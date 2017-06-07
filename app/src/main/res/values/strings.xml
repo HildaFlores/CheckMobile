@@ -12,7 +12,6 @@
     <string name="title_activity_cliente">Cliente</string>
     <string name="id_modelo">id_modelo</string>
     <string name="title_activity_inspeccion">Inspección</string>
-    <string name="URL">"http://192.168.2.19:4567/"</string>
 
 
 </resources>
