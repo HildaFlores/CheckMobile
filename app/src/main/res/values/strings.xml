@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Check Mobile</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="action_settings">Configuraciones</string>
+    <string name="Acerca">Acerca de</string>
+    <string name="Section1">Inspecciones</string>
+    <string name="Section2">Ordenes de trabajo</string>
+    <string name="Section3">Vehiculos</string>
+    <string name="title_activity_vehiculo">Vehiculo</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_activity_cliente">Cliente</string>
+    <string name="id_modelo">id_modelo</string>
+    <string name="title_activity_inspeccion">Inspección</string>
+    <string name="URL">"http://192.168.2.19:4567/"</string>
+
+
+</resources>
