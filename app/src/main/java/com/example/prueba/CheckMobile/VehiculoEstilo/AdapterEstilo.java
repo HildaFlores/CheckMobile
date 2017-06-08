@@ -50,9 +50,11 @@ public class AdapterEstilo {
 //    }
 
 
-    public static EstiloService getApiService() {
+    public static EstiloService getApiService(String parametro, String valor) {
+
 
         MainActivity main = new MainActivity();
+       final String parametroFormated = main.formatearParametro(parametro, valor);
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -63,7 +65,7 @@ public class AdapterEstilo {
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request original = chain.request();
 
-                RequestBody requestBody = RequestBody.create(JSON, "{'id_modelo' : '2'}");
+                RequestBody requestBody = RequestBody.create(JSON, parametroFormated);
 
                 Request request = original.newBuilder()
                         .post(requestBody)

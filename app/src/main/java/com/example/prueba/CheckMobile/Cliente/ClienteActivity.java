@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.example.prueba.CheckMobile.CondicionPago.AdapterCondicion;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionPago;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionResponse;
-import com.example.prueba.CheckMobile.Inspeccion.InspeccionActivity;
+import com.example.prueba.CheckMobile.Inspeccion.InspeccionLucesActivity;
 import com.example.prueba.CheckMobile.Pais.AdapterPais;
 import com.example.prueba.CheckMobile.Pais.Pais;
 import com.example.prueba.CheckMobile.Pais.PaisResponse;
@@ -35,12 +35,14 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     LinearLayout layoutEmpresa;
     RadioButton radioEmpresa;
     RadioButton radioPersona;
+    TextView txtDocIdentidad;
     TextView txtNombre;
     TextView txtapellido;
     EditText etxtDocIdentidad;
     Spinner spinnerNacionalidad;
     Spinner spinnerPais;
     Spinner spinnerCondicion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         radioPersona = (RadioButton) findViewById(R.id.rbPersona);
         txtNombre = (TextView) findViewById(R.id.txtNombre);
         txtapellido = (TextView) findViewById(R.id.txtApellido);
+        txtDocIdentidad = (TextView) findViewById(R.id.txtDocIdentidad);
         etxtDocIdentidad = (EditText) findViewById(R.id.etxtDocIdentidad);
         spinnerNacionalidad = (Spinner) findViewById(R.id.spNacionalidad);
         spinnerPais = (Spinner) findViewById(R.id.spPais);
@@ -83,7 +86,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         btnClienteSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), InspeccionActivity.class);
+                Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), InspeccionLucesActivity.class);
                 startActivity(intent);
             }
         });
@@ -111,6 +114,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.rbEmpresa:
                 txtNombre.setText("Nombres Rep.");
                 txtapellido.setText("Apellidos Rep.");
+                txtDocIdentidad.setText("RNC");
                 layoutEmpresa.setVisibility(View.VISIBLE);
                 etxtDocIdentidad.setHint("RNC");
 
@@ -119,6 +123,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 radioEmpresa.setSelected(true);
                 txtNombre.setText("Nombres ");
                 txtapellido.setText("Apellidos ");
+                txtapellido.setText("Documento Identidad ");
                 layoutEmpresa.setVisibility(View.GONE);
                 etxtDocIdentidad.setHint("Cédula/Pasaporte");
                 break;

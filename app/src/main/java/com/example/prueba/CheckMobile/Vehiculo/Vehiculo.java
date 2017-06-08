@@ -34,7 +34,7 @@ public class Vehiculo extends VehiculoResponse {
     private String estadoVeh;
     private String carga;
     private Short pasajeros;
-    private Short cilindros;
+    private int cilindros;
     private String idEntGarantia;
     private Long kmGarantia;
     private String tiempoGarantia;
@@ -46,6 +46,7 @@ public class Vehiculo extends VehiculoResponse {
     private String desc_modelo;
     private String desc_marca;
     private String desc_estilo;
+    private String idTransmision;
 
     @Override
     public String toString() {
@@ -79,7 +80,7 @@ public class Vehiculo extends VehiculoResponse {
                 ", estadoVeh='" + estadoVeh + '\'' +
                 ", carga='" + carga + '\'' +
                 ", pasajeros=" + pasajeros +
-                ", cilindros=" + cilindros +
+                ", cilindros=" + getCilindros() +
                 ", idEntGarantia='" + idEntGarantia + '\'' +
                 ", kmGarantia=" + kmGarantia +
                 ", tiempoGarantia='" + tiempoGarantia + '\'' +
@@ -326,13 +327,6 @@ public class Vehiculo extends VehiculoResponse {
         this.pasajeros = pasajeros;
     }
 
-    public Short getCilindros() {
-        return cilindros;
-    }
-
-    public void setCilindros(Short cilindros) {
-        this.cilindros = cilindros;
-    }
 
     public String getIdEntGarantia() {
         return idEntGarantia;
@@ -423,4 +417,19 @@ public class Vehiculo extends VehiculoResponse {
         this.desc_estilo = desc_estilo;
     }
 
+    public int getCilindros() {
+        return cilindros;
+    }
+
+    public void setCilindros(int cilindros) {
+        this.cilindros = cilindros;
+    }
+
+    public String getIdTransmision() {
+        return idTransmision;
+    }
+
+    public void setIdTransmision(String idTransmision) {
+        this.idTransmision = idTransmision;
+    }
 }

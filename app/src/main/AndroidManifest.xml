@@ -32,8 +32,12 @@
             android:label="Marcas"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Inspeccion.InspeccionActivity"
+            android:name=".Inspeccion.InspeccionLucesActivity"
             android:label="@string/title_activity_inspeccion"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Inspeccion.InspeccionAccesoriosActivity"
+            android:label="@string/title_activity_inspeccion_accesorios"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
          httpClient = new OkHttpClient().newBuilder();
         //add logging as last interceptor
         httpClient.addInterceptor(logging); //<- this is the important line;
-        setBaseUrl("http://192.168.0.109:4567/");
+        setBaseUrl("http://192.168.2.19:4567/");
         //192.168.0.109 //192.168.1.92//10.0.0.185
         return httpClient;
 
@@ -89,6 +89,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public String formatearParametro(String parametro, String valor) {
+
+    String param;
+        param = "{ '" + parametro + "' :" + "'"+ valor + "' }";
+
+        return param;
     }
 
 
