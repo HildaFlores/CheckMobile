@@ -38,9 +38,7 @@ import com.example.prueba.CheckMobile.ListaParametros.ListaParametroResponse;
 import com.example.prueba.CheckMobile.ListaParametros.ListaParametros;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -51,10 +49,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import static android.R.attr.path;
 import static android.R.id.list;
 import static com.example.prueba.CheckMobile.R.id.btnSiguiente;
-import static com.example.prueba.CheckMobile.R.id.listaLuces;
 
 public class InspeccionActivity extends AppCompatActivity {
 
@@ -89,7 +85,7 @@ public class InspeccionActivity extends AppCompatActivity {
         public void onResponse(Call<ListaParametros> call, Response<ListaParametros> response) {
             if (response.isSuccessful()) {
                 ListaParametroResponse listaResponse = response.body();
-                AdapterLuces adapterLuces = new AdapterLuces(getApplicationContext(), listaResponse.getListaParametros());
+                 AdapterLuces adapterLuces = new AdapterLuces(getApplicationContext(), listaResponse.getListaParametros());
                 listaLuces.setAdapter(adapterLuces);
 
             } else {
@@ -123,41 +119,31 @@ public class InspeccionActivity extends AppCompatActivity {
             CheckBox ckLuces = (CheckBox) item.findViewById(R.id.checkLuz);
             ImageView imImagen = (ImageView) item.findViewById(R.id.ivLuces);
             ckLuces.setText(listaLuces.get(posicion).getDescripcion());
-           String url = listaLuces.get(posicion).getRutaImagen();
-            String[] p =url.split("/");
-         //   Toast.makeText(getContext(), p[5].toString(), Toast.LENGTH_SHORT).show();
-            String imageLink="https://drive.google.com/uc?export=download&id="+p[5];
+          imImagen.setImageBitmap(descargarImagen(listaLuces.get(posicion).getRutaImagen()));
 
-            Picasso.with(getContext())
-                    .load(imageLink)
-                    .error(R.mipmap.ic_launcher)
-                    .fit()
-                    .centerInside()
-                    .into(imImagen);
-            //192.168.0.109:4567/
             return item;
         }
 
     }
 
-//    private Bitmap descargarImagen(String rutaImagen) {
-//
-//        URL imageUrl = null;
-//        Bitmap imagen = null;
-//        try {
-//            imageUrl = new URL(rutaImagen);
-//            HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-//            conn.connect();
-//            imagen = BitmapFactory.decodeStream(conn.getInputStream());
-//        } catch (IOException e) {
-//
-//            Toast.makeText(getApplicationContext(), "Error cargando la imagen: "+ e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-//            e.printStackTrace();
-//
-//        }
-//
-//
-//        return imagen;
-//    }
+    private Bitmap descargarImagen(String rutaImagen) {
+
+        URL imageUrl = null;
+        Bitmap imagen = null;
+        try {
+            imageUrl = new URL(rutaImagen);
+            HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
+            conn.connect();
+            imagen = BitmapFactory.decodeStream(conn.getInputStream());
+        } catch (IOException e) {
+
+            Toast.makeText(getApplicationContext(), "Error cargando la imagen: "+ e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+
+        }
+
+
+        return imagen;
+    }
 
 }
