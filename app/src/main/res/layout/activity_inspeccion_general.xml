@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/txtNoInspeccion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="20dp"
+        android:text="Inspeccion: "
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/txtDatosNoInspeccion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/txtNoInspeccion"
+        android:paddingBottom="25dp"
+        android:text="  "
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtVehiculo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtNoInspeccion"
+        android:paddingBottom="25dp"
+        android:text="Vehiculo: "
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtDatosVehiculo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtDatosNoInspeccion"
+        android:layout_toRightOf="@+id/txtVehiculo"
+        android:paddingBottom="25dp" />
+
+
+    <TextView
+        android:id="@+id/txtCliente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtVehiculo"
+        android:paddingBottom="25dp"
+        android:text="Cliente: "
+        android:textSize="20dp"
+        android:textStyle="bold">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/txtDatosCliente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtDatosVehiculo"
+        android:layout_toRightOf="@+id/txtCliente"
+        android:paddingBottom="25dp"></TextView>
+
+    <TextView
+        android:id="@+id/txtMotor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtDatosCliente"
+        android:paddingBottom="25dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:text="Motor: ">
+
+    </TextView>
+
+    <EditText
+        android:id="@+id/etxtMotor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtDatosCliente"
+        android:layout_toRightOf="@id/txtMotor"
+        android:hint="Motor "
+        android:inputType="number"
+        android:paddingBottom="25dp" />
+
+    <ImageView
+        android:id="@+id/imgKilometraje"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtMotor"
+        android:paddingBottom="25dp"
+        app:srcCompat="@mipmap/kilometraje" />
+
+    <EditText
+        android:id="@+id/etxtKilometraje"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etxtMotor"
+        android:layout_toRightOf="@id/imgKilometraje"
+        android:hint="Kilometraje"
+        android:inputType="number"
+        android:padding="20dp" />
+
+    <TextView
+        android:id="@+id/txtNotasCliente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgKilometraje"
+        android:paddingTop="20dp"
+        android:text="Observaciones: "
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etxtNotasCliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgKilometraje"
+        android:layout_toRightOf="@id/txtNotasCliente"
+        android:inputType="textMultiLine" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etxtNotasCliente"
+        android:orientation="vertical"
+        android:padding="25dp"
+
+        >
+
+        <TextView
+            android:id="@+id/txtAlfombra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            android:layout_weight="1"
+            android:text="Condición alfombra conductor"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgCondicion1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <RadioButton
+                android:id="@+id/rbBien"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bien" />
+
+            <RadioButton
+                android:id="@+id/rbNoBien"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Bien" />
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rgCondicion2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <RadioButton
+                android:id="@+id/rbGenuina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Genuina" />
+
+            <RadioButton
+                android:id="@+id/rbNoGenuina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Genuina" />
+
+        </RadioGroup>
+
+
+        <RadioGroup
+            android:id="@+id/rgCondicio3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <RadioButton
+                android:id="@+id/rbSoloUna"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Solo una" />
+
+            <RadioButton
+                android:id="@+id/rbSDosOMas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dos o mas" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

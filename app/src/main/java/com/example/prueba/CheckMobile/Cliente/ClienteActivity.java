@@ -19,6 +19,7 @@ import com.example.prueba.CheckMobile.CondicionPago.AdapterCondicion;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionPago;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionResponse;
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionLucesActivity;
+import com.example.prueba.CheckMobile.Inspeccion.MainInspeccionActivity;
 import com.example.prueba.CheckMobile.Pais.AdapterPais;
 import com.example.prueba.CheckMobile.Pais.Pais;
 import com.example.prueba.CheckMobile.Pais.PaisResponse;
@@ -50,6 +51,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_cliente);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
         layoutEmpresa = (LinearLayout) findViewById(R.id.layoutNombreEmpresa);
@@ -86,7 +89,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         btnClienteSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), InspeccionLucesActivity.class);
+                Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainInspeccionActivity.class);
                 startActivity(intent);
             }
         });
@@ -114,7 +117,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.rbEmpresa:
                 txtNombre.setText("Nombres Rep.");
                 txtapellido.setText("Apellidos Rep.");
-                txtDocIdentidad.setText("RNC");
+                txtDocIdentidad.setText("RNC ");
                 layoutEmpresa.setVisibility(View.VISIBLE);
                 etxtDocIdentidad.setHint("RNC");
 
@@ -123,7 +126,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 radioEmpresa.setSelected(true);
                 txtNombre.setText("Nombres ");
                 txtapellido.setText("Apellidos ");
-                txtapellido.setText("Documento Identidad ");
+                txtDocIdentidad.setText("Documento Identidad ");
                 layoutEmpresa.setVisibility(View.GONE);
                 etxtDocIdentidad.setHint("Cédula/Pasaporte");
                 break;

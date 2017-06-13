@@ -1,10 +1,10 @@
-package com.example.prueba.CheckMobile.ListaParametros;
+package com.example.prueba.CheckMobile.AccesoriosParametros;
 
 /**
- * Created by Prueba on 05-jun-17.
+ * Created by Prueba on 09-jun-17.
  */
 
-public class ListaParametros extends ListaParametroResponse {
+public class ListaAccesorios extends ListaAccesoriosResponse {
 
     private String id;
     private String id_empresa;
@@ -15,7 +15,7 @@ public class ListaParametros extends ListaParametroResponse {
 
     @Override
     public String toString() {
-        return "ListaParametros{" +
+        return "ListaLuces{" +
                 "id='" + id + '\'' +
                 ", id_empresa='" + id_empresa + '\'' +
                 ", valor='" + valor + '\'' +

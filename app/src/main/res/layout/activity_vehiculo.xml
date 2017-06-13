@@ -31,9 +31,6 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_vehiculo" />
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabCancel"
         android:layout_width="wrap_content"
@@ -42,6 +39,8 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <include layout="@layout/content_vehiculo" />
 
 
 </android.support.design.widget.CoordinatorLayout>

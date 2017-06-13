@@ -9,15 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.example.prueba.CheckMobile.Cliente.AdapterCliente;
 import com.example.prueba.CheckMobile.Cliente.Cliente;
 import com.example.prueba.CheckMobile.Cliente.ClienteResponse;
 import com.example.prueba.CheckMobile.Cliente.GreenAdapter;
 import com.example.prueba.CheckMobile.R;
-
 import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -90,7 +87,7 @@ public class Tab2OrdenesTrabajo extends Fragment {
                 if (cliente.getResponseCode().equals("200")) {
                     NUM_LIST_ITEMS = cliente.getClientes().size();
                     callAdapter(cliente.getClientes());
-                    Log.v("vehiculo===>", cliente.getMessage());
+
                 }
             } else {
                 Toast.makeText(getContext(), "Error en el formato de respuesta", Toast.LENGTH_SHORT).show();

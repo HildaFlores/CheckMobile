@@ -70,6 +70,35 @@ public class VehiculoActivity extends AppCompatActivity {
     EditText editTextReferencia;
     String valor;
 
+    EditText chasis;
+    EditText año;
+    EditText placa;
+    Spinner tipo;
+    EditText marca;
+    Spinner modelo;
+    Spinner estilo;
+    RadioButton cilindro2;
+    RadioButton cilindro3;
+    RadioButton cilindro4;
+    RadioButton cilindro5;
+    RadioButton cilindro6;
+    RadioButton cilindro7;
+    RadioButton cilindro8;
+    EditText color;
+    EditText colorInterior;
+    RadioButton condicionNuevo;
+    RadioButton condicionUsado;
+    EditText filaAsientos;
+    RadioButton cantPuerta2;
+    RadioButton cantPuerta3;
+    RadioButton cantPuerta4;
+    RadioButton cantPuerta5;
+    RadioButton transmisionMec;
+    RadioButton transmisionAut;
+    RadioButton transmisionSin;
+    EditText cilindraje;
+    Switch garantia;
+
 
     private Timer timer = new Timer();
     private final long DELAY = 0;
@@ -81,6 +110,8 @@ public class VehiculoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vehiculo);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
         //Inicializacion de los objetos
@@ -92,6 +123,8 @@ public class VehiculoActivity extends AppCompatActivity {
         etxtMarca = (EditText) findViewById(R.id.etxtMarca);
 
         //listMarca = (ListView) findViewById(R.id.listview_search);
+
+        InicializacionVistasVehiculo();
 
         //Llamadas de los metodos
         poblarSpinnerEstadoVeh();
@@ -126,6 +159,39 @@ public class VehiculoActivity extends AppCompatActivity {
 
             }
         });
+
+
+    }
+
+    private void InicializacionVistasVehiculo() {
+        chasis = (EditText) findViewById(R.id.etxtChasis);
+        año = (EditText) findViewById(R.id.etxtAnio);
+        placa = (EditText) findViewById(R.id.etxtPlaca);
+        tipo = (Spinner) findViewById(R.id.spinnerTipoVeh);
+        marca = (EditText) findViewById(R.id.etxtMarca);
+        modelo = (Spinner) findViewById(R.id.spinnerModelo);
+        estilo = (Spinner) findViewById(R.id.spinnerEstilo);
+        cilindro2 = (RadioButton) findViewById(R.id.rbNoClindro2);
+        cilindro3 = (RadioButton) findViewById(R.id.rbNoClindro3);
+        cilindro4 = (RadioButton) findViewById(R.id.rbNoClindro4);
+        cilindro5 = (RadioButton) findViewById(R.id.rbNoClindro5);
+        cilindro6 = (RadioButton) findViewById(R.id.rbNoClindro6);
+        cilindro7 = (RadioButton) findViewById(R.id.rbNoClindro7);
+        cilindro8 = (RadioButton) findViewById(R.id.rbNoClindro8);
+        color = (EditText) findViewById(R.id.etxtColor);
+        colorInterior = (EditText) findViewById(R.id.etxtColorInterior);
+        condicionNuevo = (RadioButton) findViewById(R.id.rbNuevo);
+        condicionUsado = (RadioButton) findViewById(R.id.rbUsado);
+        filaAsientos = (EditText) findViewById(R.id.etxtFilaAsiento);
+        cantPuerta2 = (RadioButton) findViewById(R.id.rbCant2);
+        cantPuerta3 = (RadioButton) findViewById(R.id.rbCant3);
+        cantPuerta4 = (RadioButton) findViewById(R.id.rbCant4);
+       cantPuerta5 = (RadioButton) findViewById(R.id.rbCant5);
+       transmisionMec = (RadioButton) findViewById(R.id.rbmecanico);
+      transmisionAut = (RadioButton) findViewById(R.id.rbAutomatica);
+        transmisionSin = (RadioButton) findViewById(R.id.rbSincronizada);
+        cilindraje = (EditText) findViewById(R.id.etxtCilindraje);
+         garantia = (Switch) findViewById(R.id.swGaranita);
 
 
     }
@@ -508,35 +574,6 @@ public class VehiculoActivity extends AppCompatActivity {
 
     private void llenarFormularioVehiculo(ArrayList<Vehiculo> vehiculos) {
 
-        EditText chasis = (EditText) findViewById(R.id.etxtChasis);
-        EditText año = (EditText) findViewById(R.id.etxtAnio);
-        EditText placa = (EditText) findViewById(R.id.etxtPlaca);
-        Spinner tipo = (Spinner) findViewById(R.id.spinnerTipoVeh);
-        EditText marca = (EditText) findViewById(R.id.etxtMarca);
-        Spinner modelo = (Spinner) findViewById(R.id.spinnerModelo);
-        Spinner estilo = (Spinner) findViewById(R.id.spinnerEstilo);
-        RadioButton cilindro2 = (RadioButton) findViewById(R.id.rbNoClindro2);
-        RadioButton cilindro3 = (RadioButton) findViewById(R.id.rbNoClindro3);
-        RadioButton cilindro4 = (RadioButton) findViewById(R.id.rbNoClindro4);
-        RadioButton cilindro5 = (RadioButton) findViewById(R.id.rbNoClindro5);
-        RadioButton cilindro6 = (RadioButton) findViewById(R.id.rbNoClindro6);
-        RadioButton cilindro7 = (RadioButton) findViewById(R.id.rbNoClindro7);
-        RadioButton cilindro8 = (RadioButton) findViewById(R.id.rbNoClindro8);
-        EditText color = (EditText) findViewById(R.id.etxtColor);
-        EditText colorInterior = (EditText) findViewById(R.id.etxtColorInterior);
-        RadioButton condicionNuevo = (RadioButton) findViewById(R.id.rbNuevo);
-        RadioButton condicionUsado = (RadioButton) findViewById(R.id.rbUsado);
-        EditText filaAsientos = (EditText) findViewById(R.id.etxtFilaAsiento);
-        RadioButton cantPuerta2 = (RadioButton) findViewById(R.id.rbCant2);
-        RadioButton cantPuerta3 = (RadioButton) findViewById(R.id.rbCant3);
-        RadioButton cantPuerta4 = (RadioButton) findViewById(R.id.rbCant4);
-        RadioButton cantPuerta5 = (RadioButton) findViewById(R.id.rbCant5);
-        RadioButton transmisionMec = (RadioButton) findViewById(R.id.rbmecanico);
-        RadioButton transmisionAut = (RadioButton) findViewById(R.id.rbAutomatica);
-        RadioButton transmisionSin = (RadioButton) findViewById(R.id.rbSincronizada);
-        EditText cilindraje = (EditText) findViewById(R.id.etxtCilindraje);
-        Switch garantia = (Switch) findViewById(R.id.swGaranita);
-
         for (Vehiculo varVehiculo : vehiculos) {
             chasis.setText(varVehiculo.getChasis());
             año.setText(varVehiculo.getAno());
@@ -583,7 +620,7 @@ public class VehiculoActivity extends AppCompatActivity {
             }
 
 
-                switch (varVehiculo.getIdTraccion().toString()) {
+            switch (varVehiculo.getIdTraccion().toString()) {
                 case "2WD": {
                     View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("1"));
                     RadioButton radioTrac = (RadioButton) vistaTraccion;
@@ -657,19 +694,25 @@ public class VehiculoActivity extends AppCompatActivity {
                 garantia.setChecked(true);
             }
 
-/*
-            if (!varVehiculo.getIdCliente().toString().equals(""))
+
+
+            if (varVehiculo.getIdCliente().toString() != null)
             {
-
+               // Toast.makeText(getApplicationContext(),varVehiculo.getIdCliente().toString(),Toast.LENGTH_SHORT ).show();
                 ObtenerDatosFiltradosCliente(varVehiculo.getIdCliente().toString());
-            }*/
-
+            }
 
 
         }
 
         // Toast.makeText(getApplicationContext()," "+ varVehiculo.getCilindros(),Toast.LENGTH_SHORT).show();
 
+        InabilitarVistasVehiculo();
+
+
+    }
+
+    private void InabilitarVistasVehiculo() {
         chasis.setEnabled(false);
         año.setEnabled(false);
         placa.setEnabled(false);
@@ -677,8 +720,17 @@ public class VehiculoActivity extends AppCompatActivity {
         marca.setEnabled(false);
         modelo.setEnabled(false);
         estilo.setEnabled(false);
-        radioCombustible.setSelected(false);
-        radioTraccion.setSelected(false);
+
+        for(int i = 0; i < radioCombustible.getChildCount(); i++){
+            radioCombustible.getChildAt(i).setEnabled(false);
+        }
+
+        radioTraccion.setEnabled(false);
+
+        for (int i=0; i<radioTraccion.getChildCount();i++)
+        {
+            radioTraccion.getChildAt(i).setEnabled(false);
+        }
         cilindro2.setEnabled(false);
         cilindro3.setEnabled(false);
         cilindro4.setEnabled(false);
@@ -699,6 +751,8 @@ public class VehiculoActivity extends AppCompatActivity {
         transmisionMec.setEnabled(false);
         transmisionSin.setEnabled(false);
         cilindraje.setEnabled(false);
+        garantia.setEnabled(false);
+
 
     }
     //Para obtener el indice donde se encuentra el string en el spinner deseado
@@ -724,19 +778,16 @@ public class VehiculoActivity extends AppCompatActivity {
         call.enqueue(new FiltroClienteCallback());
 
 
-
     }
 
 
     private class FiltroClienteCallback implements Callback<Cliente> {
         @Override
         public void onResponse(Call<Cliente> call, Response<Cliente> response) {
-            if (response.isSuccessful()){
+            if (response.isSuccessful()) {
                 ClienteResponse clienteResponse = response.body();
                 llenarFormularioCliente(clienteResponse.getClientes());
-            }
-
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de vehiculo", Toast.LENGTH_SHORT).show();
             }
         }
@@ -753,8 +804,7 @@ public class VehiculoActivity extends AppCompatActivity {
 
         EditText nombres = (EditText) findViewById(R.id.etxtNombre);
 
-        for(Cliente varCte : clientes)
-        {
+        for (Cliente varCte : clientes) {
             nombres.setText(varCte.getNombres());
         }
 

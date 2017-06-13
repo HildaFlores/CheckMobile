@@ -4,25 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import com.example.prueba.CheckMobile.R;
-import com.example.prueba.CheckMobile.Vehiculo.AdapterVehiculo;
-import com.example.prueba.CheckMobile.Vehiculo.RegistrosAdapter;
-import com.example.prueba.CheckMobile.Vehiculo.Vehiculo;
 import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
-import com.example.prueba.CheckMobile.Vehiculo.VehiculoResponse;
-
-import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Prueba on 26-may-17.

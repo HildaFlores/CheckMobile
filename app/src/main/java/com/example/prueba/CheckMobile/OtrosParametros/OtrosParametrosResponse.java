@@ -1,39 +1,41 @@
-package com.example.prueba.CheckMobile.ListaParametros;
+package com.example.prueba.CheckMobile.OtrosParametros;
 
-import com.example.prueba.CheckMobile.VehiculoMarca.Marca;
+import com.example.prueba.CheckMobile.AccesoriosParametros.ListaAccesorios;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import static com.example.prueba.CheckMobile.R.id.listaAccesorios;
+
 /**
- * Created by Prueba on 05-jun-17.
+ * Created by Prueba on 09-jun-17.
  */
 
-public class ListaParametroResponse {
+public class OtrosParametrosResponse {
+
 
     @SerializedName("data")
-    private ArrayList<ListaParametros> listaParametros;
+    private ArrayList<OtrosParametros> otrosParametros;
     private String responseCode;
     private String message;
     private int rows;
 
-
     @Override
     public String toString() {
-        return "ListaParametroResponse{" +
-                "listaParametros=" + listaParametros +
+        return "OtrosParametrosResponse{" +
+                "otrosParametros=" + otrosParametros +
                 ", responseCode='" + responseCode + '\'' +
                 ", message='" + message + '\'' +
                 ", rows=" + rows +
                 '}';
     }
 
-    public ArrayList<ListaParametros> getListaParametros() {
-        return listaParametros;
+    public ArrayList<OtrosParametros> getOtrosParametros() {
+        return otrosParametros;
     }
 
-    public void setListaParametros(ArrayList<ListaParametros> listaParametros) {
-        this.listaParametros = listaParametros;
+    public void setOtrosParametros(ArrayList<OtrosParametros> otrosParametros) {
+        this.otrosParametros = otrosParametros;
     }
 
     public String getResponseCode() {
