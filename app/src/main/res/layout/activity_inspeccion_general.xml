@@ -1,98 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="25dp"
+    android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/txtNoInspeccion"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:paddingBottom="20dp"
-        android:text="Inspeccion: "
-        android:textSize="20dp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:paddingBottom="25dp">
 
+        <TextView
+            android:id="@+id/txtNoInspeccion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="Inspeccion: "
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/txtDatosNoInspeccion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/txtNoInspeccion"
-        android:paddingBottom="25dp"
-        android:text="  "
-        android:textSize="20dp"
-        android:textStyle="bold" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/etxtNoInspeccion"
+            android:ems="3"
+            android:enabled="false"
+            >
 
-    <TextView
-        android:id="@+id/txtVehiculo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txtNoInspeccion"
-        android:paddingBottom="25dp"
-        android:text="Vehiculo: "
-        android:textSize="20dp"
-        android:textStyle="bold" />
+        </EditText>
+
+        <TextView
+            android:id="@+id/txtFechaInspeccion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:layout_weight="1"
+            android:padding="20dp"
+            android:text="Fecha: "
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="right|end"
+           />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:id="@+id/EtxtFechaInspeccion"
+            android:gravity="right|end"
+           />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/txtDatosVehiculo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtDatosNoInspeccion"
-        android:layout_toRightOf="@+id/txtVehiculo"
-        android:paddingBottom="25dp" />
-
-
-    <TextView
-        android:id="@+id/txtCliente"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txtVehiculo"
-        android:paddingBottom="25dp"
-        android:text="Cliente: "
+        android:padding="25dp"
         android:textSize="20dp"
-        android:textStyle="bold">
-
-    </TextView>
+        android:textStyle="bold"
+        android:text="Vehiculo"/>
 
     <TextView
         android:id="@+id/txtDatosCliente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtDatosVehiculo"
-        android:layout_toRightOf="@+id/txtCliente"
-        android:paddingBottom="25dp"></TextView>
-
-    <TextView
-        android:id="@+id/txtMotor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txtDatosCliente"
-        android:paddingBottom="25dp"
+        android:padding="25dp"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:text="Motor: ">
+        android:text="Cliente">
 
     </TextView>
 
-    <EditText
-        android:id="@+id/etxtMotor"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="25dp">
+
+        <TextView
+            android:id="@+id/txtMotor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="Motor: ">
+
+        </TextView>
+
+        <EditText
+            android:id="@+id/etxtMotor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Motor "
+            android:layout_weight="1"
+            android:inputType="number"
+            android:paddingBottom="20dp" />
+
+        <TextView
+            android:id="@+id/txtSerieGomas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="25dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="Serie de Gomas: ">
+
+        </TextView>
+
+        <EditText
+            android:id="@+id/etxtSerieGomas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="     /    / "
+            android:ems="3"
+            android:inputType="text"
+            android:paddingBottom="20dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtDatosCliente"
-        android:layout_toRightOf="@id/txtMotor"
-        android:hint="Motor "
-        android:inputType="number"
-        android:paddingBottom="25dp" />
+        android:orientation="horizontal"
+        android:padding="25dp">
 
     <ImageView
         android:id="@+id/imgKilometraje"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtMotor"
         android:paddingBottom="25dp"
         app:srcCompat="@mipmap/kilometraje" />
 
@@ -100,18 +139,16 @@
         android:id="@+id/etxtKilometraje"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/etxtMotor"
-        android:layout_toRightOf="@id/imgKilometraje"
         android:hint="Kilometraje"
         android:inputType="number"
         android:padding="20dp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/txtNotasCliente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imgKilometraje"
-        android:paddingTop="20dp"
+        android:padding="25dp"
         android:text="Observaciones: "
         android:textSize="20dp"
         android:textStyle="bold" />
@@ -120,14 +157,11 @@
         android:id="@+id/etxtNotasCliente"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imgKilometraje"
-        android:layout_toRightOf="@id/txtNotasCliente"
         android:inputType="textMultiLine" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/etxtNotasCliente"
         android:orientation="vertical"
         android:padding="25dp"
 
@@ -211,4 +245,4 @@
     </LinearLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

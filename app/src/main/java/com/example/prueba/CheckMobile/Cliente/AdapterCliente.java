@@ -86,7 +86,26 @@ public class AdapterCliente {
         }
 
         return apiService;
+    }
+
+    public static ClienteService setCliente() {
+
+        MainActivity main = new MainActivity();
+        OkHttpClient.Builder httpClient = main.httpCliente();
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
 
 
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(main.getBaseUrl())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(httpClient.build())
+                .build();
+
+
+        apiService = retrofit.create(com.example.prueba.CheckMobile.Cliente.ClienteService.class);
+
+        return apiService;
     }
 }

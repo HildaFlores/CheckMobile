@@ -14,29 +14,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="275dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:orientation="horizontal"
-            android:padding="25dp">
-
-            <TextView
-                android:id="@+id/txtEstado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2.30"
-                android:text="Estado"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-            <Spinner
-                android:id="@+id/spinnerEstado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -135,7 +112,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="25dp">
@@ -150,16 +127,16 @@
 
             <Spinner
                 android:id="@+id/spinnerTipoVeh"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:foreground="@color/accent" />
+                />
 
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="25sp">
@@ -172,13 +149,14 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/etxtMarca"
+                android:ems="10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="buscar marca"
-                android:inputType="textPersonName" />
+                android:imeOptions="actionSearch"
+                android:completionThreshold="1"
+                 />
 
             <!--     <Spinner
                      android:id="@+id/spinnerMarca"
@@ -191,7 +169,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="25sp">
@@ -206,15 +184,16 @@
 
             <Spinner
                 android:id="@+id/spinnerModelo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                />
 
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="25sp">
@@ -223,16 +202,15 @@
                 android:id="@+id/txtEstilo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.22"
                 android:text="Estilo: "
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
             <Spinner
                 android:id="@+id/spinnerEstilo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+               />
 
         </LinearLayout>
 
@@ -482,7 +460,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="No. filas" />
+                android:hint="No. filas"
+                android:inputType="number"/>
         </LinearLayout>
 
         <LinearLayout
@@ -629,6 +608,33 @@
 
         </LinearLayout>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="25dp">
+
+
+        <TextView
+            android:id="@+id/txtNota"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nota: "
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etxtNota"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Nota "
+            android:inputType="textMultiLine"
+            />
+
+    </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -636,7 +642,6 @@
             android:background="@color/divider"
             android:orientation="horizontal"
             android:paddingTop="15dp">
-
 
             <Button
                 android:id="@+id/btnSiguiente"

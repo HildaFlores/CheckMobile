@@ -4,7 +4,7 @@ package com.example.prueba.CheckMobile.TablaDgii;
  * Created by Prueba on 22-may-17.
  */
 
-public class TablaDgii {
+public class TablaDgii extends TablaDgiiResponse {
 
     private String rncCedula;
     private String razonSocial;

@@ -50,7 +50,7 @@ public class AdapterEstilo {
 
     public static EstiloService getApiService(String parametro, String valor) {
 
-
+        apiService = null;
         MainActivity main = new MainActivity();
        final String parametroFormated = main.formatearParametro(parametro, valor);
         Gson gson = new GsonBuilder()

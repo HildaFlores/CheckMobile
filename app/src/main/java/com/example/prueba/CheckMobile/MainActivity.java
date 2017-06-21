@@ -20,8 +20,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 
 public class MainActivity extends AppCompatActivity {
-
-
     /*Declaraciones*/
 
     private SectionsPagerAdapter mSectionsPagerAdapter;

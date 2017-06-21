@@ -1,13 +1,19 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -29,8 +35,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static android.R.attr.id;
+
 public class OtrosActivity extends Fragment {
-    LinearLayout layoutCantidades;
+    GridLayout layoutCantidades;
     GridLayout layoutLados;
     SeekBar sbCombustible;
     TextView txtSeekBar;
@@ -43,7 +51,7 @@ public class OtrosActivity extends Fragment {
         super.onCreate(savedInstanceState);
 
         View rootView = inflater.inflate(R.layout.activity_otros, container, false);
-        layoutCantidades = (LinearLayout) rootView.findViewById(R.id.layoutCantidades);
+        layoutCantidades = (GridLayout) rootView.findViewById(R.id.layoutCantidades);
 
         txtSeekBar = (TextView) rootView.findViewById(R.id.txtProgress);
         sbCombustible = (SeekBar) rootView.findViewById(R.id.seekBarCombustible);
@@ -161,28 +169,52 @@ public class OtrosActivity extends Fragment {
 
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        int id = v.getId();
+
+        MenuInflater menuInflater = getActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.menu_contextual_lados_vehiculo, menu);
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId())
+        {
+            case R.id.action_camara: {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivity(intent);
+                return true;
+                }
+        }
+        return super.onContextItemSelected(item);
+
+
+    }
+
     private void LlenarLadosVehiculo(List<OtrosParametros> lados) {
         int contador = 0;
         layoutLados.setRowCount(lados.size());
 
         for (OtrosParametros varLados : lados) {
             contador++;
-            TextView txt = new TextView(layoutLados.getContext());
-            txt.setText(varLados.getValor());
             ImageView imagen = new ImageView(layoutLados.getContext());
             imagen.setPadding(25,25,25,25);
             imagen.setId(contador);
             String url = varLados.getRutaImagen();
             String[] p = url.split("/");
             String imageLink = "https://drive.google.com/uc?export=download&id=" + p[5];
-
-
             Picasso.with(getContext())
                     .load(imageLink)
                     .error(R.mipmap.ic_launcher)
                     .into(imagen);
 
             layoutLados.addView(imagen);
+
+            registerForContextMenu(imagen);
 
 
         }
@@ -191,6 +223,7 @@ public class OtrosActivity extends Fragment {
 
     private void LlenarCantidades(List<OtrosParametros> cantidades) {
         int contador = 0;
+        layoutCantidades.setRowCount(cantidades.size());
         for (OtrosParametros varCantidad : cantidades) {
             contador++;
             EditText etxtCantidades = new EditText(layoutCantidades.getContext());

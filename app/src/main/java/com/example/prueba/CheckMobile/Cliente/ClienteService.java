@@ -1,9 +1,13 @@
 package com.example.prueba.CheckMobile.Cliente;
 
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 
 /**
  * Created by Prueba on 19-may-17.
@@ -16,5 +20,6 @@ public interface ClienteService {
     @POST("clientes")
      Call<Cliente> getClientes();
 
-   /* void getAllCliente( Callback<Cliente> callback);*/
+   @PUT("clientes")
+    Call<String> insertClientes(@Body ArrayList<Cliente> clientes);
 }

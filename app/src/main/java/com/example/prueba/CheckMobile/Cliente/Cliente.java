@@ -15,7 +15,7 @@ public class Cliente extends ClienteResponse {
     private String usuarioInsercion;
     private String nombres;
     private String apellidos;
-    private Short edad;
+    private int edad;
     private String sexo;
     private String estadoCivil;
     private String documentoIdentidad;
@@ -34,11 +34,43 @@ public class Cliente extends ClienteResponse {
     private Short descFactura;
     private String fechaInsercion;
     private String fechaActualizacion;
-    private String fechaNacimiento;
+    private String fechaNac;
     private String idTipoCategoria;
-
     private String razonSocial;
     private String noPasaporte;
+    private String limiteCredito;
+    private String telefono;
+    private String telefono_movil;
+    private String direccion_email;
+    private String linea1;
+    private String ciudad_provincia;
+    private String linea2;
+    private String descripcion_condicion;
+
+
+    public Cliente( String idTipoCliente, String nombres, String apellidos, int edad, String sexo, String documentoIdentidad, String rnc, String nombreEmpresa, String idCondicion, String nacionalidad, String apodo,  String notas, String pais, String fechaNac,  String limiteCredito, String telefono, String telefono_movil, String direccion_email, String linea1, String ciudad_provincia, String linea2) {
+        this.idTipoCliente = idTipoCliente;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.edad = edad;
+        this.sexo = sexo;
+        this.documentoIdentidad = documentoIdentidad;
+        this.rnc = rnc;
+        this.nombreEmpresa = nombreEmpresa;
+        this.idCondicion = idCondicion;
+        this.nacionalidad = nacionalidad;
+        this.apodo = apodo;
+        this.notas = notas;
+        this.pais = pais;
+        this.fechaNac = fechaNac;
+        this.limiteCredito = limiteCredito;
+        this.telefono = telefono;
+        this.telefono_movil = telefono_movil;
+        this.direccion_email = direccion_email;
+        this.linea1 = linea1;
+        this.ciudad_provincia = ciudad_provincia;
+        this.linea2 = linea2;
+    }
 
     @Override
     public String toString() {
@@ -70,11 +102,84 @@ public class Cliente extends ClienteResponse {
                 ", descFactura=" + descFactura +
                 ", fechaInsercion='" + fechaInsercion + '\'' +
                 ", fechaActualizacion='" + fechaActualizacion + '\'' +
-                ", fechaNacimiento='" + fechaNacimiento + '\'' +
+                ", fechaNac='" + fechaNac + '\'' +
                 ", idTipoCategoria='" + idTipoCategoria + '\'' +
                 ", razonSocial='" + razonSocial + '\'' +
                 ", noPasaporte='" + noPasaporte + '\'' +
+                ", limiteCredito='" + limiteCredito + '\'' +
+                ", telefono='" + telefono + '\'' +
+                ", telefono_movil='" + telefono_movil + '\'' +
+                ", direccion_email='" + direccion_email + '\'' +
+                ", linea1='" + linea1 + '\'' +
+                ", ciudad_provincia='" + ciudad_provincia + '\'' +
+                ", linea2='" + linea2 + '\'' +
+                ", descripcion_condicion='" + descripcion_condicion + '\'' +
                 '}';
+    }
+
+    public String getDescripcion_condicion() {
+        return descripcion_condicion;
+    }
+
+    public void setDescripcion_condicion(String descripcion_condicion) {
+        this.descripcion_condicion = descripcion_condicion;
+    }
+
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getTelefono_movil() {
+        return telefono_movil;
+    }
+
+    public void setTelefono_movil(String telefono_movil) {
+        this.telefono_movil = telefono_movil;
+    }
+
+    public String getDireccion_email() {
+        return direccion_email;
+    }
+
+    public void setDireccion_email(String direccion_email) {
+        this.direccion_email = direccion_email;
+    }
+
+    public String getLinea1() {
+        return linea1;
+    }
+
+    public void setLinea1(String linea1) {
+        this.linea1 = linea1;
+    }
+
+    public String getCiudad_provincia() {
+        return ciudad_provincia;
+    }
+
+    public void setCiudad_provincia(String ciudad_provincia) {
+        this.ciudad_provincia = ciudad_provincia;
+    }
+
+    public String getLinea2() {
+        return linea2;
+    }
+
+    public void setLinea2(String linea2) {
+        this.linea2 = linea2;
+    }
+
+    public String getLimiteCredito() {
+        return limiteCredito;
+    }
+
+    public void setLimiteCredito(String limiteCredito) {
+        this.limiteCredito = limiteCredito;
     }
 
     public String getId() {
@@ -141,11 +246,11 @@ public class Cliente extends ClienteResponse {
         this.apellidos = apellidos;
     }
 
-    public Short getEdad() {
+    public int getEdad() {
         return edad;
     }
 
-    public void setEdad(Short edad) {
+    public void setEdad(int edad) {
         this.edad = edad;
     }
 
@@ -324,12 +429,12 @@ public class Cliente extends ClienteResponse {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getFechaNacimiento() {
-        return fechaNacimiento;
+    public String getfechaNac() {
+        return fechaNac;
     }
 
-    public void setFechaNacimiento(String fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setfechaNac(String fechaNac) {
+        this.fechaNac = fechaNac;
     }
 
 

@@ -22,4 +22,5 @@ public interface EstiloService {
 //    @POST("estilos")
 //    void getEstilos(@Field("id_modelo") String id_modelo, Callback<ArrayList<Estilo>> callback);
 
+
 }

@@ -38,7 +38,7 @@ public class Vehiculo extends VehiculoResponse {
     private String idEntGarantia;
     private Long kmGarantia;
     private String tiempoGarantia;
-    private Character garantia;
+    private String garantia;
     private String notasGarantia;
     private String idUso;
     private Short noVelocidades;
@@ -47,6 +47,34 @@ public class Vehiculo extends VehiculoResponse {
     private String desc_marca;
     private String desc_estilo;
     private String idTransmision;
+    private String secuenciaEntrada;
+
+
+
+    public Vehiculo(String secuenciaEntrada,  String chasis, String idTipoVehiculo, String idMarca, String idModelo, String idEstilo, String nota, String color, String colorInterior, String ano, String filaAsiento, String cantPuerta, String idCombustible, String idTraccion, String cilindraje, String referencia, String placa, String estadoVeh, int cilindros, String garantia, String idTransmision) {
+        this.secuenciaEntrada = secuenciaEntrada;
+        this.chasis = chasis;
+        this.idTipoVehiculo = idTipoVehiculo;
+        this.idMarca = idMarca;
+        this.idModelo = idModelo;
+        this.idEstilo = idEstilo;
+        this.nota = nota;
+        this.color = color;
+        this.colorInterior = colorInterior;
+        this.ano = ano;
+        this.filaAsiento = filaAsiento;
+        this.cantPuerta = cantPuerta;
+        this.idCombustible = idCombustible;
+        this.idTraccion = idTraccion;
+        this.cilindraje = cilindraje;
+        this.referencia = referencia;
+        this.placa = placa;
+        this.estadoVeh = estadoVeh;
+        this.cilindros = cilindros;
+        this.garantia = garantia;
+        this.idTransmision = idTransmision;
+
+    }
 
     @Override
     public String toString() {
@@ -352,11 +380,11 @@ public class Vehiculo extends VehiculoResponse {
         this.tiempoGarantia = tiempoGarantia;
     }
 
-    public Character getGarantia() {
+    public String getGarantia() {
         return garantia;
     }
 
-    public void setGarantia(Character garantia) {
+    public void setGarantia(String garantia) {
         this.garantia = garantia;
     }
 
@@ -431,5 +459,13 @@ public class Vehiculo extends VehiculoResponse {
 
     public void setIdTransmision(String idTransmision) {
         this.idTransmision = idTransmision;
+    }
+
+    public String getSecuencia_entrada() {
+        return secuenciaEntrada;
+    }
+
+    public void setSecuencia_entrada(String secuencia_entrada) {
+        this.secuenciaEntrada = secuencia_entrada;
     }
 }

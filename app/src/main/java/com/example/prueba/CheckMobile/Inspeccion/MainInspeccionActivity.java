@@ -1,5 +1,6 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,13 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.prueba.CheckMobile.R;
+
+import org.w3c.dom.Text;
 
 public class MainInspeccionActivity extends AppCompatActivity {
     private mSectionsPagerAdapterInspeccion mSectionsPagerAdapterInspeccion;
 
     private ViewPager mViewPager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,7 @@ public class MainInspeccionActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs2);
         tabLayout.setupWithViewPager(mViewPager);
+
     }
 
     @Override

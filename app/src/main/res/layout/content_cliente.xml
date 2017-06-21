@@ -17,8 +17,8 @@
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
             android:paddingTop="15dp">
 
             <RadioButton
@@ -26,8 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Persona"
-                android:checked="true"/>
+                android:text="Persona" />
 
             <RadioButton
                 android:id="@+id/rbEmpresa"
@@ -56,10 +55,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textPersonName"
-                android:hint="Cédula/Pasaporte"/>
+                android:hint="Cédula/Pasaporte"
+                android:inputType="textPersonName" />
 
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutNombreSegunDgii"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <TextView
+                android:id="@+id/txtNombreSegunDgii"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre según DGII:"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etxtNombreSegundDgii"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="Nombre segun DGII"
+                android:inputType="textMultiLine" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,9 +97,9 @@
                 android:id="@+id/txtNombreEmpresa"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Nombre empresa: "
                 android:textSize="20dp"
-                android:textStyle="bold"
-                android:text="Nombre empresa " />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etxtNombreEmpresa"
@@ -83,9 +107,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:hint="Nombre empresa" />
+                android:hint="Nombre empresa"
+                android:inputType="textPersonName" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -137,6 +162,29 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/txtApodo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apodo: "
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etxtApodo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Apodo"
+                android:inputType="textPersonName" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="25dp">
@@ -170,8 +218,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:editable="false"
-                android:inputType="number" />
+                android:hint="edad"
+                android:inputType="number"
+                android:enabled="false"/>
         </LinearLayout>
 
         <LinearLayout
@@ -252,15 +301,15 @@
                 android:layout_height="wrap_content"
                 android:text="Provincia"
                 android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etxtProvincia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textPersonName"
-                android:hint="Provincia" />
+                android:hint="Provincia"
+                android:inputType="textPersonName" />
 
 
         </LinearLayout>
@@ -273,7 +322,7 @@
             android:padding="25dp">
 
             <TextView
-                android:id="@+id/txtDireccion2"
+                android:id="@+id/txtDireccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dirección "
@@ -285,7 +334,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Municipio            Sector                Calle/Av.                 No. casa"
-                android:inputType="textPersonName" />
+                android:inputType="textMultiLine" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <TextView
+                android:id="@+id/txtProximoA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Próximo A "
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etxtProximoA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Escriba alguna referencia"
+                android:inputType="textMultiLine" />
 
 
         </LinearLayout>
@@ -368,13 +441,12 @@
                 android:layout_height="wrap_content"
                 android:text="Condición "
                 android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Spinner
                 android:id="@+id/spCondicion"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                 />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/txtLimite"
@@ -382,15 +454,39 @@
                 android:layout_height="wrap_content"
                 android:text="Límite crédito "
                 android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etxtLimite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
-                android:hint="99999" />
+                android:hint="99999"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+
+            <TextView
+                android:id="@+id/txtNotasCliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notas:  "
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etxtNotasCliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Notas"
+                android:inputType="textMultiLine" />
         </LinearLayout>
 
 

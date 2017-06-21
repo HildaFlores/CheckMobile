@@ -1,9 +1,12 @@
 package com.example.prueba.CheckMobile.Vehiculo;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -13,7 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -23,10 +28,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.prueba.CheckMobile.Cliente.AdapterCliente;
-import com.example.prueba.CheckMobile.Cliente.Cliente;
 import com.example.prueba.CheckMobile.Cliente.ClienteActivity;
-import com.example.prueba.CheckMobile.Cliente.ClienteResponse;
 import com.example.prueba.CheckMobile.Combustible.AdapterCombustible;
 import com.example.prueba.CheckMobile.Combustible.Combustible;
 import com.example.prueba.CheckMobile.Combustible.CombustibleResponse;
@@ -46,8 +48,11 @@ import com.example.prueba.CheckMobile.VehiculoTraccion.AdapterTraccion;
 import com.example.prueba.CheckMobile.VehiculoTraccion.Traccion;
 import com.example.prueba.CheckMobile.VehiculoTraccion.TraccionResponse;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,28 +60,24 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static android.R.attr.id;
 
 
 public class VehiculoActivity extends AppCompatActivity {
     Spinner spinnerEstilo;
-    Spinner spinnerMarca;
     Spinner spinnerTipoVehiculo;
-    Spinner spinnerEstado;
     Spinner spinnerModelo;
     RadioGroup radioCombustible, radioTraccion;
-    EditText etxtMarca;
     ListView listaMarcas;
     EditText editTextReferencia;
     String valor;
-
+    String nombreVehiculo;
     EditText chasis;
     EditText año;
     EditText placa;
-    Spinner tipo;
-    EditText marca;
-    Spinner modelo;
-    Spinner estilo;
+    AutoCompleteTextView marca;
+    RadioGroup rgCilindros;
+    RadioGroup rGCantPuertas;
     RadioButton cilindro2;
     RadioButton cilindro3;
     RadioButton cilindro4;
@@ -97,12 +98,16 @@ public class VehiculoActivity extends AppCompatActivity {
     RadioButton transmisionAut;
     RadioButton transmisionSin;
     EditText cilindraje;
-    Switch garantia;
+    EditText nota;
+    Switch swgarantia;
+    private String idCliente, idTipoVeh, idMarca, idModelo, idEstilo, cantidadPuertas,
+            idCombustible, idTraccion, estadoVeh, garantia, idTransmision, idVehiculo;
+    private boolean insertar = true;
+    int NumCilindro;
 
 
     private Timer timer = new Timer();
     private final long DELAY = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,63 +119,205 @@ public class VehiculoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        //Inicializacion de los objetos
-        spinnerEstilo = (Spinner) findViewById(R.id.spinnerEstilo);
-        // spinnerMarca = (Spinner) findViewById(R.id.spinnerMarca);
-        spinnerTipoVehiculo = (Spinner) findViewById(R.id.spinnerTipoVeh);
-        spinnerEstado = (Spinner) findViewById(R.id.spinnerEstado);
-        spinnerModelo = (Spinner) findViewById(R.id.spinnerModelo);
-        etxtMarca = (EditText) findViewById(R.id.etxtMarca);
-
-        //listMarca = (ListView) findViewById(R.id.listview_search);
-
         InicializacionVistasVehiculo();
 
         //Llamadas de los metodos
-        poblarSpinnerEstadoVeh();
         obtenerDatosCombustilbe();
         obtenerDatosTraccion();
         obtenerDatosTipoVeh();
         obtenerDatosMarca();
-        obtenerDatosModelo();
-        obtenerDatosEstilo();
         buscarChasis();
-//
-//        this.runOnUiThread(new Runnable() {
-//            public void run() {
-//                new FeedTask().execute("2");
-//            }
-//        });
+        obtenerCantidadPuertas();
+        obtenerEstadoVeh();
+        obtenerCilindros();
+        obtenerTransmision();
+        obtenerGarantia();
 
-
+        //Para pasar de una actividad a otra
         Button btnSiguiente = (Button) findViewById(R.id.btnSiguiente);
         btnSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(VehiculoActivity.this.getApplicationContext(), ClienteActivity.class);
-                startActivity(intent);
+                if (insertar) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VehiculoActivity.this);
+                    alertBuilder.setMessage("¿Está seguro de guardar los datos?")
+                            .setCancelable(false)
+                            .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    InsertarVehiculo();
+
+                                }
+                            })
+                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            });
+
+                    AlertDialog alert = alertBuilder.create();
+                    alert.setTitle("Guardar");
+                    alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+                    alert.show();
+
+
+                } else {
+                    Intent intent = new Intent(VehiculoActivity.this.getApplicationContext(), ClienteActivity.class);
+                    if (idCliente != null) {
+                        intent.putExtra("CLIENTE", idCliente);
+                    }
+                    intent.putExtra("IDVEHICULO", idVehiculo);
+                    intent.putExtra("VEHICULO", nombreVehiculo);
+                    startActivity(intent);
+
+                }
             }
         });
 
-        etxtMarca.setOnClickListener(new View.OnClickListener() {
+
+        FloatingActionButton fabcancel = (FloatingActionButton) findViewById(R.id.fabCancel);
+        fabcancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialogListView(view);
+                finish();
+            }
+        });
 
+    }
+
+    private void obtenerGarantia() {
+        swgarantia.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    garantia = "S";
+                } else {
+                    garantia = "N";
+                }
+            }
+        });
+    }
+
+    private void obtenerCilindros() {
+
+        rgCilindros.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                switch (i) {
+                    case (R.id.rbNoClindro2): {
+                        NumCilindro = Integer.parseInt(cilindro2.getText().toString());
+                        break;
+                    }
+                    case (R.id.rbNoClindro3): {
+                        NumCilindro = Integer.parseInt(cilindro3.getText().toString());
+                        break;
+                    }
+                    case (R.id.rbNoClindro4): {
+                        NumCilindro = Integer.parseInt(cilindro4.getText().toString());
+                        break;
+                    }
+                    case (R.id.rbNoClindro5): {
+                        NumCilindro = Integer.parseInt(cilindro5.getText().toString());
+                        break;
+                    }
+                    case (R.id.rbNoClindro6): {
+                        NumCilindro = Integer.parseInt(cilindro6.getText().toString());
+                        break;
+                    }
+                    case (R.id.rbNoClindro7): {
+                        NumCilindro = Integer.parseInt(cilindro7.getText().toString());
+                        break;
+                    }
+                    case (R.id.rbNoClindro8): {
+                        NumCilindro = Integer.parseInt(cilindro8.getText().toString());
+                        break;
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void obtenerTransmision() {
+        transmisionMec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                idTransmision = "1";
+            }
+        });
+
+        transmisionAut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                idTransmision = "2";
+            }
+        });
+        transmisionSin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                idTransmision = "3";
             }
         });
 
 
     }
 
+    private void obtenerEstadoVeh() {
+        condicionNuevo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                estadoVeh = "1";
+            }
+        });
+        condicionUsado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                estadoVeh = "3";
+            }
+        });
+    }
+
+    private void obtenerCantidadPuertas() {
+        rGCantPuertas.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                switch (i) {
+                    case R.id.rbCant2: {
+                        cantidadPuertas = cantPuerta2.getText().toString();
+                        break;
+                    }
+                    case R.id.rbCant3: {
+                        cantidadPuertas = cantPuerta3.getText().toString();
+                        break;
+                    }
+                    case R.id.rbCant4: {
+                        cantidadPuertas = cantPuerta4.getText().toString();
+                        break;
+                    }
+                    case R.id.rbCant5: {
+                        cantidadPuertas = cantPuerta5.getText().toString();
+                        break;
+                    }
+                }
+            }
+        });
+
+    }
+
+
     private void InicializacionVistasVehiculo() {
+
+        //Inicializacion de los objetos
+        spinnerEstilo = (Spinner) findViewById(R.id.spinnerEstilo);
+        spinnerTipoVehiculo = (Spinner) findViewById(R.id.spinnerTipoVeh);
+        spinnerModelo = (Spinner) findViewById(R.id.spinnerModelo);
+        editTextReferencia = (EditText) findViewById(R.id.etxtReferencia);
         chasis = (EditText) findViewById(R.id.etxtChasis);
         año = (EditText) findViewById(R.id.etxtAnio);
         placa = (EditText) findViewById(R.id.etxtPlaca);
-        tipo = (Spinner) findViewById(R.id.spinnerTipoVeh);
-        marca = (EditText) findViewById(R.id.etxtMarca);
-        modelo = (Spinner) findViewById(R.id.spinnerModelo);
-        estilo = (Spinner) findViewById(R.id.spinnerEstilo);
+        marca = (AutoCompleteTextView) findViewById(R.id.etxtMarca);
+        rgCilindros = (RadioGroup) findViewById(R.id.rGNumCilindros);
         cilindro2 = (RadioButton) findViewById(R.id.rbNoClindro2);
         cilindro3 = (RadioButton) findViewById(R.id.rbNoClindro3);
         cilindro4 = (RadioButton) findViewById(R.id.rbNoClindro4);
@@ -183,22 +330,85 @@ public class VehiculoActivity extends AppCompatActivity {
         condicionNuevo = (RadioButton) findViewById(R.id.rbNuevo);
         condicionUsado = (RadioButton) findViewById(R.id.rbUsado);
         filaAsientos = (EditText) findViewById(R.id.etxtFilaAsiento);
+        rGCantPuertas = (RadioGroup) findViewById(R.id.rGCantPuertas);
         cantPuerta2 = (RadioButton) findViewById(R.id.rbCant2);
         cantPuerta3 = (RadioButton) findViewById(R.id.rbCant3);
         cantPuerta4 = (RadioButton) findViewById(R.id.rbCant4);
-       cantPuerta5 = (RadioButton) findViewById(R.id.rbCant5);
-       transmisionMec = (RadioButton) findViewById(R.id.rbmecanico);
-      transmisionAut = (RadioButton) findViewById(R.id.rbAutomatica);
+        cantPuerta5 = (RadioButton) findViewById(R.id.rbCant5);
+        transmisionMec = (RadioButton) findViewById(R.id.rbmecanico);
+        transmisionAut = (RadioButton) findViewById(R.id.rbAutomatica);
         transmisionSin = (RadioButton) findViewById(R.id.rbSincronizada);
         cilindraje = (EditText) findViewById(R.id.etxtCilindraje);
-         garantia = (Switch) findViewById(R.id.swGaranita);
+        nota = (EditText) findViewById(R.id.etxtNota);
+        swgarantia = (Switch) findViewById(R.id.swGaranita);
+    }
 
+    private void InsertarVehiculo() {
+        ArrayList<Vehiculo> vehiculo = new ArrayList<Vehiculo>();
+        vehiculo.add(new Vehiculo(
+                "1",
+                chasis.getText().toString(),
+                idTipoVeh,
+                idMarca,
+                idModelo,
+                idEstilo,
+                nota.getText().toString().toUpperCase(),
+                color.getText().toString().toUpperCase(),
+                colorInterior.getText().toString().toUpperCase(),
+                año.getText().toString(),
+                filaAsientos.getText().toString(),
+                cantidadPuertas,
+                idCombustible,
+                idTraccion,
+                cilindraje.getText().toString(),
+                editTextReferencia.getText().toString(),
+                placa.getText().toString(),
+                estadoVeh,
+                NumCilindro,
+                garantia,
+                idTransmision));
 
+        if (chasis.getText().toString() == null || editTextReferencia.getText().toString() == null
+                || idMarca == null || idModelo == null || idEstilo == null || idTipoVeh == null ||
+                color.getText().toString() == null || estadoVeh == null) {
+            Toast.makeText(getApplicationContext(), "Faltan datos por llenar!!", Toast.LENGTH_LONG).show();
+        } else {
+
+            Call<String> vehiculoCall = AdapterVehiculo.setVehiculo().insertVehiculos(vehiculo);
+            vehiculoCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()) {
+                        String[] p = response.body().toString().split(",");
+                        if (p[0].equals("200")) {
+                            idVehiculo = p[1];
+                            Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(VehiculoActivity.this.getApplicationContext(), ClienteActivity.class);
+                            if (idCliente != null) {
+                                intent.putExtra("CLIENTE", idCliente);
+                            }
+                            intent.putExtra("VEHICULO", nombreVehiculo);
+                            intent.putExtra("IDVEHICULO", idVehiculo);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error al guardar datos del vehiculo", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.v("Error insercion ** ", t.getMessage());
+                    Toast.makeText(getApplicationContext(), t.getMessage() + " Error al insertar vehiculo", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
 
     private void buscarChasis() {
-        editTextReferencia = (EditText) findViewById(R.id.etxtReferencia);
+
         editTextReferencia.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
@@ -239,24 +449,8 @@ public class VehiculoActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-//         ((EditText) findViewById(R.id.etxtChasis)).setOnEditorActionListener(
-//                new EditText.OnEditorActionListener() {
-//                    @Override
-//                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-//                                actionId == EditorInfo.IME_ACTION_DONE ||
-//                                event.getAction() == KeyEvent.ACTION_DOWN &&
-//                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-//                            if (!event.isShiftPressed()) {
-//                            Toast.makeText(getApplicationContext(), "Hola", Toast.LENGTH_LONG).show();
-//                            return true;                            }
-//                        }
-//                        return false; // pass on to other listeners.
-//                    }
-//                });
     }
+
 
     private void ObtenerVehiculo(String valor) {
         Call<Vehiculo> call = AdapterVehiculo.getChasis("referencia", valor).getVehiculos();
@@ -274,9 +468,9 @@ public class VehiculoActivity extends AppCompatActivity {
         call.enqueue(new CombustibleCallback());
     }
 
-    private void obtenerDatosModelo() {
+    private void obtenerDatosModelo(String valor) {
 
-        Call<Modelo> call = AdapterModelo.getApiService().getModelos();
+        Call<Modelo> call = AdapterModelo.getApiService("id_marca", valor).getModelos();
         call.enqueue(new ModeloCallbak());
     }
 
@@ -320,9 +514,10 @@ public class VehiculoActivity extends AppCompatActivity {
         @Override
         public void onResponse(Call<Marca> call, Response<Marca> response) {
             if (response.isSuccessful()) {
-                MarcaResponse marcaResponse = response.body();
-                // poblarSpinnerMarca(marcaResponse.getMarcas());
-                ObtenerDialogLista(marcaResponse.getMarcas());
+                MarcaResponse marcaRes = response.body();
+                poblarSpinnerMarca(marcaRes.getMarcas());
+                //marcaResponse = marcaRes.getMarcas();
+                // ObtenerDialogLista(marcaResponse.getMarcas());
             } else {
                 Toast.makeText(getApplicationContext(), "Error en el formato de respuesta", Toast.LENGTH_SHORT).show();
             }
@@ -360,70 +555,97 @@ public class VehiculoActivity extends AppCompatActivity {
 
     }
 
-    public void showDialogListView(View view) {
-        AlertDialog.Builder builder = new
-                AlertDialog.Builder(VehiculoActivity.this);
-        builder.setCancelable(true);
-        builder.setPositiveButton("OK", null);
-        builder.setView(listaMarcas);
-        AlertDialog dialog = builder.create();
-
-        dialog.show();
-
-    }
-
-
-    private void poblarSpinnerTipoVehiculo(ArrayList<TipoVehiculo> tipo) {
+    private void poblarSpinnerTipoVehiculo(final ArrayList<TipoVehiculo> tipo) {
 
         List<String> lista = new ArrayList<>();
         for (TipoVehiculo varTipo : tipo) {
             lista.add(varTipo.getDescripcion());
         }
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, lista);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);
         spinnerTipoVehiculo.setAdapter(spinnerArrayAdapter);
+
+        spinnerTipoVehiculo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String descripcion = spinnerArrayAdapter.getItem(i);
+
+                for (int j = 0; j < tipo.size(); j++) {
+                    if (tipo.get(j).getDescripcion().equals(descripcion)) {
+                        idTipoVeh = tipo.get(j).getIdTipoVehiculo();
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
     }
 
-    private void poblarSpinnerMarca(ArrayList<Marca> marcas) {
+    private void poblarSpinnerMarca(final ArrayList<Marca> marcas) {
         List<String> lista = new ArrayList<>();
         for (Marca varMarca : marcas) {
             lista.add(varMarca.getDescripcion());
         }
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.select_dialog_item, lista);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spinnerMarca.setAdapter(spinnerArrayAdapter);
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
+        marca.setAdapter(arrayAdapter);
+        marca.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String descripcion = arrayAdapter.getItem(i);
+                String id = null;
+                for (int j = 0; j < marcas.size(); j++) {
+                    if (marcas.get(j).getDescripcion().equals(descripcion)) {
+                        id = marcas.get(j).getId();
+                        idMarca = id;
+                    }
+
+                }
+                obtenerDatosModelo(id);
+            }
+        });
 
 
     }
 
-    private void poblarSpinnerEstadoVeh() {
-        List<String> lista = new ArrayList<>();
-        lista.add("ACTIVO");
-        lista.add("INACTIVO");
-        lista.add("PENDIENTE");
 
-
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, lista);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerEstado.setAdapter(spinnerArrayAdapter);
-
-    }
-
-    private void poblarSpinnerEstilo(ArrayList<Estilo> estilos) {
+    private void poblarSpinnerEstilo(final ArrayList<Estilo> estilos) {
         List<String> lista = new ArrayList<>();
         for (Estilo varEstilo : estilos) {
             lista.add(varEstilo.getDescripcion());
         }
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, lista);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);
         spinnerEstilo.setAdapter(spinnerArrayAdapter);
+
+        spinnerEstilo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String descripcion = spinnerArrayAdapter.getItem(i);
+
+                for (int j = 0; j < estilos.size(); j++) {
+                    if (estilos.get(j).getDescripcion().equals(descripcion)) {
+                        idEstilo = estilos.get(j).getId();
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
     }
 
-    private void obtenerDatosEstilo() {
+    private void obtenerDatosEstilo(String valor) {
 
-        Call<ArrayList<Estilo>> call = AdapterEstilo.getApiService("id_modelo", "2").getEstilos();
+        Call<ArrayList<Estilo>> call = AdapterEstilo.getApiService("id_modelo", valor).getEstilos();
         call.enqueue(new EstiloCallback());
     }
 
@@ -442,7 +664,6 @@ public class VehiculoActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<ArrayList<Estilo>> call, Throwable t) {
-
             Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             Log.v("Aqui ===>", t.getMessage());
         }
@@ -469,15 +690,41 @@ public class VehiculoActivity extends AppCompatActivity {
         }
     }
 
-    private void poblarSpinnerModelo(ArrayList<Modelo> modelos) {
+    private void poblarSpinnerModelo(final ArrayList<Modelo> modelos) {
         List<String> lista = new ArrayList<>();
+        lista.add("");
         for (Modelo varModelo : modelos) {
             lista.add(varModelo.getDescripcion());
         }
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, lista);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);
         spinnerModelo.setAdapter(spinnerArrayAdapter);
+
+        spinnerModelo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i > 0) {
+                    String descripcion = spinnerArrayAdapter.getItem(i);
+                    String id = null;
+
+                    for (int j = 0; j < modelos.size(); j++) {
+                        if (modelos.get(j).getDescripcion().equals(descripcion)) {
+                            id = modelos.get(j).getId();
+                            idModelo = id;
+                        }
+                    }
+
+                    obtenerDatosEstilo(id);
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
 
     }
@@ -513,6 +760,46 @@ public class VehiculoActivity extends AppCompatActivity {
             radioCombustible.addView(radio);
         }
 
+        radioCombustible.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                switch (i) {
+                    case 1: {
+                        idCombustible = "1";
+                        break;
+                    }
+                    case 2: {
+                        idCombustible = "2";
+                        break;
+                    }
+                    case 3: {
+                        idCombustible = "3";
+                        break;
+                    }
+                    case 4: {
+                        idCombustible = "4";
+                        break;
+                    }
+                    case 5: {
+                        idCombustible = "5";
+                        break;
+                    }
+                    case 6: {
+                        idCombustible = "6";
+                        break;
+                    }
+                    case 7: {
+                        idCombustible = "7";
+                        break;
+                    }
+
+
+                }
+
+                //  Toast.makeText(getApplicationContext(), String.valueOf(i), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private class TraccionCallback implements Callback<Traccion> {
@@ -547,9 +834,31 @@ public class VehiculoActivity extends AppCompatActivity {
             radio.setId(contador);
             radio.setText(varTraccion.getDescripcion().toUpperCase());
             radioTraccion.addView(radio);
-
-
         }
+        radioTraccion.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                switch (i) {
+                    case 1: {
+                        RadioButton vista = (RadioButton) radioGroup.findViewById(Integer.parseInt("1"));
+                        idTraccion = vista.getText().toString();
+                        break;
+                    }
+
+                    case 2: {
+                        RadioButton vista = (RadioButton) radioGroup.findViewById(Integer.parseInt("2"));
+                        idTraccion = vista.getText().toString();
+                        break;
+                    }
+                    case 3: {
+                        RadioButton vista = (RadioButton) radioGroup.findViewById(Integer.parseInt("3"));
+                        idTraccion = vista.getText().toString();
+                        break;
+                    }
+
+                }
+            }
+        });
 
     }
 
@@ -559,7 +868,14 @@ public class VehiculoActivity extends AppCompatActivity {
         public void onResponse(Call<Vehiculo> call, Response<Vehiculo> response) {
             if (response.isSuccessful()) {
                 VehiculoResponse vehiculoResponse = response.body();
-                llenarFormularioVehiculo(vehiculoResponse.getVehiculos());
+                if (!vehiculoResponse.getVehiculos().isEmpty()) {
+                    llenarFormularioVehiculo(vehiculoResponse.getVehiculos());
+                    insertar = false;
+                } else {
+                    InabilitarVistasVehiculo(true);
+                    limpiarVistas();
+                    insertar = true;
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de vehiculo", Toast.LENGTH_SHORT).show();
             }
@@ -572,17 +888,74 @@ public class VehiculoActivity extends AppCompatActivity {
         }
     }
 
+    private void limpiarVistas() {
+        chasis.getText().clear();
+        año.getText().clear();
+        placa.getText().clear();
+        spinnerTipoVehiculo.setSelected(false);
+        marca.getText().clear();
+        spinnerModelo.setAdapter(null);
+        spinnerEstilo.setAdapter(null);
+
+        for (int i = 0; i < radioCombustible.getChildCount(); i++) {
+            View vista = radioCombustible.getChildAt(i);
+            RadioButton radioCom = (RadioButton) vista;
+            radioCom.setChecked(false);
+        }
+
+        for (int i = 0; i < rgCilindros.getChildCount(); i++) {
+            View vista = rgCilindros.getChildAt(i);
+            RadioButton radioCil = (RadioButton) vista;
+            radioCil.setChecked(false);
+        }
+
+        for (int i = 0; i < radioTraccion.getChildCount(); i++) {
+            View vista = radioTraccion.getChildAt(i);
+            RadioButton radioCil = (RadioButton) vista;
+            radioCil.setChecked(false);
+
+        }
+
+        color.getText().clear();
+        colorInterior.getText().clear();
+        condicionNuevo.setChecked(false);
+        condicionUsado.setChecked(false);
+        filaAsientos.getText().clear();
+        cantPuerta2.setChecked(false);
+        cantPuerta3.setChecked(false);
+        cantPuerta4.setChecked(false);
+        cantPuerta5.setChecked(false);
+        transmisionMec.setChecked(false);
+        transmisionAut.setChecked(false);
+        transmisionSin.setChecked(false);
+        cilindraje.getText().clear();
+        nota.getText().clear();
+        swgarantia.setChecked(false);
+        idCliente = null;
+
+    }
+
+
     private void llenarFormularioVehiculo(ArrayList<Vehiculo> vehiculos) {
 
         for (Vehiculo varVehiculo : vehiculos) {
+            idVehiculo = varVehiculo.getId();
             chasis.setText(varVehiculo.getChasis());
             año.setText(varVehiculo.getAno());
             placa.setText(varVehiculo.getPlaca());
-            tipo.setSelection(Integer.parseInt(varVehiculo.getIdTipoVehiculo()));
+            spinnerTipoVehiculo.setSelection(Integer.parseInt(varVehiculo.getIdTipoVehiculo()));
             marca.setText(varVehiculo.getDesc_marca());
-            modelo.setSelection(getIndex(modelo, varVehiculo.getDesc_modelo()));
-            estilo.setSelection(getIndex(estilo, varVehiculo.getDesc_estilo()));
+            /////Spinner Modelo/////////
+            List<String> lista = new ArrayList<>();
+            lista.add(varVehiculo.getDesc_modelo());
+            ArrayAdapter<String> spinnerAdapterModelo = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
+            spinnerModelo.setAdapter(spinnerAdapterModelo);
 
+            /////Spinner Estilo////
+            List<String> listaEstilo = new ArrayList<>();
+            listaEstilo.add(varVehiculo.getDesc_estilo());
+            ArrayAdapter<String> spinnerAdapterEstilo = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, listaEstilo);
+            spinnerEstilo.setAdapter(spinnerAdapterEstilo);
             View vista = radioCombustible.findViewById(Integer.parseInt(varVehiculo.getIdCombustible()));
             RadioButton radioCom = (RadioButton) vista;
             radioCom.setChecked(true);
@@ -639,10 +1012,7 @@ public class VehiculoActivity extends AppCompatActivity {
                     radioTrac.setChecked(true);
                     break;
                 }
-
             }
-
-
             color.setText(varVehiculo.getColor());
             colorInterior.setText(varVehiculo.getColorInterior());
             if (varVehiculo.getEstadoVeh().equals("1") || varVehiculo.getEstadoVeh().equals("2")) {
@@ -689,69 +1059,62 @@ public class VehiculoActivity extends AppCompatActivity {
 
             }
             cilindraje.setText(varVehiculo.getCilindraje());
+            nota.setText(varVehiculo.getNota());
 
             if (varVehiculo.getGarantia().toString().equals("S")) {
-                garantia.setChecked(true);
+                swgarantia.setChecked(true);
             }
 
-
-
-            if (varVehiculo.getIdCliente().toString() != null)
-            {
-               // Toast.makeText(getApplicationContext(),varVehiculo.getIdCliente().toString(),Toast.LENGTH_SHORT ).show();
-                ObtenerDatosFiltradosCliente(varVehiculo.getIdCliente().toString());
+            if (varVehiculo.getIdCliente() != null) {
+                idCliente = varVehiculo.getIdCliente().toString();
+                nombreVehiculo = varVehiculo.getDesc_marca() + " " + varVehiculo.getDesc_modelo() + " " + varVehiculo.getDesc_estilo()
+                        + " " + varVehiculo.getAno() + " (Ref." + varVehiculo.getReferencia() + ")";
             }
-
-
         }
-
-        // Toast.makeText(getApplicationContext()," "+ varVehiculo.getCilindros(),Toast.LENGTH_SHORT).show();
-
-        InabilitarVistasVehiculo();
+        InabilitarVistasVehiculo(false);
 
 
     }
 
-    private void InabilitarVistasVehiculo() {
-        chasis.setEnabled(false);
-        año.setEnabled(false);
-        placa.setEnabled(false);
-        tipo.setEnabled(false);
-        marca.setEnabled(false);
-        modelo.setEnabled(false);
-        estilo.setEnabled(false);
+    private void InabilitarVistasVehiculo(boolean estado) {
+        chasis.setEnabled(estado);
+        año.setEnabled(estado);
+        placa.setEnabled(estado);
+        spinnerTipoVehiculo.setEnabled(estado);
+        marca.setEnabled(estado);
+        spinnerModelo.setEnabled(estado);
+        spinnerEstilo.setEnabled(estado);
 
-        for(int i = 0; i < radioCombustible.getChildCount(); i++){
-            radioCombustible.getChildAt(i).setEnabled(false);
+        for (int i = 0; i < radioCombustible.getChildCount(); i++) {
+            radioCombustible.getChildAt(i).setEnabled(estado);
         }
 
-        radioTraccion.setEnabled(false);
 
-        for (int i=0; i<radioTraccion.getChildCount();i++)
-        {
-            radioTraccion.getChildAt(i).setEnabled(false);
+        for (int i = 0; i < radioTraccion.getChildCount(); i++) {
+            radioTraccion.getChildAt(i).setEnabled(estado);
         }
-        cilindro2.setEnabled(false);
-        cilindro3.setEnabled(false);
-        cilindro4.setEnabled(false);
-        cilindro5.setEnabled(false);
-        cilindro6.setEnabled(false);
-        cilindro7.setEnabled(false);
-        cilindro8.setEnabled(false);
-        color.setEnabled(false);
-        colorInterior.setEnabled(false);
-        condicionNuevo.setEnabled(false);
-        condicionUsado.setEnabled(false);
-        filaAsientos.setEnabled(false);
-        cantPuerta2.setEnabled(false);
-        cantPuerta3.setEnabled(false);
-        cantPuerta4.setEnabled(false);
-        cantPuerta5.setEnabled(false);
-        transmisionAut.setEnabled(false);
-        transmisionMec.setEnabled(false);
-        transmisionSin.setEnabled(false);
-        cilindraje.setEnabled(false);
-        garantia.setEnabled(false);
+        cilindro2.setEnabled(estado);
+        cilindro3.setEnabled(estado);
+        cilindro4.setEnabled(estado);
+        cilindro5.setEnabled(estado);
+        cilindro6.setEnabled(estado);
+        cilindro7.setEnabled(estado);
+        cilindro8.setEnabled(estado);
+        color.setEnabled(estado);
+        colorInterior.setEnabled(estado);
+        condicionNuevo.setEnabled(estado);
+        condicionUsado.setEnabled(estado);
+        filaAsientos.setEnabled(estado);
+        cantPuerta2.setEnabled(estado);
+        cantPuerta3.setEnabled(estado);
+        cantPuerta4.setEnabled(estado);
+        cantPuerta5.setEnabled(estado);
+        transmisionAut.setEnabled(estado);
+        transmisionMec.setEnabled(estado);
+        transmisionSin.setEnabled(estado);
+        cilindraje.setEnabled(estado);
+        nota.setEnabled(estado);
+        swgarantia.setEnabled(estado);
 
 
     }
@@ -766,47 +1129,5 @@ public class VehiculoActivity extends AppCompatActivity {
             }
         }
         return index;
-    }
-
-
-    //Obtener Cliente teniendo su id
-
-    private void ObtenerDatosFiltradosCliente(String s) {
-
-
-        Call<Cliente> call = AdapterCliente.getFiltroClliente("id_cliente", s).getClientes();
-        call.enqueue(new FiltroClienteCallback());
-
-
-    }
-
-
-    private class FiltroClienteCallback implements Callback<Cliente> {
-        @Override
-        public void onResponse(Call<Cliente> call, Response<Cliente> response) {
-            if (response.isSuccessful()) {
-                ClienteResponse clienteResponse = response.body();
-                llenarFormularioCliente(clienteResponse.getClientes());
-            } else {
-                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de vehiculo", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onFailure(Call<Cliente> call, Throwable t) {
-            Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            Log.v("Clii-->*** ===>", t.getMessage());
-
-        }
-    }
-
-    private void llenarFormularioCliente(ArrayList<Cliente> clientes) {
-
-        EditText nombres = (EditText) findViewById(R.id.etxtNombre);
-
-        for (Cliente varCte : clientes) {
-            nombres.setText(varCte.getNombres());
-        }
-
     }
 }

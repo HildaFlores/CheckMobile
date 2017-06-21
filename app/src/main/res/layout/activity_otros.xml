@@ -7,118 +7,22 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.prueba.CheckMobile.Inspeccion.OtrosActivity">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/layoutCantidades"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtCantidades"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cantidades"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/layoutCondicionEntrada"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/layoutCantidades"
-            android:layout_weight="1">
+            android:orientation="horizontal"
+            android:id="@+id/layoutHorizontal">
 
-            <TextView
-                android:id="@+id/txtNivelCombustible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:paddingTop="15dp"
-                android:text="Nivel Combustible"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/ivNivelCombustible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txtNivelCombustible"
-                android:layout_centerHorizontal="true"
-                android:layout_weight="1"
-                android:padding="15dp"
-                android:scaleType="center"
-                android:src="@mipmap/combustible" />
-
-            <SeekBar
-                android:id="@+id/seekBarCombustible"
+            <RelativeLayout
+                android:id="@+id/layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ivNivelCombustible"
-                android:max="4"
-                android:paddingRight="15dp"
-                android:progress="0" />
-
-            <TextView
-                android:id="@+id/txtProgress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/seekBarCombustible"
-                android:text=" "
-                android:textSize="20dp" />
-
-            <TextView
-                android:id="@+id/txtNivelAceite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txtProgress"
-                android:layout_centerHorizontal="true"
-                android:padding="15dp"
-                android:text="Nivel Aceite"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/ivNivelAceite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txtNivelAceite"
-                android:layout_centerHorizontal="true"
-                android:layout_weight="1"
-                android:scaleType="center"
-                android:src="@mipmap/nivel_aceite" />
-
-            <SeekBar
-                android:id="@+id/seekBarAceite"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ivNivelAceite"
-                android:layout_centerHorizontal="true"
-                android:max="10"
-                android:progress="10"
-                android:rotation="180"/>
-
-            <TextView
-                android:id="@+id/txtProgressAceite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/seekBarAceite"
-                android:layout_centerHorizontal="true"
-                android:text=" "
-                android:textSize="20dp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/layoutCondicionEntrada">
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
 
             <TextView
@@ -126,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:padding="15dp"
+                android:padding="25dp"
                 android:text="Tipo de llave"
                 android:textSize="20dp"
                 android:textStyle="bold" />
@@ -167,31 +71,144 @@
 
             </RadioGroup>
 
-            <TextView
-                android:id="@+id/etxtLadosVehiculo"
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/layoutCondicionEntrada"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/rgLLaves"
-                android:layout_centerHorizontal="true"
-                android:padding="20dp"
-                android:text="Lados con rayones"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                >
 
-            <GridLayout
-                android:id="@+id/layoutLadosVehiculo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/etxtLadosVehiculo"
-                android:columnCount="1"
-                android:padding="25dp">
+                <TextView
+                    android:id="@+id/txtNivelCombustible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:paddingTop="15dp"
+                    android:text="Nivel Combustible"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
-            </GridLayout>
+                <ImageView
+                    android:id="@+id/ivNivelCombustible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtNivelCombustible"
+                    android:layout_centerHorizontal="true"
+                    android:padding="15dp"
+                    android:scaleType="center"
+                    android:src="@mipmap/combustible" />
 
-        </RelativeLayout>
+                <SeekBar
+                    android:id="@+id/seekBarCombustible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ivNivelCombustible"
+                    android:max="4"
+                    android:progress="0"
+                    />
+
+                <TextView
+                    android:id="@+id/txtProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/seekBarCombustible"
+                    android:layout_centerHorizontal="true"
+                    android:text="5555"
+                    android:textSize="20dp" />
+
+
+                <TextView
+                    android:id="@+id/txtNivelAceite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtProgress"
+                    android:layout_centerHorizontal="true"
+                    android:padding="15dp"
+                    android:text="Nivel Aceite"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+
+                <ImageView
+                    android:id="@+id/ivNivelAceite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtNivelAceite"
+                    android:layout_centerHorizontal="true"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@mipmap/nivel_aceite" />
+
+                <SeekBar
+                    android:id="@+id/seekBarAceite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ivNivelAceite"
+                    android:layout_centerHorizontal="true"
+                    android:max="10"
+                    android:progress="10"
+                    android:rotation="180" />
+
+                <TextView
+                    android:id="@+id/txtProgressAceite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/seekBarAceite"
+                    android:layout_centerHorizontal="true"
+                    android:text=" "
+                    android:textSize="20dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtCantidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutHorizontal"
+            android:text="Cantidades"
+            android:textSize="20dp"
+            android:padding="25dp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:id="@+id/layoutCantidades"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtCantidades"
+            android:padding="20dp"
+            android:columnCount="2"
+           >
+
+        </GridLayout>
 
 
 
+        <TextView
+            android:id="@+id/etxtLadosVehiculo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:padding="20dp"
+            android:layout_below="@id/layoutCantidades"
+            android:text="Lados con rayones"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:id="@+id/layoutLadosVehiculo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etxtLadosVehiculo"
+            android:columnCount="1"
+            android:padding="25dp">
+
+        </GridLayout>
 
     </RelativeLayout>
+
 </android.support.v4.widget.NestedScrollView>

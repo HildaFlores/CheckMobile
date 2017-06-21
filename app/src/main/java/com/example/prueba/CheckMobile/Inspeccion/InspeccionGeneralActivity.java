@@ -1,5 +1,6 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.prueba.CheckMobile.ProductoServicio.AdapterProductoServicio;
 import com.example.prueba.CheckMobile.ProductoServicio.GreenAdapterServicio;
 import com.example.prueba.CheckMobile.ProductoServicio.ProductoServicio;
@@ -30,14 +33,28 @@ public class InspeccionGeneralActivity extends Fragment {
     private int NUM_LIST_ITEMS = 0 ;
     MenuItem menuItem;*/
 
+    TextView cliente;
+    TextView vehiculo;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                         Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         View rootView = inflater.inflate(R.layout.activity_inspeccion_general, container, false);
-       // mServicioList = (RecyclerView) rootView.findViewById(R.id.rc_servicios);
+
+
+        cliente = (TextView) rootView.findViewById(R.id.txtDatosCliente);
+        vehiculo = (TextView) rootView.findViewById(R.id.txtDatosVehiculo);
+        // mServicioList = (RecyclerView) rootView.findViewById(R.id.rc_servicios);
         //obtenerDatosServicios("4");
+
+        Intent intent = getActivity().getIntent();
+        Bundle extra = intent.getExtras();
+        if (extra != null) {
+            cliente.setText(extra.getString("CLIENTE"));
+            vehiculo.setText(extra.getString("VEHICULO"));
+        }
         return rootView;
 
     }
