@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Check Mobile</string>
-    <string name="title_activity_main2">Activity</string>
+    <string name="title_activity_main">Activity</string>
     <string name="action_settings">Configuraciones</string>
     <string name="Acerca">Acerca de</string>
-    <string name= "action_salir">Salir</string>
+    <string name="action_salir">Salir</string>
     <string name="Section1">Inspecciones</string>
     <string name="Section2">Ordenes de trabajo</string>
     <string name="Section3">Vehiculos</string>
@@ -19,5 +19,5 @@
     <string name="section2Inspeccion">Luces</string>
     <string name="section3Inspeccion">Accesorios</string>
     <string name="section4Inspeccion">Otros elementos</string>
-
+    <string name="title_activity_consulta_inspeccion">Consulta Inspección</string>
 </resources>

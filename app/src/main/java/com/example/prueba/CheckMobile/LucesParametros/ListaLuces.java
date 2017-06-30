@@ -12,6 +12,7 @@ public class ListaLuces extends ListaLucesResponse {
     private String descripcion;
     private String estado;
     private String rutaImagen;
+    private Boolean selected;
 
     @Override
     public String toString() {
@@ -71,5 +72,13 @@ public class ListaLuces extends ListaLucesResponse {
 
     public void setRutaImagen(String rutaImagen) {
         this.rutaImagen = rutaImagen;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 }

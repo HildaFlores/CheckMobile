@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,6 +30,32 @@ public class InspeccionAccesoriosActivity extends Fragment {
 
 
     ListView lvAccesorios;
+    List<String> listaDescripcion = new ArrayList<>();
+    List<Integer> listaId = new ArrayList<>();
+    private sendAccesorios mListener;
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof sendAccesorios) {
+            mListener = (sendAccesorios) context;
+        } else {
+            throw new RuntimeException(context.toString());
+        }
+    }
+
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface sendAccesorios {
+        void sendIdAccesorio(List<Integer> idAccesorio);
+
+        void sendDescAccesorio(List<String> descAccesorio);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,12 +66,10 @@ public class InspeccionAccesoriosActivity extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_inspeccion_accesorios, container, false);
         lvAccesorios = (ListView) rootView.findViewById(R.id.listaAccesorios);
         OntenerDatosAccesorios("60");
-
         return rootView;
     }
 
     private void OntenerDatosAccesorios(String s) {
-
         Call<ListaAccesorios> call = AdapterAccesorios.getServiceAccesorios("id_lista", s).getListaAccesorios();
         call.enqueue(new AccesoriosCallback());
     }
@@ -54,9 +79,9 @@ public class InspeccionAccesoriosActivity extends Fragment {
         public void onResponse(Call<ListaAccesorios> call, Response<ListaAccesorios> response) {
             if (response.isSuccessful()) {
                 ListaAccesoriosResponse accesoriosResponse = response.body();
-               // Toast.makeText(getContext(), accesoriosResponse.getListaAccesorios().toString(), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getContext(), accesoriosResponse.getListaAccesorios().toString(), Toast.LENGTH_SHORT).show();
                 AdapterListaAccesorios adapter = new AdapterListaAccesorios(getContext(), accesoriosResponse.getListaAccesorios());
-                    lvAccesorios.setAdapter(adapter);
+                lvAccesorios.setAdapter(adapter);
 
             } else {
                 Toast.makeText(getContext(), "Error en el formato de respuesta de accesorios", Toast.LENGTH_SHORT).show();
@@ -86,8 +111,53 @@ public class InspeccionAccesoriosActivity extends Fragment {
 
             View item = inflater.inflate(R.layout.row_accesorios, null);
             CheckBox ckAccesorios = (CheckBox) item.findViewById(R.id.checkAccesorios);
-            ckAccesorios.setText(lista.get(posicion).getValor());
-            ckAccesorios.setId(posicion);
+            ckAccesorios.setText(lista.get(posicion).getDescripcion());
+            ckAccesorios.setId(Integer.parseInt(lista.get(posicion).getValor()));
+
+            ckAccesorios.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b) {
+                        listaDescripcion.add(compoundButton.getText().toString());
+                        listaId.add(compoundButton.getId());
+                        if (mListener != null) {
+                           // Log.d("TAG", "Fragment ==> " + listaDescripcion);
+                          //  Log.d("TAG", "Fragment ==> " + listaId);
+                            mListener.sendDescAccesorio(listaDescripcion);
+                            mListener.sendIdAccesorio(listaId);
+                        }
+
+                        //   Toast.makeText(getContext(), "Seleccionado  >> " + listaId.toString() + " - " +listaDescripcion, Toast.LENGTH_SHORT).show();
+
+
+                    } else {
+                        for (int i = 0; i < listaDescripcion.size(); i++) {
+                            if (listaDescripcion.get(i).equals(compoundButton.getText().toString())) {
+                                listaDescripcion.remove(i);
+                                listaId.remove(i);
+                            }
+                        }
+                        if (mListener != null) {
+                           // Log.d("TAG", "Fragment ==> " + listaDescripcion);
+                            mListener.sendDescAccesorio(listaDescripcion);
+                            mListener.sendIdAccesorio(listaId);
+                        }
+                    }
+
+                }
+            });
+
+            if (listaId != null && listaDescripcion!= null)
+            {
+                for(int i = 0; i<listaId.size(); i++)
+                {
+                    if (ckAccesorios.getId() == listaId.get(i)) {
+                        ckAccesorios.setChecked(true);
+                    }
+                }
+            }
+
+
             return item;
         }
     }

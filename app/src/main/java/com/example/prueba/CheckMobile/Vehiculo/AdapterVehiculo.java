@@ -1,27 +1,20 @@
 package com.example.prueba.CheckMobile.Vehiculo;
 
 
-import android.widget.Toast;
-
 import com.example.prueba.CheckMobile.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.example.prueba.CheckMobile.VehiculoEstilo.AdapterEstilo.JSON;
 
 /**
  * Created by Prueba on 22-may-17.
@@ -30,8 +23,13 @@ import static com.example.prueba.CheckMobile.VehiculoEstilo.AdapterEstilo.JSON;
 public class AdapterVehiculo {
 
     public static VehiculoService apiService;
+    public static VehiculoClienteService updateService;
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
+
+    public static final MediaType JSON2
+            = MediaType.parse("text/plain");
+
 
     public static VehiculoService getApiService() {
         MainActivity main = new MainActivity();
@@ -65,7 +63,7 @@ public class AdapterVehiculo {
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request original = chain.request();
 
-                RequestBody requestBody = RequestBody.create(JSON, parametroFormated);
+                RequestBody requestBody = RequestBody.create(JSON2, parametroFormated);
 
                 Request request = original.newBuilder()
                         .post(requestBody)
@@ -110,5 +108,42 @@ public class AdapterVehiculo {
         apiService = retrofit.create(com.example.prueba.CheckMobile.Vehiculo.VehiculoService.class);
 
         return apiService;
+    }
+    public static VehiculoClienteService setUpdateService(final String parametro)
+    {
+        MainActivity main = new MainActivity();
+        updateService = null;
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        OkHttpClient.Builder httpClient2 = main.httpCliente();
+        httpClient2.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request original = chain.request();
+
+                RequestBody requestBody = RequestBody.create(JSON, parametro);
+
+                Request request = original.newBuilder()
+                        .post(requestBody)
+                        .build();
+
+                return chain.proceed(request);
+            }
+        });
+
+        if (updateService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(main.getBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .client(httpClient2.build()) //<- using the log level
+                    .build();
+
+            updateService = retrofit.create(com.example.prueba.CheckMobile.Vehiculo.VehiculoClienteService.class);
+
+        }
+
+        return updateService;
     }
 }

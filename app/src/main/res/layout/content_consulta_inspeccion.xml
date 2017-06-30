@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.prueba.CheckMobile.Inspeccion.ConsultaInspeccionActivity"
+    tools:showIn="@layout/activity_consulta_inspeccion">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/border"
+            android:orientation="horizontal"
+            android:paddingBottom="25dp">
+
+            <TextView
+                android:id="@+id/txtCNoInspeccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="Inspeccion: "
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etxtCNoInspeccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:enabled="false">
+
+            </EditText>
+
+            <TextView
+                android:id="@+id/txtCFechaInspeccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right|end"
+                android:padding="20dp"
+                android:paddingBottom="20dp"
+                android:text="Fecha: "
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etxtCFechaInspeccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:gravity="right|end"
+                android:inputType="date" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtCDatosVehiculo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:text="Vehiculo"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtCDatosCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:text="Cliente"
+            android:textSize="20dp"
+            android:textStyle="bold">
+
+        </TextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <TextView
+                android:id="@+id/txtMotor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Motor: "
+                android:textSize="20dp"
+                android:textStyle="bold">
+
+            </TextView>
+
+            <EditText
+                android:id="@+id/etxtCMotor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:hint="Motor "
+                android:inputType="number"
+                android:paddingBottom="20dp" />
+
+            <TextView
+                android:id="@+id/txtCSerieGomas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="25dp"
+                android:text="Serie de Gomas: "
+                android:textSize="20dp"
+                android:textStyle="bold">
+
+            </TextView>
+
+            <EditText
+                android:id="@+id/etxtCSerieGomas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="3"
+                android:enabled="false"
+                android:hint="     /    / "
+                android:inputType="text"
+                android:paddingBottom="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <ImageView
+                android:id="@+id/imgCKilometraje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="25dp"
+                app:srcCompat="@mipmap/kilometraje" />
+
+            <EditText
+                android:id="@+id/etxtCKilometraje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:hint="Kilometraje"
+                android:inputType="number"
+                android:padding="20dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtCNotasCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:text="Observaciones: "
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etxtCNotasInspeccion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:inputType="textMultiLine" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <TextView
+                android:id="@+id/txtCLlaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:padding="25dp"
+                android:text="Tipo de llave"
+                android:textColor="@color/accent"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/rgCLLaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@mipmap/normalkey" />
+
+                <RadioButton
+                    android:id="@+id/rbCLlaveNormal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icono_llave" />
+
+                <RadioButton
+                    android:id="@+id/rbCLlaveSmart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
+
+
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <TextView
+                android:id="@+id/txtCCombustible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:padding="25dp"
+                android:text="Nivel Combustible"
+                android:textColor="@color/accent"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textCCombustible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@mipmap/combustible"
+                android:gravity="center"
+                android:text="1/2"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <TextView
+                android:id="@+id/txtCNivelAceite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="Nivel Aceite"
+                android:textColor="@color/accent"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtCProgressAceite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5/10"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/seekBarCAceite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:enabled="false"
+                android:max="10">
+
+            </SeekBar>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            android:text="Luces encendidas"
+            android:textColor="@color/accent"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/layoutCLuces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtCAccesorios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            android:text="Accesorios y/o equipamientos"
+            android:textColor="@color/accent"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:id="@+id/gridAccesorios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:padding="20dp"></GridLayout>
+
+        <TextView
+            android:id="@+id/txtCAlfombra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            android:text="Condición alfombra conductor"
+            android:textColor="@color/accent"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgCCondicion1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbCBien"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Bien" />
+
+            <RadioButton
+                android:id="@+id/rbCNoBien"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="No Bien" />
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rgCCondicion2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbCGenuina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Genuina" />
+
+            <RadioButton
+                android:id="@+id/rbCNoGenuina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="No Genuina" />
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/rgCCondicion3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbCSoloUna"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Solo una" />
+
+            <RadioButton
+                android:id="@+id/rbCSDosOMas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Dos o mas" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/txtCCantidades"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            android:text="Cantidades"
+            android:textColor="@color/accent"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:id="@+id/gridCantidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:horizontalSpacing="20dp"
+            android:padding="20dp"
+            android:verticalSpacing="20dp">
+
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/txtClados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            android:text="Lados del vehículo"
+            android:textColor="@color/accent"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+
+        <ListView
+            android:id="@+id/gridLadosVehiculo"
+            android:layout_width="match_parent"
+            android:layout_height="1250dp"
+            android:padding="20dp">
+
+        </ListView>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

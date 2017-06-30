@@ -8,11 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.prueba.CheckMobile.Cliente.AdapterCliente;
 import com.example.prueba.CheckMobile.Cliente.Cliente;
 import com.example.prueba.CheckMobile.Cliente.ClienteResponse;
 import com.example.prueba.CheckMobile.Cliente.GreenAdapter;
+import com.example.prueba.CheckMobile.Inspeccion.DrawingView;
 import com.example.prueba.CheckMobile.R;
 import java.util.ArrayList;
 import retrofit2.Call;
@@ -37,7 +39,9 @@ public class Tab2OrdenesTrabajo extends Fragment {
         View rootView = inflater.inflate(R.layout.tab2_ordenes_trabajo, container, false);
         mClienteList = (RecyclerView) rootView.findViewById(R.id.rc_numbers);
 
-        obtenerDatosClientes();
+
+
+       obtenerDatosClientes();
         return rootView;
     }
 
@@ -90,7 +94,7 @@ public class Tab2OrdenesTrabajo extends Fragment {
 
                 }
             } else {
-                Toast.makeText(getContext(), "Error en el formato de respuesta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error en el formato de respuesta de cliente", Toast.LENGTH_SHORT).show();
             }
         }
 

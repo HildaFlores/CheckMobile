@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,6 +45,7 @@ import com.example.prueba.CheckMobile.VehiculoEstilo.Estilo;
 import com.example.prueba.CheckMobile.VehiculoMarca.AdapterMarca;
 import com.example.prueba.CheckMobile.VehiculoMarca.Marca;
 import com.example.prueba.CheckMobile.VehiculoMarca.MarcaResponse;
+import com.example.prueba.CheckMobile.VehiculoMarca.myDialogMarca;
 import com.example.prueba.CheckMobile.VehiculoModelo.AdapterModelo;
 import com.example.prueba.CheckMobile.VehiculoModelo.Modelo;
 import com.example.prueba.CheckMobile.VehiculoModelo.ModeloResponse;
@@ -101,7 +106,7 @@ public class VehiculoActivity extends AppCompatActivity {
     EditText nota;
     Switch swgarantia;
     private String idCliente, idTipoVeh, idMarca, idModelo, idEstilo, cantidadPuertas,
-            idCombustible, idTraccion, estadoVeh, garantia, idTransmision, idVehiculo;
+            idCombustible, idTraccion, estadoVeh, garantia, idTransmision, idVehiculo, refVehiculo, chasisVehiculo;
     private boolean insertar = true;
     int NumCilindro;
 
@@ -169,6 +174,8 @@ public class VehiculoActivity extends AppCompatActivity {
                     }
                     intent.putExtra("IDVEHICULO", idVehiculo);
                     intent.putExtra("VEHICULO", nombreVehiculo);
+                    intent.putExtra("REFERENCIA", refVehiculo);
+                    intent.putExtra("CHASIS", chasisVehiculo);
                     startActivity(intent);
 
                 }
@@ -310,13 +317,16 @@ public class VehiculoActivity extends AppCompatActivity {
 
         //Inicializacion de los objetos
         spinnerEstilo = (Spinner) findViewById(R.id.spinnerEstilo);
+        registerForContextMenu(spinnerEstilo);
         spinnerTipoVehiculo = (Spinner) findViewById(R.id.spinnerTipoVeh);
         spinnerModelo = (Spinner) findViewById(R.id.spinnerModelo);
+        registerForContextMenu(spinnerModelo);
         editTextReferencia = (EditText) findViewById(R.id.etxtReferencia);
         chasis = (EditText) findViewById(R.id.etxtChasis);
         año = (EditText) findViewById(R.id.etxtAnio);
         placa = (EditText) findViewById(R.id.etxtPlaca);
         marca = (AutoCompleteTextView) findViewById(R.id.etxtMarca);
+        registerForContextMenu(marca);
         rgCilindros = (RadioGroup) findViewById(R.id.rGNumCilindros);
         cilindro2 = (RadioButton) findViewById(R.id.rbNoClindro2);
         cilindro3 = (RadioButton) findViewById(R.id.rbNoClindro3);
@@ -387,8 +397,13 @@ public class VehiculoActivity extends AppCompatActivity {
                             if (idCliente != null) {
                                 intent.putExtra("CLIENTE", idCliente);
                             }
+                            refVehiculo = editTextReferencia.getText().toString();
+                            chasisVehiculo = chasis.getText().toString();
                             intent.putExtra("VEHICULO", nombreVehiculo);
                             intent.putExtra("IDVEHICULO", idVehiculo);
+                            intent.putExtra("REFERENCIA", refVehiculo);
+                            intent.putExtra("CHASIS", chasisVehiculo);
+                            InabilitarVistasVehiculo(false);
                             startActivity(intent);
                         } else {
                             Toast.makeText(getApplicationContext(), "Error al guardar datos del vehiculo", Toast.LENGTH_SHORT).show();
@@ -869,6 +884,7 @@ public class VehiculoActivity extends AppCompatActivity {
             if (response.isSuccessful()) {
                 VehiculoResponse vehiculoResponse = response.body();
                 if (!vehiculoResponse.getVehiculos().isEmpty()) {
+                    idCliente = null;
                     llenarFormularioVehiculo(vehiculoResponse.getVehiculos());
                     insertar = false;
                 } else {
@@ -940,6 +956,8 @@ public class VehiculoActivity extends AppCompatActivity {
 
         for (Vehiculo varVehiculo : vehiculos) {
             idVehiculo = varVehiculo.getId();
+            chasisVehiculo = varVehiculo.getChasis().toString();
+            refVehiculo = varVehiculo.getReferencia().toString();
             chasis.setText(varVehiculo.getChasis());
             año.setText(varVehiculo.getAno());
             placa.setText(varVehiculo.getPlaca());
@@ -1065,10 +1083,13 @@ public class VehiculoActivity extends AppCompatActivity {
                 swgarantia.setChecked(true);
             }
 
+            nombreVehiculo = varVehiculo.getDesc_marca() + " " + varVehiculo.getDesc_modelo() + " " + varVehiculo.getDesc_estilo()
+                    + " " + varVehiculo.getAno() + " (Ref." + varVehiculo.getReferencia() + ")";
+
             if (varVehiculo.getIdCliente() != null) {
                 idCliente = varVehiculo.getIdCliente().toString();
-                nombreVehiculo = varVehiculo.getDesc_marca() + " " + varVehiculo.getDesc_modelo() + " " + varVehiculo.getDesc_estilo()
-                        + " " + varVehiculo.getAno() + " (Ref." + varVehiculo.getReferencia() + ")";
+            } else {
+                idCliente = null;
             }
         }
         InabilitarVistasVehiculo(false);
@@ -1129,5 +1150,53 @@ public class VehiculoActivity extends AppCompatActivity {
             }
         }
         return index;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        switch (v.getId()) {
+            case R.id.etxtMarca: {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.menu_contextual_marca, menu);
+                break;
+            }
+            case R.id.spinnerModelo: {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.menu_contextual_modelo, menu);
+                break;
+            }
+            case R.id.spinnerEstilo: {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.menu_contextual_estilo, menu);
+                break;
+            }
+
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+
+        switch (item.getItemId()) {
+            case R.id.action_add_marca: {
+                myDialogMarca myDialogMarca = new myDialogMarca();
+                myDialogMarca.show(getFragmentManager(), "Marca");
+                return true;
+
+            }
+            case R.id.action_add_modelo:
+            {
+                return true;
+            }
+            case R.id.action_add_estilo:
+            {
+                return true;
+            }
+        }
+        return super.onContextItemSelected(item);
     }
 }

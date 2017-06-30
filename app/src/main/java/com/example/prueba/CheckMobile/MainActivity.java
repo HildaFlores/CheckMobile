@@ -1,5 +1,6 @@
 package com.example.prueba.CheckMobile;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -53,9 +54,8 @@ public class MainActivity extends AppCompatActivity {
         //add logging as last interceptor
         httpClient.addInterceptor(logging); //<- this is the important line;
         setBaseUrl("http://192.168.2.19:4567/");
-        //192.168.0.109 //192.168.1.92//10.0.0.185
+        //192.168.0.109 //192.168.1.92//10.0.0.185  192.168.2.19
         return httpClient;
-
     }
 
 
@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
                     return null;
             }
 
-
         }
 
         @Override
@@ -145,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
             String titulo1 = getString(R.string.Section1);
             String titulo2 = getString(R.string.Section2);
             String titulo3 = getString(R.string.Section3);
-
-
 
             switch (position) {
                 case 0:

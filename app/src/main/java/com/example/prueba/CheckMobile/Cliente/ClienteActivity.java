@@ -3,6 +3,7 @@ package com.example.prueba.CheckMobile.Cliente;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +34,7 @@ import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.TablaDgii.AdapterDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgiiResponse;
-import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
+import com.example.prueba.CheckMobile.Vehiculo.AdapterVehiculo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static android.R.attr.format;
 
 public class ClienteActivity extends AppCompatActivity implements View.OnClickListener {
     //Vistas
@@ -82,10 +83,9 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     EditText limiteCredito;
     EditText notas;
 
-
     // /Parametros
 
-    String nombreVehiculo = null, nombreCliente = null, idCliente = null, idVehiculo = null;
+    String nombreVehiculo = null, nombreCliente = null, idCliente = null, idVehiculo = null, refVehiculo, chasisVehiculo;
     private Timer timer = new Timer();
     private final long DELAY = 0;
     String valor;
@@ -119,6 +119,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             idCliente = extra.getString("CLIENTE");
             nombreVehiculo = extra.getString("VEHICULO");
             idVehiculo = extra.getString("IDVEHICULO");
+            refVehiculo = extra.getString("REFERENCIA");
+            chasisVehiculo = extra.getString("CHASIS");
         }
         if (idCliente != null) {
             insertar = false;
@@ -127,7 +129,6 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             radioPersona.setEnabled(false);
             etxtDocIdentidad.setEnabled(false);
         } else {
-
 
             buscarCliente();
         }
@@ -145,6 +146,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     InsertarCliente();
+
 
                                 }
                             })
@@ -164,18 +166,90 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 } else {
 
                     Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainInspeccionActivity.class);
-                    intent.putExtra("VEHICULO", nombreVehiculo);
-                    intent.putExtra("CLIENTE", nombreCliente);
                     intent.putExtra("IDVEHICULO", idVehiculo);
+                    intent.putExtra("VEHICULO", nombreVehiculo);
+                    intent.putExtra("IDCLIENTE", idCliente);
+                    intent.putExtra("CLIENTE", nombreCliente);
+                    intent.putExtra("REFERENCIA", refVehiculo);
+                    intent.putExtra("CHASIS", chasisVehiculo);
+                    ActualizaVehiculoCliente(idCliente, idVehiculo);
+                    etxtDocIdentidad.setEnabled(false);
+                    radioEmpresa.setEnabled(false);
+                    radioPersona.setEnabled(false);
+                    InhabilitarVistas(false);
                     startActivity(intent);
                 }
             }
         });
     }
 
+    private void ActualizaVehiculoCliente(String idCte, String idVeh) {
+
+        String parametro = idCte + "," + idVeh;
+        Call<String> callUpdate = AdapterVehiculo.setUpdateService(parametro).updatesVehiculos();
+        callUpdate.enqueue(new updateVehiculoCallback());
+
+    }
+
     private void CalcularEdad() {
 
-        fechaNac.setOnKeyListener(new View.OnKeyListener() {
+
+        fechaNac.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, int start, int before,
+                                      int count) {
+                if (timer != null)
+                    timer.cancel();
+
+            }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                //avoid triggering event when text is too short
+                if (s.length() >= 10) {
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    try {
+                                        Calendar cal = Calendar.getInstance();
+                                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                                        Date myDate = null;
+                                        try {
+                                            myDate = df.parse(fechaNac.getText().toString());
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        cal.setTime(myDate);
+
+                                        edad.setText(String.valueOf(calculaEdad(cal)));
+
+
+                                    } catch (Exception e) {
+                                        Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                }
+                            });
+                        }
+
+                    }, DELAY);
+                }
+
+
+            }
+        });
+
+
+       /* fechaNac.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
                 try {
@@ -204,7 +278,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 return false;
             }
         });
-
+*/
 
     }
 
@@ -241,6 +315,25 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void InsertarCliente() {
+
+        String fechaNacimiento = fechaNac.getText().toString();
+        String date = null;
+        try {
+
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            Date newDate = null;
+            try {
+                newDate = format.parse(fechaNacimiento);
+            } catch (Exception e) {
+                Log.d("TAG", e.getMessage());
+            }
+
+            format = new SimpleDateFormat("yyyy-MM-dd");
+            date = format.format(newDate);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
         ArrayList<Cliente> clientes = new ArrayList<Cliente>();
         if (radioPersona.isChecked()) {
             clientes.add(new Cliente(
@@ -257,7 +350,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     apodo.getText().toString(),
                     notas.getText().toString(),
                     desc_pais,
-                    fechaNac.getText().toString(),
+                    date,
                     limiteCredito.getText().toString(),
                     telefono.getText().toString(),
                     celular.getText().toString(),
@@ -271,14 +364,14 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     || edad.getText().toString() == null || direccion.getText().toString() == null) {
 
                 Toast.makeText(getApplicationContext(), "Faltan datos por llenar", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
+            } else {
+                Log.d("TAG", "cliente == >" + clientes);
+                nombreCliente = nombres.getText().toString() + " " + apellidos.getText().toString();
                 Call<String> clienteCall = AdapterCliente.setCliente().insertClientes(clientes);
                 clienteCall.enqueue(new InsertClienteCallback());
             }
 
-        } else if (radioEmpresa.isChecked()){
+        } else if (radioEmpresa.isChecked()) {
             clientes.add(new Cliente(
                     "1",
                     nombres.getText().toString().toUpperCase(),
@@ -293,7 +386,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     apodo.getText().toString().toUpperCase(),
                     notas.getText().toString().toUpperCase(),
                     desc_pais,
-                    fechaNac.getText().toString(),
+                    date,
                     limiteCredito.getText().toString(),
                     telefono.getText().toString(),
                     celular.getText().toString(),
@@ -307,9 +400,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     || edad.getText().toString() == null || nombreEmpresa.getText().toString() == null || direccion.getText().toString() == null) {
 
                 Toast.makeText(getApplicationContext(), "Faltan datos por llenar", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
+            } else {
+                nombreCliente = nombreEmpresa.getText().toString();
                 Call<String> clienteCall = AdapterCliente.setCliente().insertClientes(clientes);
                 clienteCall.enqueue(new InsertClienteCallback());
             }
@@ -345,7 +437,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     valor = etxtDocIdentidad.getText().toString();
-                                  //  Toast.makeText(getApplicationContext(), valor + " Con-> " + contador + " largo -> " + s.length(), Toast.LENGTH_SHORT).show();
+                                    //  Toast.makeText(getApplicationContext(), valor + " Con-> " + contador + " largo -> " + s.length(), Toast.LENGTH_SHORT).show();
                                     obtenerClientePorDocIdentidad(valor);
                                 }
                             });
@@ -641,6 +733,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     private void llenarFormularioCliente(ArrayList<Cliente> clientes) {
 
         for (Cliente varCte : clientes) {
+
+            idCliente = varCte.getId().toString();
             if (varCte.getRnc() != null && varCte.getDocumentoIdentidad() == null) {
                 radioEmpresa.setChecked(true);
                 layoutEmpresa.setVisibility(View.VISIBLE);
@@ -656,7 +750,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             apellidos.setText(varCte.getApellidos().toUpperCase());
 
             apodo.setText(varCte.getApodo());
-            fechaNac.setText(varCte.getfechaNac());
+
+            fechaNac.setText(varCte.getfechaNac().substring(0, 10));
             edad.setText(String.valueOf(varCte.getEdad()));
             if (varCte.getSexo().equals("F")) {
                 sexoF.setChecked(true);
@@ -700,7 +795,6 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         spinnerCondicion.setEnabled(estado);
         limiteCredito.setEnabled(estado);
 
-
     }
 
     private int getIndex(Spinner spinner, String myString) {
@@ -713,6 +807,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         }
         return index;
     }
+
 
     private class FiltroTablaDgiiCallback implements Callback<TablaDgii> {
         @Override
@@ -749,21 +844,58 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     idCliente = p[1];
                     Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainInspeccionActivity.class);
-                    intent.putExtra("VEHICULO", nombreVehiculo);
-                    intent.putExtra("CLIENTE", nombreCliente);
                     intent.putExtra("IDVEHICULO", idVehiculo);
+                    intent.putExtra("VEHICULO", nombreVehiculo);
+                    intent.putExtra("IDCLIENTE", idCliente);
+                    intent.putExtra("CLIENTE", nombreCliente);
+                    intent.putExtra("REFERENCIA", refVehiculo);
+                    intent.putExtra("CHASIS", chasisVehiculo);
+
+                    ActualizaVehiculoCliente(idCliente, idVehiculo);
+                    etxtDocIdentidad.setEnabled(false);
+                    radioEmpresa.setEnabled(false);
+                    radioPersona.setEnabled(false);
+                    InhabilitarVistas(false);
                     startActivity(intent);
+
                 } else {
-                    Toast.makeText(getApplicationContext(), "Error al guardar datos del vehiculo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error al guardar datos del cliente", Toast.LENGTH_SHORT).show();
 
                 }
+            } else {
+                Toast.makeText(getApplicationContext(), "Error al guardar datos del cliente", Toast.LENGTH_SHORT).show();
+
             }
-            }
+        }
 
         @Override
         public void onFailure(Call<String> call, Throwable t) {
             Log.v("Error insercion ** ", t.getMessage());
-            Toast.makeText(getApplicationContext(), t.getMessage() + " Error al insertar vehiculo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), t.getMessage() + " Error de respuesta", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    private class updateVehiculoCallback implements Callback<String> {
+        @Override
+        public void onResponse(Call<String> call, Response<String> response) {
+            if (response.isSuccessful()) {
+                if (response.toString().equals("200")) {
+                    Toast.makeText(getApplicationContext(), "Cliente Actualizado", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        @Override
+        public void onFailure(Call<String> call, Throwable t) {
+            Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
+            Log.v("Act---> ", t.getMessage());
 
         }
     }
