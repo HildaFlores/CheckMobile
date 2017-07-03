@@ -17,6 +17,12 @@ public class Modelo extends ModeloResponse {
     private String usuarioActualizacion;
     private String idTipoVehiculo;
 
+
+    public Modelo(String idMarca, String descripcion) {
+        this.idMarca = idMarca;
+        this.descripcion = descripcion;
+    }
+
     public String getId() {
         return id;
     }

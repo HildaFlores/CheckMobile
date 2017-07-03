@@ -4,7 +4,7 @@ package com.example.prueba.CheckMobile.Usuario;
  * Created by Prueba on 22-may-17.
  */
 
-public class Usuario {
+public class Usuario extends UsuarioResponse {
 
     private String id;
     private String nombres;

@@ -17,6 +17,11 @@ public class Estilo  {
 
     }
 
+    public Estilo(String id_modelo, String descripcion) {
+        this.id_modelo = id_modelo;
+        this.descripcion = descripcion;
+    }
+
     @Override
     public String toString() {
         return "Estilo{" +

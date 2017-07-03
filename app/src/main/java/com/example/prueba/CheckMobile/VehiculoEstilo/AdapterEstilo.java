@@ -2,6 +2,7 @@ package com.example.prueba.CheckMobile.VehiculoEstilo;
 
 
 import com.example.prueba.CheckMobile.MainActivity;
+import com.example.prueba.CheckMobile.VehiculoModelo.ModeloService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -28,31 +29,11 @@ public class AdapterEstilo {
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
-
-//
-//
-//    public static RestAdapter Connect (){
-//        RequestInterceptor requestInterceptor = new RequestInterceptor() {
-//            @Override
-//            public void intercept(RequestFacade request) {
-////                request.addHeader("User-Agent", "Your-App-Name");
-//                request.addHeader("Accept", "application/json");
-//                request.addHeader("Content-Type", "application/json");
-//            }
-//        };
-//       // MainActivity main = new MainActivity();
-//        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint("http://192.168.0.101:4567")
-//                .setRequestInterceptor(requestInterceptor)
-//                .build();
-//        return restAdapter;
-//    }
-
-
     public static EstiloService getApiService(String parametro, String valor) {
 
         apiService = null;
         MainActivity main = new MainActivity();
-       final String parametroFormated = main.formatearParametro(parametro, valor);
+        final String parametroFormated = main.formatearParametro(parametro, valor);
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -85,7 +66,26 @@ public class AdapterEstilo {
         }
         return apiService;
     }
+
+    public static EstiloService insertarEstilo() {
+
+        MainActivity main = new MainActivity();
+        OkHttpClient.Builder httpClient = main.httpCliente();
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(main.getBaseUrl())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(httpClient.build())
+                .build();
+
+
+        apiService = retrofit.create(com.example.prueba.CheckMobile.VehiculoEstilo.EstiloService.class);
+
+        return apiService;
     }
 
-
-
+}

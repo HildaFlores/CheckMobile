@@ -1,5 +1,6 @@
 package com.example.prueba.CheckMobile.MenuPrincipal;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -41,7 +42,6 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
     private GreenAdapterInspeccion mAdapter;
     private RecyclerView mInspeccionList;
     private int NUM_LIST_ITEMS = 0;
-    private Toast mToast;
     private int idInspeccion = 0;
     private View vista;
     private String nombreVehiculo;
@@ -52,7 +52,28 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
     private String fechaInspeccion;
     private String observaciones;
     private ArrayList<InspeccionVehiculo> inspecciones = new ArrayList<InspeccionVehiculo>();
+    List<String> list = new ArrayList<>();
+    private sendData mListener;
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof sendData) {
+            mListener = (sendData) context;
+        } else {
+            throw new RuntimeException(context.toString());
+        }
+    }
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+    public interface sendData {
+        void sendAdapter(RecyclerView recyclerView);
+        void sendList(ArrayList<InspeccionVehiculo> listaInspeccion);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +91,6 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
             }
         });
 
-
         return rootView;
     }
 
@@ -80,13 +100,15 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
 
     }
 
-
     private void callAdapter(ArrayList<InspeccionVehiculo> inspeccionVeh) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mInspeccionList.setLayoutManager(layoutManager);
         mInspeccionList.setHasFixedSize(true);
         mAdapter = new GreenAdapterInspeccion(NUM_LIST_ITEMS, inspeccionVeh, this);
         mInspeccionList.setAdapter(mAdapter);
+        mListener.sendAdapter(mInspeccionList);
+
+        mListener.sendList(inspeccionVeh);
 
     }
 
@@ -94,10 +116,10 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(Tab1Inspecciones.this.getContext(), ConsultaInspeccionActivity.class);
         vista = mInspeccionList.getLayoutManager().findViewByPosition(clickedItemIndex);
-        String toastMessage = String.valueOf(vista.getId());
-//        mToast = Toast.makeText(getContext(), toastMessage , Toast.LENGTH_SHORT);
-//        mToast.show();
-        idInspeccion = vista.getId();
+       TextView textView = (TextView) vista.findViewById(R.id.txtRowInspeccion0);
+        int index1 = textView.getText().toString().indexOf("-") + 1;
+        int index2 = textView.getText().toString().indexOf(")");
+        idInspeccion = Integer.parseInt(textView.getText().toString().substring(index1,index2));
         llenarValoresInspeccion();
         intent.putExtra("IDINSPECCION", idInspeccion);
         intent.putExtra("VEHICULO", nombreVehiculo);
@@ -133,9 +155,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
 
         }
     }
-
     private void llenarValoresInspeccion() {
-
         if (idInspeccion != 0) {
             for (int i = 0; i < inspecciones.size(); i++) {
                 if (inspecciones.get(i).getId().equals(String.valueOf(idInspeccion))) {
@@ -150,7 +170,6 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
 
             }
         }
-
 
     }
 

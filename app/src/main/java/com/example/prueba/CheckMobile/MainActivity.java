@@ -5,28 +5,49 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.InputDeviceCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
+import com.example.prueba.CheckMobile.Cliente.GreenAdapter;
+import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehDetalleResponse;
+import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
+import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterInspeccion;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab1Inspecciones;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab2OrdenesTrabajo;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab3Vehiculos;
+import com.example.prueba.CheckMobile.VehiculoDocumento.VehiculoDocumento;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
+import static android.R.id.list;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.sendData, GreenAdapterInspeccion.ListItemClickListener {
     /*Declaraciones*/
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
-    private String  baseUrl;
+    private String baseUrl;
+    private String idUsuario;
+    RecyclerView recyclerViewInspeccion;
+    ArrayList<InspeccionVehiculo> inspeccionVehiculos = new ArrayList<InspeccionVehiculo>();
+    int indexClicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public OkHttpClient.Builder httpCliente()
-    {
+    public OkHttpClient.Builder httpCliente() {
         OkHttpClient.Builder httpClient;
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-         httpClient = new OkHttpClient().newBuilder();
+        httpClient = new OkHttpClient().newBuilder();
         //add logging as last interceptor
         httpClient.addInterceptor(logging); //<- this is the important line;
-        setBaseUrl("http://192.168.2.19:4567/");
+        setBaseUrl("http://192.168.0.102:4567/");
         //192.168.0.109 //192.168.1.92//10.0.0.185  192.168.2.19
         return httpClient;
     }
@@ -77,11 +97,39 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if (id == R.id.action_salir)
-        {
+        } else if (id == R.id.action_salir) {
             finish();
             return true;
+        } else if (id == R.id.action_search) {
+            SearchView search = (SearchView) MenuItemCompat.getActionView(item);
+            search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    newText = newText.toUpperCase();
+                    final ArrayList<InspeccionVehiculo> filterList = new ArrayList<InspeccionVehiculo>();
+                    for (int i = 0; i < inspeccionVehiculos.size(); i++) {
+                        final String text = inspeccionVehiculos.get(i).getNombre_vehiculo().toUpperCase();
+                        if (text.contains(newText)) {
+                            filterList.add(inspeccionVehiculos.get(i));
+                        }
+                    }
+                    GreenAdapterInspeccion madapter = (GreenAdapterInspeccion) recyclerViewInspeccion.getAdapter();
+                    madapter.setFilter(filterList);
+                    /*
+                    recyclerViewInspeccion.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                    GreenAdapterInspeccion madapter = new GreenAdapterInspeccion(filterList.size(),filterList,MainActivity.this);
+                    recyclerViewInspeccion.setAdapter(madapter);
+                    madapter.notifyDataSetChanged();*/
+
+                    return true;
+                }
+            });
+            return false;
         }
 
 
@@ -98,10 +146,34 @@ public class MainActivity extends AppCompatActivity {
 
     public String formatearParametro(String parametro, String valor) {
 
-    String param;
-        param = "{ '" + parametro + "' :" + "'"+ valor + "' }";
+        String param;
+        param = "{ '" + parametro + "' :" + "'" + valor + "' }";
 
         return param;
+    }
+
+    public String formatearParametro(String parametro1, String valor1, String parametro2, String valor2) {
+        String param;
+        param = "{ '" + parametro1 + "' :" + "'" + valor1 + "', " +
+                "'" + parametro2 + "' :" + " '" + valor2 + "' }";
+
+        return param;
+
+    }
+
+    @Override
+    public void sendAdapter(RecyclerView recyclerView) {
+        this.recyclerViewInspeccion = recyclerView;
+    }
+
+    @Override
+    public void sendList(ArrayList<InspeccionVehiculo> inspecciones) {
+        this.inspeccionVehiculos = inspecciones;
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        indexClicked = clickedItemIndex;
     }
 
 
@@ -124,8 +196,8 @@ public class MainActivity extends AppCompatActivity {
                 case 2:
 
 
-                Tab3Vehiculos vehiculos = new Tab3Vehiculos();
-                return vehiculos;
+                    Tab3Vehiculos vehiculos = new Tab3Vehiculos();
+                    return vehiculos;
 
                 default:
                     return null;

@@ -1,32 +1,28 @@
-package com.example.prueba.CheckMobile.Vehiculo;
+package com.example.prueba.CheckMobile.Usuario;
 
+import com.example.prueba.CheckMobile.Vehiculo.Vehiculo;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class VehiculoResponse {
+/**
+ * Created by Prueba on 02-jul-17.
+ */
+
+public class UsuarioResponse {
     @SerializedName("data")
-    private ArrayList<Vehiculo> vehiculos;
+    private ArrayList<Usuario> usuarios;
     private String responseCode;
     private String message;
     private int rows;
 
-    @Override
-    public String toString() {
-        return "VehiculoResponse{" +
-                "vehiculos=" + vehiculos +
-                ", responseCode='" + responseCode + '\'' +
-                ", message='" + message + '\'' +
-                ", rows=" + rows +
-                '}';
+
+    public ArrayList<Usuario> getUsuarios() {
+        return usuarios;
     }
 
-    public ArrayList<Vehiculo> getVehiculos() {
-        return vehiculos;
-    }
-
-    public void setVehiculos(ArrayList<Vehiculo> vehiculos) {
-        this.vehiculos = vehiculos;
+    public void setUsuarios(ArrayList<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 
     public String getResponseCode() {

@@ -15,6 +15,11 @@ public class Marca extends MarcaResponse {
     private String fechaActualizacion;
     private String usuarioActualizacion;
 
+
+    public Marca(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     public String getId() {
         return id;
     }

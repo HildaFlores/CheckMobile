@@ -13,33 +13,24 @@
 
 
         <TextView
-            android:id="@+id/txtAddMarca"
+            android:id="@+id/txtAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nombre Marca: "
+            android:text="Descripción: "
             android:textSize="20dp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/etxtAddMarca"
+            android:id="@+id/etxtAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="Marca"
+            android:hint="Descripción"
             android:inputType="textPersonName" />
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="30dp"
-        android:layout_gravity="center_horizontal">
-
-
-    </LinearLayout>
 
 
 </LinearLayout>

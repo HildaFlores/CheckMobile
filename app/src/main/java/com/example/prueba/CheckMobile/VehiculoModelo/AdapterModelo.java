@@ -1,6 +1,7 @@
 package com.example.prueba.CheckMobile.VehiculoModelo;
 
 import com.example.prueba.CheckMobile.MainActivity;
+import com.example.prueba.CheckMobile.VehiculoMarca.MarcaService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -60,6 +61,28 @@ public class AdapterModelo {
             apiService = retrofit.create(com.example.prueba.CheckMobile.VehiculoModelo.ModeloService.class);
 
         }
+        return apiService;
+    }
+
+
+    public static ModeloService insertarModelo() {
+
+        MainActivity main = new MainActivity();
+        OkHttpClient.Builder httpClient = main.httpCliente();
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(main.getBaseUrl())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(httpClient.build())
+                .build();
+
+
+        apiService = retrofit.create(com.example.prueba.CheckMobile.VehiculoModelo.ModeloService.class);
+
         return apiService;
     }
 }

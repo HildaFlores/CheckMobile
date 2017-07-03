@@ -1,6 +1,7 @@
 package com.example.prueba.CheckMobile.Vehiculo;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +44,7 @@ import com.example.prueba.CheckMobile.TipoVehiculo.TipoVehiculo;
 import com.example.prueba.CheckMobile.TipoVehiculo.TipoVehiculoResponse;
 import com.example.prueba.CheckMobile.VehiculoEstilo.AdapterEstilo;
 import com.example.prueba.CheckMobile.VehiculoEstilo.Estilo;
+import com.example.prueba.CheckMobile.VehiculoEstilo.myDialogEstilo;
 import com.example.prueba.CheckMobile.VehiculoMarca.AdapterMarca;
 import com.example.prueba.CheckMobile.VehiculoMarca.Marca;
 import com.example.prueba.CheckMobile.VehiculoMarca.MarcaResponse;
@@ -49,6 +52,7 @@ import com.example.prueba.CheckMobile.VehiculoMarca.myDialogMarca;
 import com.example.prueba.CheckMobile.VehiculoModelo.AdapterModelo;
 import com.example.prueba.CheckMobile.VehiculoModelo.Modelo;
 import com.example.prueba.CheckMobile.VehiculoModelo.ModeloResponse;
+import com.example.prueba.CheckMobile.VehiculoModelo.myDialogModelo;
 import com.example.prueba.CheckMobile.VehiculoTraccion.AdapterTraccion;
 import com.example.prueba.CheckMobile.VehiculoTraccion.Traccion;
 import com.example.prueba.CheckMobile.VehiculoTraccion.TraccionResponse;
@@ -66,9 +70,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.R.attr.id;
+import static com.example.prueba.CheckMobile.VehiculoMarca.AdapterMarca.insertarMarca;
 
 
-public class VehiculoActivity extends AppCompatActivity {
+public class VehiculoActivity extends AppCompatActivity implements myDialogMarca.OnCompleteListener, myDialogModelo.OnCompleteListenerModelo, myDialogEstilo.OnCompleteListenerEstilo {
     Spinner spinnerEstilo;
     Spinner spinnerTipoVehiculo;
     Spinner spinnerModelo;
@@ -106,8 +111,11 @@ public class VehiculoActivity extends AppCompatActivity {
     EditText nota;
     Switch swgarantia;
     private String idCliente, idTipoVeh, idMarca, idModelo, idEstilo, cantidadPuertas,
-            idCombustible, idTraccion, estadoVeh, garantia, idTransmision, idVehiculo, refVehiculo, chasisVehiculo;
-    private boolean insertar = true;
+            idCombustible, idTraccion, estadoVeh, garantia, idTransmision, idVehiculo, refVehiculo,
+            chasisVehiculo, descMarca, descModelo, descEstilo;
+
+
+    private boolean insertar = true, canceled = false;
     int NumCilindro;
 
 
@@ -501,6 +509,162 @@ public class VehiculoActivity extends AppCompatActivity {
         call.enqueue(new MarcaCallback());
     }
 
+    @Override
+    public void onComplete(String id) {
+
+        this.idMarca = id;
+        Log.d("ACTIVITY==>", idMarca);
+    }
+
+    @Override
+    public void onCompleteDescripcion(String descripcion) {
+        this.descMarca = descripcion;
+        Log.d("ACTIVITY==>", descMarca);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        ArrayList<Marca> marcas = new ArrayList<Marca>();
+        marcas.add(new Marca(
+                descMarca
+        ));
+
+        Call<String> callMarca = insertarMarca().setMarca(marcas);
+        callMarca.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String[] p = response.body().toString().split(",");
+                    if (p[0].equals("200")) {
+                        Toast.makeText(getApplicationContext(), "Marca guardada con éxito!", Toast.LENGTH_SHORT).show();
+                        obtenerDatosMarca();
+                        String id = p[1];
+
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error al guardar registro", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.dismiss();
+    }
+
+
+    @Override
+    public void onCompleteModelo(String idModelo) {
+        this.idModelo = idModelo;
+    }
+
+    @Override
+    public void onCompleteDescripcionModelo(String descripcion) {
+        this.descModelo = descripcion;
+    }
+
+    @Override
+    public void onDialogModeloPositiveClick(DialogFragment dialog) {
+
+        final ArrayList<Modelo> modelos = new ArrayList<Modelo>();
+        modelos.add(new Modelo(
+                idMarca,
+                descModelo
+        ));
+
+        Call<String> callModelo = AdapterModelo.insertarModelo().setModelo(modelos);
+        callModelo.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String[] p = response.body().toString().split(",");
+
+                    if (p[0].equals("200")) {
+                        Toast.makeText(getApplicationContext(), "Modelo guardado con éxito!", Toast.LENGTH_SHORT).show();
+                        obtenerDatosModelo(idMarca);
+                        spinnerModelo.setSelection(getIndex(spinnerModelo,descModelo));
+
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error al guardar registro", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+    @Override
+    public void onDialogModeloNegativeClick(DialogFragment dialog) {
+        dialog.dismiss();
+    }
+
+    @Override
+    public void onCompleteEstilo(String idModelo) {
+
+    }
+
+    @Override
+    public void onCompleteDescripcionEstilo(String descripcion) {
+        this.descEstilo = descripcion;
+    }
+
+    @Override
+    public void onDialogEstiloPositiveClick(DialogFragment dialog) {
+
+        ArrayList<Estilo> estilos = new ArrayList<Estilo>();
+        estilos.add(new Estilo(
+                idModelo,
+                descEstilo
+
+
+        ));
+
+        Call<String> callEstilo = AdapterEstilo.insertarEstilo().setEstilo(estilos);
+        callEstilo.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String[] p = response.body().toString().split(",");
+                    if (p[0].equals("200")) {
+                        Toast.makeText(getApplicationContext(), "Estilo guardado con éxito!", Toast.LENGTH_SHORT).show();
+                        obtenerDatosEstilo(idModelo);
+                        spinnerEstilo.setSelection(getIndex(spinnerEstilo, descEstilo));
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error al guardar registro", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onDialogEstiloNegativeClick(DialogFragment dialog) {
+        dialog.dismiss();
+    }
+
 
     class TipoVehCallback implements Callback<TipoVehiculo> {
         @Override
@@ -530,7 +694,9 @@ public class VehiculoActivity extends AppCompatActivity {
         public void onResponse(Call<Marca> call, Response<Marca> response) {
             if (response.isSuccessful()) {
                 MarcaResponse marcaRes = response.body();
+                Log.d("PASE POR AQUI", "==>" + idMarca);
                 poblarSpinnerMarca(marcaRes.getMarcas());
+
                 //marcaResponse = marcaRes.getMarcas();
                 // ObtenerDialogLista(marcaResponse.getMarcas());
             } else {
@@ -1180,20 +1346,34 @@ public class VehiculoActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-
         switch (item.getItemId()) {
             case R.id.action_add_marca: {
                 myDialogMarca myDialogMarca = new myDialogMarca();
                 myDialogMarca.show(getFragmentManager(), "Marca");
+
                 return true;
 
             }
-            case R.id.action_add_modelo:
-            {
+            case R.id.action_add_modelo: {
+                if (idMarca == null)
+                {
+                    Toast.makeText(getApplicationContext(), "Debe seleccionar la marca", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    myDialogModelo myDialogModelo = new myDialogModelo();
+                    myDialogModelo.show(getFragmentManager(), "Modelo");
+                }
                 return true;
             }
-            case R.id.action_add_estilo:
-            {
+            case R.id.action_add_estilo: {
+                if (idModelo== null)
+                {
+                    Toast.makeText(getApplicationContext(), "Debe seleccionar el modelo", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    myDialogEstilo myDialogEstilo = new myDialogEstilo();
+                    myDialogEstilo.show(getFragmentManager(), "Estilo");
+                }
                 return true;
             }
         }

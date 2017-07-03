@@ -1,6 +1,7 @@
 package com.example.prueba.CheckMobile.VehiculoMarca;
 
 import com.example.prueba.CheckMobile.MainActivity;
+import com.example.prueba.CheckMobile.Vehiculo.VehiculoService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -18,6 +19,7 @@ public class AdapterMarca {
 
     public static MarcaService getApiService() {
 
+        apiService = null;
         MainActivity main = new MainActivity();
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -34,6 +36,27 @@ public class AdapterMarca {
             apiService = retrofit.create(com.example.prueba.CheckMobile.VehiculoMarca.MarcaService.class);
 
         }
+        return apiService;
+    }
+
+    public static MarcaService insertarMarca() {
+
+        MainActivity main = new MainActivity();
+        OkHttpClient.Builder httpClient = main.httpCliente();
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(main.getBaseUrl())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(httpClient.build())
+                .build();
+
+
+        apiService = retrofit.create(com.example.prueba.CheckMobile.VehiculoMarca.MarcaService.class);
+
         return apiService;
     }
 }
