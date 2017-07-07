@@ -112,11 +112,9 @@ public class GreenAdapterServicio extends RecyclerView.Adapter<GreenAdapterServi
             super(itemView);
 
             listItemNumberView = (TextView) itemView.findViewById(R.id.item_servicios);
-            listItemPrice = (TextView) itemView.findViewById(R.id.item_Precio_servicios);
 
 
         }
-
 
         /**
          * A method we wrote for convenience. This method will take an integer as input and
@@ -127,7 +125,6 @@ public class GreenAdapterServicio extends RecyclerView.Adapter<GreenAdapterServi
         void bind(int listIndex) {
 
             listItemNumberView.setText(servicios.get(listIndex).getDesc_servicio());
-            listItemPrice.setText(" RD$ "+ servicios.get(listIndex).getPrecio_servicio() + ".00");
 
         }
     }

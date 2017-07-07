@@ -13,7 +13,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,7 +110,6 @@
                 android:inputType="textPersonName" />
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -188,7 +186,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="25dp">
-
             <TextView
                 android:id="@+id/txtFechaNacimiento"
                 android:layout_width="wrap_content"
@@ -218,9 +215,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:enabled="false"
                 android:hint="edad"
-                android:inputType="number"
-                android:enabled="false"/>
+                android:inputType="number" />
         </LinearLayout>
 
         <LinearLayout
@@ -295,6 +292,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
             <TextView
                 android:id="@+id/txtProvincia"
                 android:layout_width="wrap_content"
@@ -310,10 +316,7 @@
                 android:layout_weight="1"
                 android:hint="Provincia"
                 android:inputType="textPersonName" />
-
-
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -384,7 +387,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="999-999-9999"
-                android:inputType="number" />
+                android:inputType="number"
+                android:maxLength="10"/>
 
             <TextView
                 android:id="@+id/txtCelular"
@@ -400,7 +404,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="999-999-9999"
-                android:inputType="number" />
+                android:inputType="number"
+                android:maxLength="10"/>
         </LinearLayout>
 
         <LinearLayout

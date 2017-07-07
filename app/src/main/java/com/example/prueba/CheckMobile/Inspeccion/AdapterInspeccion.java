@@ -24,8 +24,12 @@ public class AdapterInspeccion {
 
     public static InspeccionService apiService;
     public static InspeccionDetalleService detApiService;
+    public static updateInspeccionService updateService;
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
+
+    public static final MediaType JSON2
+            = MediaType.parse("text/plain");
 
 
     public static InspeccionService setInspeccionVehiculo() {
@@ -73,7 +77,7 @@ public class AdapterInspeccion {
 
 
     public static InspeccionService getApiService() {
-
+        apiService = null;
         //Creating the interceptor , and setting the log level
         MainActivity main = new MainActivity();
 
@@ -131,5 +135,79 @@ public class AdapterInspeccion {
         return detApiService;
     }
 
+    public static updateInspeccionService updateInspeccion(final String parametro)
+    {
+        MainActivity main = new MainActivity();
+        updateService = null;
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
 
+        OkHttpClient.Builder httpClient2 = main.httpCliente();
+        httpClient2.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request original = chain.request();
+
+                RequestBody requestBody = RequestBody.create(JSON, parametro);
+
+                Request request = original.newBuilder()
+                        .post(requestBody)
+                        .build();
+
+                return chain.proceed(request);
+            }
+        });
+
+        if (updateService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(main.getBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .client(httpClient2.build()) //<- using the log level
+                    .build();
+
+            updateService = retrofit.create(com.example.prueba.CheckMobile.Inspeccion.updateInspeccionService.class);
+
+        }
+        return updateService;
+
+    }
+
+    public static updateInspeccionService convertInspeccion(final String parametro)
+    {
+        MainActivity main = new MainActivity();
+        updateService = null;
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        OkHttpClient.Builder httpClient2 = main.httpCliente();
+        httpClient2.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request original = chain.request();
+
+                RequestBody requestBody = RequestBody.create(JSON, parametro);
+
+                Request request = original.newBuilder()
+                        .post(requestBody)
+                        .build();
+
+                return chain.proceed(request);
+            }
+        });
+
+        if (updateService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(main.getBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .client(httpClient2.build()) //<- using the log level
+                    .build();
+
+            updateService = retrofit.create(com.example.prueba.CheckMobile.Inspeccion.updateInspeccionService.class);
+
+        }
+        return updateService;
+
+    }
 }

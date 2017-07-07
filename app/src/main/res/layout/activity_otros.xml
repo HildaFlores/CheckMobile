@@ -47,7 +47,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:src="@mipmap/normalkey" />
+                    android:src="@mipmap/normalkey"
+                    android:background="@android:color/transparent"/>
 
                 <RadioButton
                     android:id="@+id/rbLlaveNormal"
@@ -60,7 +61,8 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/icono_llave" />
+                    android:src="@mipmap/icono_llave"
+                    android:background="@android:color/transparent"/>
 
                 <RadioButton
                     android:id="@+id/rbLlaveSmart"
@@ -99,7 +101,8 @@
                     android:layout_centerHorizontal="true"
                     android:padding="15dp"
                     android:scaleType="center"
-                    android:src="@mipmap/combustible" />
+                    android:src="@mipmap/combustible"
+                    android:background="@android:color/transparent"/>
 
                 <SeekBar
                     android:id="@+id/seekBarCombustible"
@@ -140,7 +143,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_weight="1"
                     android:scaleType="center"
-                    android:src="@mipmap/nivel_aceite" />
+                    android:src="@mipmap/nivel_aceite"
+                    android:background="@android:color/transparent"/>
 
                 <SeekBar
                     android:id="@+id/seekBarAceite"
@@ -149,8 +153,8 @@
                     android:layout_below="@id/ivNivelAceite"
                     android:layout_centerHorizontal="true"
                     android:max="10"
-                    android:progress="10"
-                    android:rotation="180" />
+                    android:progress="0"
+                    />
 
                 <TextView
                     android:id="@+id/txtProgressAceite"

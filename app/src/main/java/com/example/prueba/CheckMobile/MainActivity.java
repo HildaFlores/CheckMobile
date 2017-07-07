@@ -1,43 +1,29 @@
 package com.example.prueba.CheckMobile;
 
-import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.InputDeviceCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.Toast;
-
-import com.example.prueba.CheckMobile.Cliente.GreenAdapter;
-import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehDetalleResponse;
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
 import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterInspeccion;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab1Inspecciones;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab2OrdenesTrabajo;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab3Vehiculos;
-import com.example.prueba.CheckMobile.VehiculoDocumento.VehiculoDocumento;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-import static android.R.id.list;
 
 
-public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.sendData, GreenAdapterInspeccion.ListItemClickListener {
+public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.sendData {
     /*Declaraciones*/
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -53,16 +39,12 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
     }
 
     public OkHttpClient.Builder httpCliente() {
@@ -73,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         httpClient = new OkHttpClient().newBuilder();
         //add logging as last interceptor
         httpClient.addInterceptor(logging); //<- this is the important line;
-        setBaseUrl("http://192.168.0.102:4567/");
+        setBaseUrl("http://192.168.2.19:4567/");
         //192.168.0.109 //192.168.1.92//10.0.0.185  192.168.2.19
         return httpClient;
     }
@@ -169,11 +151,6 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
     @Override
     public void sendList(ArrayList<InspeccionVehiculo> inspecciones) {
         this.inspeccionVehiculos = inspecciones;
-    }
-
-    @Override
-    public void onListItemClick(int clickedItemIndex) {
-        indexClicked = clickedItemIndex;
     }
 
 

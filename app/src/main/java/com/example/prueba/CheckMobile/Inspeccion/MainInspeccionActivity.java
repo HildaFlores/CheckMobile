@@ -15,24 +15,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.prueba.CheckMobile.Cliente.ClienteActivity;
-import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.R;
-import com.example.prueba.CheckMobile.Vehiculo.AdapterVehiculo;
 import com.example.prueba.CheckMobile.VehiculoDocumento.AdapterVehiculoDocumento;
 import com.example.prueba.CheckMobile.VehiculoDocumento.VehiculoDocumento;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
-
-import static android.R.attr.data;
-import static android.R.attr.id;
 
 public class MainInspeccionActivity extends AppCompatActivity implements InspeccionGeneralActivity.passingData, InspeccionLucesActivity.sendData, InspeccionAccesoriosActivity.sendAccesorios, OtrosActivity.sendOtros {
 
@@ -81,10 +72,34 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     }
 
     @Override
+    public void onBackPressed() {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainInspeccionActivity.this);
+            alertBuilder.setMessage("¿Está seguro de salir?")
+                    .setCancelable(false)
+                    .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            MainInspeccionActivity.this.finish();
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+            AlertDialog alert = alertBuilder.create();
+            alert.setTitle("Advertencia");
+            alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+            alert.show();
+    }
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.menu_main_inspeccion, menu);
+        getMenuInflater().inflate(R.menu.menu_main_guardar, menu);
         return true;
     }
 
@@ -584,7 +599,14 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             if (response.isSuccessful()) {
                 Log.v("TAG ==> ", response.body());
                 if (response.body().toString().equals("200")) {
-                    guardarVehiculoDocumento();
+                    if (!imageRuta.isEmpty()) {
+                        guardarVehiculoDocumento();
+                    }
+                    else
+                    {
+                        myDialogProgress dialogProgress = new myDialogProgress();
+                        dialogProgress.show(getFragmentManager(), "Inspeccion");
+                    }
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
@@ -663,7 +685,6 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
         }
 
-        System.out.print("==>" + documento);
         Call<String> callVehiculoDocumento = AdapterVehiculoDocumento.getService().setVehiculoDocumentos(documento);
         callVehiculoDocumento.enqueue(new VehDocumentoCallback());
     }
@@ -673,10 +694,9 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
                 if (response.body().toString().equals("200")) {
-                    Toast.makeText(getApplicationContext(), "Registros guardados con éxito >> IV-" + idInspeccion, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainInspeccionActivity.this.getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                }
+                    myDialogProgress dialogProgress = new myDialogProgress();
+                    dialogProgress.show(getFragmentManager(), "Inspeccion");
+                   }
             } else {
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
             }
@@ -689,4 +709,8 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
         }
     }
+
+
+
+
 }

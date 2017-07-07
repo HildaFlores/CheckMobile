@@ -34,6 +34,7 @@ public class InspeccionVehiculo extends InspeccionVehiculoResponse {
     private String nombre_vehiculo;
     private String nombre_cliente;
     private String tipo_veh;
+    private String id_condicion;
 
 
     public InspeccionVehiculo(String idVehiculo, String chasis, String referencia, String fechaInspeccion, String serieGomas, String idMecanico, String supervisor, String observaciones, String idAsesor, String idCliente, String kilometraje, String motor) {
@@ -277,5 +278,13 @@ public class InspeccionVehiculo extends InspeccionVehiculoResponse {
 
     public void setTipo_veh(String tipo_veh) {
         this.tipo_veh = tipo_veh;
+    }
+
+    public String getId_condicion() {
+        return id_condicion;
+    }
+
+    public void setId_condicion(String id_condicion) {
+        this.id_condicion = id_condicion;
     }
 }

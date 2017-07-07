@@ -12,7 +12,6 @@ import retrofit2.http.PUT;
 
 public interface VehiculoClienteService {
 
-
     @POST("cteVehiculo")
     Call<String> updatesVehiculos();
 }

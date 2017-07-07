@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -35,6 +37,7 @@ public class GreenAdapterInspeccion extends RecyclerView.Adapter<GreenAdapterIns
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
+        void onReciclyListItemClick(int Iditem, int clickedItemIndex);
     }
 
 
@@ -79,13 +82,12 @@ public class GreenAdapterInspeccion extends RecyclerView.Adapter<GreenAdapterIns
     }
 
 
-    class NumberViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class NumberViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
 
         // Will display the position in the list, ie 0 through getItemCount() - 1
         TextView listItemNumberView;
         TextView listClienteName;
         TextView listIdInspeccion;
-        View vista;
 
         public NumberViewHolder(View itemView) {
             super(itemView);
@@ -95,7 +97,7 @@ public class GreenAdapterInspeccion extends RecyclerView.Adapter<GreenAdapterIns
             itemView.setId(Integer.parseInt(inspeccionVeh.get(contador).getId()));
             contador++;
             itemView.setOnClickListener(this);
-            vista = itemView;
+            itemView.setOnCreateContextMenuListener(this);
         }
 
         void bind(int listIndex) {
@@ -117,8 +119,26 @@ public class GreenAdapterInspeccion extends RecyclerView.Adapter<GreenAdapterIns
             mOnClickListener.onListItemClick(clickedPosition);
 
         }
-    }
 
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+
+            MenuItem itemAGenerar = contextMenu.add(0, R.id.action_convert, 0, "Generar orden");
+            MenuItem itemAnular = contextMenu.add(0, R.id.action_delete, 0, "Descartar");
+            itemAnular.setOnMenuItemClickListener(mOnMyActionClickListener);
+            itemAGenerar.setOnMenuItemClickListener(mOnMyActionClickListener);
+
+        }
+
+        private final MenuItem.OnMenuItemClickListener mOnMyActionClickListener = new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mOnClickListener.onReciclyListItemClick(item.getItemId(), getAdapterPosition());
+                return true;
+            }
+        };
+
+    }
 
 }
 

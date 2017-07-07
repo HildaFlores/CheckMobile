@@ -113,12 +113,8 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
     private String idCliente, idTipoVeh, idMarca, idModelo, idEstilo, cantidadPuertas,
             idCombustible, idTraccion, estadoVeh, garantia, idTransmision, idVehiculo, refVehiculo,
             chasisVehiculo, descMarca, descModelo, descEstilo;
-
-
-    private boolean insertar = true, canceled = false;
+    private boolean insertar = true;
     int NumCilindro;
-
-
     private Timer timer = new Timer();
     private final long DELAY = 0;
 
@@ -199,6 +195,35 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!insertar) {
+            VehiculoActivity.this.finish();
+        } else {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VehiculoActivity.this);
+            alertBuilder.setMessage("¿Está seguro de salir?")
+                    .setCancelable(false)
+                    .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            VehiculoActivity.this.finish();
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+            AlertDialog alert = alertBuilder.create();
+            alert.setTitle("Advertencia");
+            alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+            alert.show();
+        }
     }
 
     private void obtenerGarantia() {
@@ -591,7 +616,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                     if (p[0].equals("200")) {
                         Toast.makeText(getApplicationContext(), "Modelo guardado con éxito!", Toast.LENGTH_SHORT).show();
                         obtenerDatosModelo(idMarca);
-                        spinnerModelo.setSelection(getIndex(spinnerModelo,descModelo));
+                        spinnerModelo.setSelection(getIndex(spinnerModelo, descModelo));
 
                     }
                 } else {
@@ -1175,8 +1200,6 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                     break;
                 }
             }
-
-
             switch (varVehiculo.getIdTraccion().toString()) {
                 case "2WD": {
                     View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("1"));
@@ -1350,27 +1373,22 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             case R.id.action_add_marca: {
                 myDialogMarca myDialogMarca = new myDialogMarca();
                 myDialogMarca.show(getFragmentManager(), "Marca");
-
                 return true;
 
             }
             case R.id.action_add_modelo: {
-                if (idMarca == null)
-                {
+                if (idMarca == null) {
                     Toast.makeText(getApplicationContext(), "Debe seleccionar la marca", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     myDialogModelo myDialogModelo = new myDialogModelo();
                     myDialogModelo.show(getFragmentManager(), "Modelo");
                 }
                 return true;
             }
             case R.id.action_add_estilo: {
-                if (idModelo== null)
-                {
+                if (idModelo == null) {
                     Toast.makeText(getApplicationContext(), "Debe seleccionar el modelo", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     myDialogEstilo myDialogEstilo = new myDialogEstilo();
                     myDialogEstilo.show(getFragmentManager(), "Estilo");
                 }

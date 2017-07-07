@@ -22,6 +22,17 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
+            <ImageView
+                android:id="@+id/bgheader"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerInside"
+                app:layout_collapseMode="pin"
+                app:layout_collapseParallaxMultiplier="1.0"
+                app:srcCompat="@drawable/vehicle_icon" />
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

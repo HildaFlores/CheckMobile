@@ -35,6 +35,7 @@ import com.example.prueba.CheckMobile.TablaDgii.AdapterDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgiiResponse;
 import com.example.prueba.CheckMobile.Vehiculo.AdapterVehiculo;
+import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -133,7 +134,6 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             buscarCliente();
         }
 
-
         Button btnClienteSiguiente = (Button) findViewById(R.id.btnClienteSiguiente);
         btnClienteSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +183,35 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!insertar) {
+            ClienteActivity.this.finish();
+        }
+        else {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ClienteActivity.this);
+            alertBuilder.setMessage("¿Está seguro de salir?")
+                    .setCancelable(false)
+                    .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            ClienteActivity.this.finish();
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+            AlertDialog alert = alertBuilder.create();
+            alert.setTitle("Advertencia");
+            alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+            alert.show();
+        }
+    }
     private void ActualizaVehiculoCliente(String idCte, String idVeh) {
 
         String parametro = idCte + "," + idVeh;
@@ -229,9 +258,9 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                                         }
 
                                         cal.setTime(myDate);
-
-                                        edad.setText(String.valueOf(calculaEdad(cal)));
-
+                                        if (insertar) {
+                                            edad.setText(String.valueOf(calculaEdad(cal)));
+                                        }
 
                                     } catch (Exception e) {
                                         Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
@@ -243,12 +272,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
                     }, DELAY);
                 }
-
-
             }
         });
-
-
        /* fechaNac.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
@@ -338,8 +363,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         if (radioPersona.isChecked()) {
             clientes.add(new Cliente(
                     "1",
-                    nombres.getText().toString(),
-                    apellidos.getText().toString(),
+                    nombres.getText().toString().toUpperCase(),
+                    apellidos.getText().toString().toUpperCase(),
                     Integer.parseInt(edad.getText().toString()),
                     valorSexo,
                     etxtDocIdentidad.getText().toString(),
@@ -347,17 +372,17 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     null,
                     idCondicion,
                     desc_nacionalidad,
-                    apodo.getText().toString(),
-                    notas.getText().toString(),
+                    apodo.getText().toString().toUpperCase(),
+                    notas.getText().toString().toUpperCase(),
                     desc_pais,
                     date,
                     limiteCredito.getText().toString(),
                     telefono.getText().toString(),
                     celular.getText().toString(),
-                    email.getText().toString(),
-                    direccion.getText().toString(),
-                    provincia.getText().toString(),
-                    proximoA.getText().toString()));
+                    email.getText().toString().toUpperCase(),
+                    direccion.getText().toString().toUpperCase(),
+                    provincia.getText().toString().toUpperCase(),
+                    proximoA.getText().toString().toUpperCase()));
 
             if (etxtDocIdentidad.getText().toString() == null || nombres.getText().toString() == null
                     || apellidos.getText().toString() == null || idCondicion == null || fechaNac.getText().toString() == null
@@ -366,7 +391,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(getApplicationContext(), "Faltan datos por llenar", Toast.LENGTH_SHORT).show();
             } else {
                 Log.d("TAG", "cliente == >" + clientes);
-                nombreCliente = nombres.getText().toString() + " " + apellidos.getText().toString();
+                nombreCliente = nombres.getText().toString().toUpperCase() + " " + apellidos.getText().toString().toUpperCase();
                 Call<String> clienteCall = AdapterCliente.setCliente().insertClientes(clientes);
                 clienteCall.enqueue(new InsertClienteCallback());
             }
@@ -405,10 +430,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 Call<String> clienteCall = AdapterCliente.setCliente().insertClientes(clientes);
                 clienteCall.enqueue(new InsertClienteCallback());
             }
-
         }
-
-
     }
 
     private void buscarCliente() {
@@ -686,7 +708,6 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     InhabilitarVistas(true);
                     obtenerClienteFiltrado(valor);
 
-
                 } else {
                     insertar = false;
                     layoutSegunDGII.setVisibility(View.GONE);
@@ -696,18 +717,17 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
 
             } else {
-                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de vehiculo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de cliente", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void onFailure(Call<Cliente> call, Throwable t) {
             Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            Log.v("Clii-->*** ===>", t.getMessage());
+            Log.v("VEHICULO-->*** ===>", t.getMessage());
 
         }
     }
-
     private void limpiarVistasCliente() {
         nombreEmpresa.getText().clear();
         nombreSegunDGII.getText().clear();
@@ -731,9 +751,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void llenarFormularioCliente(ArrayList<Cliente> clientes) {
-
         for (Cliente varCte : clientes) {
-
             idCliente = varCte.getId().toString();
             if (varCte.getRnc() != null && varCte.getDocumentoIdentidad() == null) {
                 radioEmpresa.setChecked(true);
@@ -748,11 +766,12 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             }
             nombres.setText(varCte.getNombres().toUpperCase());
             apellidos.setText(varCte.getApellidos().toUpperCase());
-
+            Log.v("EDAD==>", Integer.toString(varCte.getEdad()));
             apodo.setText(varCte.getApodo());
-
-            fechaNac.setText(varCte.getfechaNac().substring(0, 10));
-            edad.setText(String.valueOf(varCte.getEdad()));
+            edad.setText(Integer.toString(varCte.getEdad()));
+            if (varCte.getfechaNac() != null) {
+                fechaNac.setText(varCte.getfechaNac().substring(0, 10));
+            }
             if (varCte.getSexo().equals("F")) {
                 sexoF.setChecked(true);
             } else {
@@ -769,9 +788,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             spinnerCondicion.setSelection(getIndex(spinnerCondicion, varCte.getDescripcion_condicion()));
             limiteCredito.setText(varCte.getLimiteCredito());
             InhabilitarVistas(false);
-
         }
-
     }
 
     private void InhabilitarVistas(boolean estado) {
@@ -850,7 +867,6 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     intent.putExtra("CLIENTE", nombreCliente);
                     intent.putExtra("REFERENCIA", refVehiculo);
                     intent.putExtra("CHASIS", chasisVehiculo);
-
                     ActualizaVehiculoCliente(idCliente, idVehiculo);
                     etxtDocIdentidad.setEnabled(false);
                     radioEmpresa.setEnabled(false);
@@ -885,8 +901,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 } else {
                     Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();
                 }
-            }
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
             }
 
