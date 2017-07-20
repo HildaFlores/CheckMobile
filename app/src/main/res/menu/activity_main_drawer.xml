@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Actualizaciones">
+        <menu>
+            <item
+                android:id="@+id/nav_titular"
+                android:icon="@mipmap/icon_veh"
+                android:title="Titular Vehiculo" />
+            <item
+                android:id="@+id/nav_inspeccion"
+                android:icon="@mipmap/icon_inspeccion"
+                android:title="Inspección" />
+
+            <item
+                android:id="@+id/nav_orden"
+                android:icon="@mipmap/icon_job"
+                android:title="Orden Trabajo" />
+        </menu>
+    </item>
+    <item android:title="Consultas">
+        <menu>
+            <item
+                android:id="@+id/nav_consulta_inspecciones"
+                android:icon="@mipmap/icon_inspeccion"
+                android:title="Inspecciones" />
+            <item
+                android:id="@+id/nav_consulta_ordenes"
+                android:icon="@mipmap/icon_job"
+                android:title="Ordenes de trabajo" />
+
+        </menu>
+    </item>
+</menu>

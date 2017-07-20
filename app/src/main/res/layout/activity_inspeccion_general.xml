@@ -242,7 +242,7 @@
                     android:text="Solo una" />
 
                 <RadioButton
-                    android:id="@+id/rbSDosOMas"
+                    android:id="@+id/rbDosOMas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Dos o mas" />

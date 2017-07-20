@@ -52,6 +52,16 @@ public class InspeccionVehiculo extends InspeccionVehiculoResponse {
         this.motor = motor;
     }
 
+
+    public InspeccionVehiculo(String id, String serieGomas, String nivelCombustible, String observaciones, String kilometraje, String motor) {
+        this.id = id;
+        this.serieGomas = serieGomas;
+        this.nivelCombustible = nivelCombustible;
+        this.observaciones = observaciones;
+        this.kilometraje = kilometraje;
+        this.motor = motor;
+    }
+
     @Override
     public String toString() {
         return "InspeccionVehiculo{" +

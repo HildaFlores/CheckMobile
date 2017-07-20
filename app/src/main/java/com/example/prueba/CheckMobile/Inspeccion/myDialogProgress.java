@@ -59,7 +59,7 @@ public class myDialogProgress extends DialogFragment {
             while (progreso < 100) {
                 progreso++;
                 publishProgress(progreso);
-                SystemClock.sleep(20);
+                SystemClock.sleep(10);
             }
             return null;
         }

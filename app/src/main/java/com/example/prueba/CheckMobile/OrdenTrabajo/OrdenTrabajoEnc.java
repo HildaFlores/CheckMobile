@@ -4,9 +4,7 @@ package com.example.prueba.CheckMobile.OrdenTrabajo;
  * Created by Prueba on 07-jul-17.
  */
 
-public class OrdenTrabajoEnc {
-
-
+public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse {
     private String id;
     private String id_empresa;
     private String id_centroCostos;
@@ -47,9 +45,13 @@ public class OrdenTrabajoEnc {
     private String recibidoPor;
     private String realizadoPor;
     private String id_inspeccion;
+    private String fechaDocumento;
+    private String permite_pieza_reemplazo;
+    private String nombre_mecanico;
+    private String condicion;
 
 
-    public OrdenTrabajoEnc(String cliente, String nombreCliente, String apellidosCte, String montoBruto, String montoNeto, String porcDescuento, String montoDesc, String montoImpuestos, String montoGravado, String montoExento, String notas, String idCondicion, String idMoneda, String idMecanico, String fechaPedido, String idSupervisor, String id_inspeccion) {
+    public OrdenTrabajoEnc(String cliente, String nombreCliente, String apellidosCte, String montoBruto, String montoNeto, String porcDescuento, String montoDesc, String montoImpuestos, String montoGravado, String montoExento, String notas, String idCondicion, String idMoneda, String idMecanico, String fechaPedido, String idSupervisor, String id_inspeccion, String permite_pieza_reemplazo) {
         this.cliente = cliente;
         this.nombreCliente = nombreCliente;
         this.apellidosCte = apellidosCte;
@@ -67,6 +69,16 @@ public class OrdenTrabajoEnc {
         this.fechaPedido = fechaPedido;
         this.idSupervisor = idSupervisor;
         this.id_inspeccion = id_inspeccion;
+        this.permite_pieza_reemplazo = permite_pieza_reemplazo;
+    }
+
+    public OrdenTrabajoEnc(String id, String notas, String idCondicion, String idMecanico, String fechaPedido, String permite_pieza_reemplazo) {
+        this.id = id;
+        this.notas = notas;
+        this.idCondicion = idCondicion;
+        this.idMecanico = idMecanico;
+        this.fechaPedido = fechaPedido;
+        this.permite_pieza_reemplazo = permite_pieza_reemplazo;
     }
 
     @Override
@@ -433,5 +445,37 @@ public class OrdenTrabajoEnc {
 
     public void setId_inspeccion(String id_inspeccion) {
         this.id_inspeccion = id_inspeccion;
+    }
+
+    public String getFechaDocumento() {
+        return fechaDocumento;
+    }
+
+    public void setFechaDocumento(String fechaDocumento) {
+        this.fechaDocumento = fechaDocumento;
+    }
+
+    public String getPermite_pieza_reemplazo() {
+        return permite_pieza_reemplazo;
+    }
+
+    public void setPermite_pieza_reemplazo(String permite_pieza_reemplazo) {
+        this.permite_pieza_reemplazo = permite_pieza_reemplazo;
+    }
+
+    public String getNombre_mecanico() {
+        return nombre_mecanico;
+    }
+
+    public void setNombre_mecanico(String nombre_mecanico) {
+        this.nombre_mecanico = nombre_mecanico;
+    }
+
+    public String getCondicion() {
+        return condicion;
+    }
+
+    public void setCondicion(String condicion) {
+        this.condicion = condicion;
     }
 }

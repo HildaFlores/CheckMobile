@@ -1,12 +1,8 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,44 +24,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.prueba.CheckMobile.OtrosParametros.AdapterOtrosParametros;
 import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametros;
 import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametrosResponse;
 import com.example.prueba.CheckMobile.R;
 import com.kosalgeek.android.photoutil.CameraPhoto;
-import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.ImageLoader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.zip.Inflater;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
-
-
-import static android.R.attr.fragment;
 import static android.app.Activity.RESULT_OK;
 
 public class OtrosActivity extends Fragment {
@@ -81,7 +61,6 @@ public class OtrosActivity extends Fragment {
     private final long DELAY = 0;
     int idPictureLados;
     String tipoLlave, descLlave, nivelCombustible, nivelAceite;
-
     String cantAlfombra, cantLlaves, cantGato, cantAlicate, cantLlaveRueda, noBateria;
     sendOtros mListener;
     private static final int TAKE_PICTURE = 1;
@@ -91,6 +70,7 @@ public class OtrosActivity extends Fragment {
     List<String> photoToUpload = new ArrayList<>();
     List<Integer> lado = new ArrayList<>();
     DrawingView mDrawingView;
+    boolean actualizar;
 
     @Override
     public void onAttach(Context context) {
@@ -155,7 +135,23 @@ public class OtrosActivity extends Fragment {
         txtAceite.setText("Nivel -->" + sbAceite.getProgress());
 
         ObtenerDatosOtrosParametros("59,61,62,63,64");
+
         ObtenerTipoLlave();
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            tipoLlave = bundle.getString("LLAVE");
+           // Toast.makeText(getContext(), tipoLlave, Toast.LENGTH_SHORT).show();
+            if (tipoLlave.contains("15")) {
+                RadioButton rb = (RadioButton) rgLLaves.findViewById(R.id.rbLlaveSmart);
+                rb.setChecked(true);
+            } else {
+                RadioButton rb = (RadioButton) rgLLaves.findViewById(R.id.rbLlaveNormal);
+                rb.setChecked(true);
+            }
+        }
+
+
         cameraPhoto = new CameraPhoto(getContext());
 
 
@@ -458,7 +454,6 @@ public class OtrosActivity extends Fragment {
                     }
                 }
                 if (mListener != null) {
-                    System.out.println("fragment==>" + photoToUpload);
                     mListener.sendImageRuta(photoToUpload);
                 }
                 ImageView imageView = (ImageView) layoutLados.findViewById(idPictureLados);
@@ -470,7 +465,7 @@ public class OtrosActivity extends Fragment {
                     e.printStackTrace();
                     Log.d("TAG==>", PhotoPath);
                 }
-                Log.d("TAG==>", PhotoPath);
+
             }
         }
 
@@ -529,7 +524,6 @@ public class OtrosActivity extends Fragment {
             etxtCantidades.setPadding(15, 15, 15, 15);
             layoutCantidades.addView(etxtCantidades);
             final EditText finalEtxtCantidades = etxtCantidades;
-
             etxtCantidades.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

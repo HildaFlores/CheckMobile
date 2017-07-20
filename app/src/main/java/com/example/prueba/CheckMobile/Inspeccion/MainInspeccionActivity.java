@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +38,9 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     private String observaciones;
     private String serieGomas;
     String cantAlfombra, cantLlaves, cantGato, cantAlicate, cantLlaveRueda, noBateria;
+    boolean actualizar = false;
+
+    //Views
     private List<String> descripcionLuces = new ArrayList<>();
     private List<Integer> idLuces = new ArrayList<>();
     private List<String> descAccesorios = new ArrayList<>();
@@ -59,7 +63,8 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs2);
         tabLayout.setupWithViewPager(mViewPager);
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main_inspeccion);
+        setSupportActionBar(toolbar);
         Intent intent = this.getIntent();
         Bundle extra = intent.getExtras();
         if (extra != null) {
@@ -68,49 +73,45 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             chasis = extra.getString("CHASIS");
             idCliente = extra.getString("IDCLIENTE");
         }
-
     }
 
     @Override
     public void onBackPressed() {
-            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainInspeccionActivity.this);
-            alertBuilder.setMessage("¿Está seguro de salir?")
-                    .setCancelable(false)
-                    .setPositiveButton("SI", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainInspeccionActivity.this);
+        alertBuilder.setMessage("¿Está seguro de salir?")
+                .setCancelable(false)
+                .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                            MainInspeccionActivity.this.finish();
-                        }
-                    })
-                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    });
+                        MainInspeccionActivity.this.finish();
+                    }
+                })
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
 
-            AlertDialog alert = alertBuilder.create();
-            alert.setTitle("Advertencia");
-            alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
-            alert.show();
+        AlertDialog alert = alertBuilder.create();
+        alert.setTitle("Advertencia");
+        alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+        alert.show();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.menu_main_guardar, menu);
 
-        getMenuInflater().inflate(R.menu.menu_main_guardar, menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainInspeccionActivity.this);
             alertBuilder.setMessage("¿Está seguro de guardar los datos?")
@@ -136,6 +137,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
             return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -170,6 +172,11 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         }
     }
 
+
+    @Override
+    public void actualizar(boolean update) {
+        this.actualizar = update;
+    }
 
     @Override
     public void OnPassingFecha(String fecha) {
@@ -304,7 +311,6 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     @Override
     public void sendLadoId(List<Integer> lado) {
         this.ladoVehiculo = lado;
-
     }
 
     public class mSectionsPagerAdapterInspeccion extends FragmentPagerAdapter {
@@ -597,13 +603,11 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         @Override
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
-                Log.v("TAG ==> ", response.body());
+
                 if (response.body().toString().equals("200")) {
                     if (!imageRuta.isEmpty()) {
                         guardarVehiculoDocumento();
-                    }
-                    else
-                    {
+                    } else {
                         myDialogProgress dialogProgress = new myDialogProgress();
                         dialogProgress.show(getFragmentManager(), "Inspeccion");
                     }
@@ -637,8 +641,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     ));
                     break;
                 }
-                case 2:
-                {
+                case 2: {
                     documento.add(new VehiculoDocumento(
                             idVehiculo,
                             imageRuta.get(i),
@@ -648,8 +651,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     ));
                     break;
                 }
-                case 3:
-                {
+                case 3: {
                     documento.add(new VehiculoDocumento(
                             idVehiculo,
                             imageRuta.get(i),
@@ -659,8 +661,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     ));
                     break;
                 }
-                case 4:
-                {
+                case 4: {
                     documento.add(new VehiculoDocumento(
                             idVehiculo,
                             imageRuta.get(i),
@@ -670,8 +671,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     ));
                     break;
                 }
-                case 5:
-                {
+                case 5: {
                     documento.add(new VehiculoDocumento(
                             idVehiculo,
                             imageRuta.get(i),
@@ -696,7 +696,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                 if (response.body().toString().equals("200")) {
                     myDialogProgress dialogProgress = new myDialogProgress();
                     dialogProgress.show(getFragmentManager(), "Inspeccion");
-                   }
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
             }
@@ -709,8 +709,6 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
         }
     }
-
-
 
 
 }

@@ -13,9 +13,11 @@
     <color name="backGroundColor">#b2ff59</color>
     <color name="backGroundColor2">#ccff90</color>
     <color name="backGroundColor3">#c5e1a5</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>
 
 
-<!--   <color name="colorPrimary">#3F51B5</color>
+    <!--   <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color> -->

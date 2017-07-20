@@ -68,8 +68,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="25dp">
-
-
         <TextView
             android:id="@+id/txtCondicion"
             android:layout_width="wrap_content"
@@ -108,7 +106,6 @@
             android:textStyle="bold"
             android:textSize="20dp"
             android:paddingRight="20dp"
-
             />
         <Spinner
             android:id="@+id/spinnerMec"
@@ -116,7 +113,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             />
-
 
     </LinearLayout>
 
@@ -133,12 +129,12 @@
             android:textStyle="bold"/>
 
         <EditText
-            android:id="@+id/editTextObervaciones"
+            android:id="@+id/etxtObervaciones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="textMultiLine"
-            android:hint="       observaciones" />
+            android:hint="  observaciones" />
 
 
     </LinearLayout>
@@ -174,14 +170,15 @@
         android:id="@+id/textViewInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right|end"
         android:text="Presione para agregar servicio"
         android:textSize="15dp"
-        android:textStyle="italic"
-        android:layout_gravity="right|end"/>
+        android:textStyle="italic" />
 
     <ListView
         android:id="@+id/listaAddServicios"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="20dp" />
+
 </LinearLayout>

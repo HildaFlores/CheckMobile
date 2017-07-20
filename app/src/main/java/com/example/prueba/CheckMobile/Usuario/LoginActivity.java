@@ -3,6 +3,7 @@ package com.example.prueba.CheckMobile.Usuario;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
@@ -21,7 +22,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,6 +35,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -42,7 +47,10 @@ import java.util.List;
 
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
 import com.example.prueba.CheckMobile.MainActivity;
+import com.example.prueba.CheckMobile.MenuPrincipal.ConfigurationActivity;
 import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterInspeccion;
+import com.example.prueba.CheckMobile.OrdenTrabajo.FiltroProductoActivity;
+import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity;
 import com.example.prueba.CheckMobile.R;
 
 import retrofit2.Call;
@@ -58,14 +66,15 @@ public class LoginActivity extends AppCompatActivity {
     private EditText muserView;
     private EditText mPasswordView;
     private ProgressBar progress;
-    private String idUsuario, nombreUsuario;
-
-
+    private String idUsuario, nombreUsuario, ipservidor, puerto, supervisor;
+    int requestCode = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_login);
+        setSupportActionBar(toolbar);
         // Set up the login form.
         progress = (ProgressBar) findViewById(R.id.progressBarCircle);
         muserView = (EditText) findViewById(R.id.user);
@@ -89,8 +98,6 @@ public class LoginActivity extends AppCompatActivity {
                 String usuario = muserView.getText().toString().toLowerCase();
                 String clave = mPasswordView.getText().toString().toLowerCase();
                 buscarUsuario(usuario, clave);
-
-
             }
         });
 
@@ -108,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     if (usuarioResponse.getResponseCode().equals("200") && usuarioResponse.getRows() > 0) {
                         idUsuario = usuarioResponse.getUsuarios().get(0).getId();
-                        nombreUsuario = usuarioResponse.getUsuarios().get(0).getNombres() + " " +  usuarioResponse.getUsuarios().get(0).getApellidos();
+                        nombreUsuario = usuarioResponse.getUsuarios().get(0).getNombres() + " " + usuarioResponse.getUsuarios().get(0).getApellidos();
                         new AsyncTask_load().execute();
                         progress.setClickable(false);
 
@@ -163,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("IDUSUARIO", idUsuario);
             intent.putExtra("NOMBREUSUARIO", nombreUsuario);
+            finish();
             startActivity(intent);
         }
 
@@ -178,19 +186,40 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (data != null) {
+
+                ipservidor = data.getStringExtra("IP");
+                puerto = data.getStringExtra("PUERTO");
+                supervisor = data.getStringExtra("SUPERVISOR");
+
+            }
+            MainActivity main = new MainActivity();
+            main.ipservidor = ipservidor;
+            main.puerto = puerto;
+        }
+
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-         if (id == R.id.action_salir_login) {
-             finish();
-             return true;
-         }
+        if (id == R.id.action_salir_login) {
+            finish();
+            return true;
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(LoginActivity.this, ConfigurationActivity.class);
+            startActivityForResult(intent, requestCode);
+            return true;
+        }
 
-             return super.onOptionsItemSelected(item);
-         }
+        return super.onOptionsItemSelected(item);
+    }
 
 }
 

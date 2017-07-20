@@ -8,13 +8,11 @@
     tools:context="com.example.prueba.CheckMobile.Inspeccion.ConsultaInspeccionActivity"
     tools:showIn="@layout/activity_consulta_inspeccion">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -252,7 +250,15 @@
                 android:textSize="25dp"
                 android:textStyle="bold" />
 
+            <SeekBar
+                android:id="@+id/seekBarCCombustible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:max="4">
 
+            </SeekBar>
         </LinearLayout>
 
         <LinearLayout
@@ -279,16 +285,16 @@
                 android:textSize="25dp"
                 android:textStyle="bold" />
 
+
             <SeekBar
                 android:id="@+id/seekBarCAceite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:enabled="false"
+                android:visibility="gone"
                 android:max="10">
 
             </SeekBar>
-
 
         </LinearLayout>
 
@@ -296,11 +302,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:padding="20dp"
+            android:paddingTop="20dp"
             android:text="Luces encendidas"
             android:textColor="@color/accent"
             android:textSize="25dp"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/ibBuscarLuces"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:background="@android:color/transparent"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/txtInfoLuces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:text="Presione para agregar luces"
+            android:textSize="15dp"
+            android:textStyle="italic"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:id="@+id/layoutCLuces"
@@ -316,11 +342,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:padding="20dp"
+            android:paddingTop="20dp"
             android:text="Accesorios y/o equipamientos"
             android:textColor="@color/accent"
             android:textSize="25dp"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/ibBuscarAccesorios"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:background="@android:color/transparent"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/txtInfoAccesorios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:text="Presione para agregar accesorios y/o equipamientos"
+            android:textSize="14dp"
+            android:textStyle="italic"
+            android:visibility="gone"/>
 
         <GridLayout
             android:id="@+id/gridAccesorios"
@@ -424,7 +470,7 @@
             android:id="@+id/gridCantidades"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
+            android:columnCount="4"
             android:horizontalSpacing="20dp"
             android:padding="20dp"
             android:verticalSpacing="20dp">
@@ -442,6 +488,34 @@
             android:textSize="25dp"
             android:textStyle="bold" />
 
+        <ImageButton
+            android:id="@+id/ibCamera"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:background="@android:color/transparent"
+            app:srcCompat="@android:drawable/ic_menu_camera"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Presione para tomar foto"
+            android:layout_gravity="right|end"
+            android:textStyle="italic"
+            android:id="@+id/txtMensajeCam"
+            android:visibility="gone"
+            android:textSize="14dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="50dp"
+            android:text="No hay ninguna fotografía de rayones en la inspección"
+            android:visibility="gone"
+            android:textStyle="italic"
+            android:id="@+id/txtMensajeLados"/>
 
         <ListView
             android:id="@+id/gridLadosVehiculo"

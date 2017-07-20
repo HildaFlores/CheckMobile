@@ -26,10 +26,12 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Usuario.LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:clearTaskOnLaunch="true"
+            android:finishOnTaskLaunch ="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -61,7 +63,8 @@
             android:name=".Inspeccion.ConsultaInspeccionActivity"
             android:label="@string/title_activity_consulta_inspeccion"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -70,9 +73,31 @@
             android:name=".OrdenTrabajo.OrdenTrabajoActivity"
             android:label="@string/title_activity_orden_trabajo"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".OrdenTrabajo.FiltroProductoActivity"
-            android:label="Servicios">
+        <activity
+            android:name=".OrdenTrabajo.FiltroProductoActivity"
+            android:label="Servicios" />
+        <activity android:name=".MenuPrincipal.ConfigurationActivity" />
+        <activity
+            android:name=".OrdenTrabajo.ConsultaOrdenTrabajo"
+            android:label="@string/title_activity_consulta_orden_trabajo"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".FullscreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_fullscreen"
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".Actualizaciones.FiltroInspeccionActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".Actualizaciones.FiltroLucesActivity" />
+        <activity android:name=".Actualizaciones.FiltroAccesoriosActivity" />
+        <activity android:name=".Actualizaciones.FiltroOrdenTrabajoActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 

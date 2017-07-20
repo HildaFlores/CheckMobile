@@ -3,7 +3,7 @@
     <string name="title_activity_main">Activity</string>
     <string name="action_settings">Configuraciones</string>
     <string name="Acerca">Acerca de</string>
-    <string name="action_salir">Salir</string>
+    <string name="action_salir">cerrar sesión</string>
     <string name="Section1">Inspecciones</string>
     <string name="Section2">Ordenes de trabajo</string>
     <string name="Section3">Vehiculos</string>
@@ -21,14 +21,25 @@
     <string name="section4Inspeccion">Otros elementos</string>
     <string name="title_activity_consulta_inspeccion">Consulta Inspección</string>
     <string name="title_activity_login">Entrar</string>
+    <string name="version">version 1.0.0</string>
+    <string name="año">©2017-2020 BPS&amp;TEC</string>
 
     <!-- Strings related to login -->
     <string name="prompt_user">Usuario</string>
     <string name="prompt_password">Clave</string>
-    <string name="action_sign_in">Entrar</string>
+    <string name="action_sign_in">Iniciar sesión </string>
     <string name="action_sign_in_short">Entrar</string>
 
 
     <string name="title_activity_orden_trabajo">Orden de Trabajo</string>
+    <string name="title_activity_consulta_orden_trabajo">Orden de trabajo</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="title_activity_fullscreen">Acerca de</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">Check Mobile</string>
+
 
 </resources>

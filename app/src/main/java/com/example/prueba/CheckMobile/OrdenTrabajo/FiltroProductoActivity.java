@@ -36,7 +36,7 @@ public class FiltroProductoActivity extends AppCompatActivity {
         private RecyclerView mServicioList;
         private int NUM_LIST_ITEMS = 0 ;
         MenuItem menuItem;*/
-    //equestCode = 1
+    //requestCode = 1
     android.widget.SearchView buscar;
     ListView listaServicios;
     ArrayList<ProductoServicio> productoServicios = new ArrayList<ProductoServicio>();
@@ -135,8 +135,6 @@ public class FiltroProductoActivity extends AppCompatActivity {
             Log.v("Serv *==>", t.getMessage());
         }
     }
-
-
 
     public class AdapterServicios extends ArrayAdapter<ProductoServicio>{
         private List<ProductoServicio> listaServicios;

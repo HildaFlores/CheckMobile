@@ -15,14 +15,12 @@
         android:layout_marginRight="10dp"
         android:background="#FFFFFF"
         android:id="@+id/searchViewServicios"
-            android:queryHint="Buscar"
+        android:queryHint="Buscar"
         />
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/searchViewServicios"
         android:id="@+id/listaServicios"/>
-
 
 </RelativeLayout>

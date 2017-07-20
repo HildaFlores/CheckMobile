@@ -12,15 +12,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.prueba.CheckMobile.Inspeccion.AdapterInspeccion;
 import com.example.prueba.CheckMobile.Inspeccion.ConsultaInspeccionActivity;
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
@@ -29,18 +25,12 @@ import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.R.attr.id;
-import static android.R.string.no;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Created by Prueba on 26-may-17.
@@ -63,9 +53,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
     private String idCondicion;
     private String idCliente;
     private ArrayList<InspeccionVehiculo> inspecciones = new ArrayList<InspeccionVehiculo>();
-    List<String> list = new ArrayList<>();
     private sendData mListener;
-
 
     @Override
     public void onAttach(Context context) {
@@ -133,7 +121,6 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
         menuInflater.inflate(R.menu.menu_context_inspeccion_action, menu);
     }
 
-
     private void anularInspeccion(String id) {
         Call<String> callAnular = AdapterInspeccion.updateInspeccion(id).setUpdate();
         callAnular.enqueue(new Callback<String>() {
@@ -160,7 +147,6 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
         });
     }
 
-
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(Tab1Inspecciones.this.getContext(), ConsultaInspeccionActivity.class);
@@ -178,6 +164,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
         intent.putExtra("FECHA", fechaInspeccion);
         intent.putExtra("OBSERVACION", observaciones);
         intent.putExtra("SERIEGOMAS", serieGomas);
+        intent.putExtra("CONSULTAR", true);
         startActivity(intent);
     }
 
@@ -198,7 +185,6 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                                 int index2 = textView.getText().toString().indexOf(")");
                                 idInspeccion = Integer.parseInt(textView.getText().toString().substring(index1, index2));
                                 actualizarInspeccion(idInspeccion);
-
 
                             }
                         })
@@ -245,9 +231,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
 
 
                 break;
-
         }
-
     }
 //Cambiar estado de inspeccion a Finalizada
     private void actualizarInspeccion(final int idInspeccion) {
@@ -271,7 +255,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                     }
                     else
                     {
-                        Toast.makeText(getContext(), "Error al general orden", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error al generar orden", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
@@ -300,15 +284,15 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                     callAdapter(inspeccion.getInspecciones());
                 }
             } else {
-                Toast.makeText(getContext(), "Error en el formato de respuesta", Toast.LENGTH_SHORT).show();
-                Log.v("INSPECCION ==>", response.errorBody().toString());
+                Toast.makeText(getContext(), "Error en el formato de respuesta de inspección", Toast.LENGTH_SHORT).show();
+
             }
         }
 
         @Override
         public void onFailure(Call<InspeccionVehiculo> call, Throwable t) {
             Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-            Log.v("Aqui ===>", t.getMessage());
+            Log.v("Aqui ===>", "error: " + t.getMessage());
 
         }
     }

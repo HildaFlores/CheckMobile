@@ -13,39 +13,37 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.prueba.CheckMobile.CondicionPago.AdapterCondicion;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionPago;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionResponse;
-import com.example.prueba.CheckMobile.Inspeccion.AdapterInspeccion;
+import com.example.prueba.CheckMobile.Inspeccion.myDialogProgress;
+import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.RepresentanteVenta.AdapterRepresentante;
-import com.example.prueba.CheckMobile.RepresentanteVenta.RepresentanteService;
 import com.example.prueba.CheckMobile.RepresentanteVenta.RepresentanteVenta;
 import com.example.prueba.CheckMobile.RepresentanteVenta.RepresentanteVentaResponse;
 import com.example.prueba.CheckMobile.TipoTransaccion.AdapterTipoTransaccion;
 import com.example.prueba.CheckMobile.TipoTransaccion.TipoTransaccion;
-import com.example.prueba.CheckMobile.Vehiculo.VehiculoService;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.R.attr.data;
-import static android.text.TextUtils.concat;
-import static java.security.AccessController.getContext;
+import static com.example.prueba.CheckMobile.R.id.layoutServicios;
 
 public class OrdenTrabajoActivity extends AppCompatActivity {
 
@@ -57,17 +55,24 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     TextView txtNombreCliente;
     TextView txtNombreVehiculo;
     EditText editTextObservaciones;
-    EditText fechaOrden;
+    EditText txtfechaOrden;
     Spinner spinnerMecanico;
     Spinner spinnerCondicion;
+    Switch swReemplazo;
+
 
     //mis variables
     int requestCode = 1;
     String idProducto, descProducto, idInspeccion, nombreCliente, nombreVehiculo, idCondicion, idCliente, idMecanico;
-    String idOrden;
+    String idOrden, permiteReemplazo;
     List<String> listaIdProductos = new ArrayList<>();
     List<String> listaDescProductos = new ArrayList<>();
-
+    private boolean permitePiezasReemplazo = false;
+    private boolean actualizar = false;
+    private String fechaOrden;
+    private String observaciones;
+    private String descripcionCondicion;
+    private String nombreMecanico;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +80,10 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_orden_trabajo);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarOrden);
         setSupportActionBar(toolbar);
-        //Inicializacion vistas
-        buscarServicio = (ImageButton) findViewById(R.id.ibBuscarServicio);
-        listaServicios = (ListView) findViewById(R.id.listaAddServicios);
-        txtOrden = (TextView) findViewById(R.id.textViewOrden);
-        txtNombreCliente = (TextView) findViewById(R.id.textViewDatosCliente);
-        txtNombreVehiculo = (TextView) findViewById(R.id.textViewDatosVehiculo);
-        editTextObservaciones = (EditText) findViewById(R.id.editTextObervaciones);
-        spinnerMecanico = (Spinner) findViewById(R.id.spinnerMec);
-        spinnerCondicion = (Spinner) findViewById(R.id.spCondicion2);
-        fechaOrden = (EditText) findViewById(R.id.etxtFechaOrden);
 
+        inicializacionVistas();
+        ObtenerDatosMecanicos("1");
+        ObtenerDatosCondicion();
 
         //obtentiendo datos de intent
         Intent intent = getIntent();
@@ -96,6 +94,35 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
             nombreVehiculo = extra.getString("VEHICULO");
             idCondicion = extra.getString("IDCONDICION");
             idCliente = extra.getString("IDCLIENTE");
+            actualizar = extra.getBoolean("ACTUALIZAR");
+            if (actualizar) {
+                idOrden = extra.getString("ORDEN");
+                nombreCliente = extra.getString("CLIENTE");
+                idCliente = extra.getString("IDCLIENTE");
+                idCondicion = extra.getString("IDCONDICION");
+                fechaOrden = extra.getString("FECHA");
+                observaciones = extra.getString("OBSERVACION");
+                permitePiezasReemplazo = extra.getBoolean("PIEZAS");
+                nombreMecanico = extra.getString("MECANICO");
+                idMecanico = extra.getString("IDMECANICO");
+                descripcionCondicion = extra.getString("CONDICION");
+                llenarOrdenEnc();
+                obtenerOrdenDetalle(idOrden);
+                spinnerMecanico.setSelection(getIndex(spinnerMecanico, nombreMecanico));
+                spinnerCondicion.setSelection(getIndex(spinnerCondicion, descripcionCondicion));
+                if (permitePiezasReemplazo) {
+                    swReemplazo.setChecked(true);
+                    permiteReemplazo = "1";
+                } else {
+                    permiteReemplazo = "0";
+                    swReemplazo.setChecked(false);
+                }
+
+                txtfechaOrden.setEnabled(false);
+            } else {
+                ObtenerSecuencia("OTT");
+            }
+
         }
 
         //Evento click buscar
@@ -107,14 +134,15 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
             }
         });
 
-//Llenando datos de la inspeccion
+        //Llenando datos de encabezado
+        if (actualizar) {
+            txtNombreVehiculo.setVisibility(View.GONE);
+        } else {
+            txtNombreVehiculo.setText("VEHICULO >> " + nombreVehiculo);
+            txtNombreCliente.setText("CLIENTE >> " + nombreCliente);
+        }
 
-
-        txtNombreVehiculo.setText("VEHICULO >> " + nombreVehiculo);
-        txtNombreCliente.setText("CLIENTE >> " + nombreCliente);
-        ObtenerDatosMecanicos("1");
-        ObtenerDatosCondicion();
-        ObtenerSecuencia("OTT");
+        obtenerResultadoPieza();
         //Evento click de la lista para remover los elementos
         listaServicios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -131,6 +159,86 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                 listaServicios.setAdapter(arrayAdapter);
                 arrayAdapter.notifyDataSetChanged();
 
+            }
+        });
+
+    }
+
+    private void inicializacionVistas() {
+        //Inicializacion vistas
+        buscarServicio = (ImageButton) findViewById(R.id.ibBuscarServicio);
+        listaServicios = (ListView) findViewById(R.id.listaAddServicios);
+        txtOrden = (TextView) findViewById(R.id.textViewOrden);
+        txtNombreCliente = (TextView) findViewById(R.id.textViewDatosCliente);
+        txtNombreVehiculo = (TextView) findViewById(R.id.textViewDatosVehiculo);
+        editTextObservaciones = (EditText) findViewById(R.id.etxtObervaciones);
+        spinnerMecanico = (Spinner) findViewById(R.id.spinnerMec);
+        spinnerCondicion = (Spinner) findViewById(R.id.spCondicion2);
+        txtfechaOrden = (EditText) findViewById(R.id.etxtFechaOrden);
+        swReemplazo = (Switch) findViewById(R.id.switchPiezas);
+    }
+
+    private void obtenerOrdenDetalle(String valor) {
+
+
+        Call<OrdenTrabajoDet> callOrden = AdapterOrdenTrabajo.getOrdenDetalle("id_tipo_trans", "OTT", "id_documento", valor).getPedidoDetalle();
+        callOrden.enqueue(new Callback<OrdenTrabajoDet>() {
+            @Override
+            public void onResponse(Call<OrdenTrabajoDet> call, Response<OrdenTrabajoDet> response) {
+                if (response.isSuccessful()) {
+                    OrdenTrabajoDetResponse ordenResponse = response.body();
+                    if (!ordenResponse.getOrdenes().isEmpty()) {
+                        llenarFormularioOrdenDetalle(ordenResponse.getOrdenes());
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de orden", Toast.LENGTH_SHORT).show();
+                    Log.v("INSPECCION ==>", response.errorBody().toString());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OrdenTrabajoDet> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.v("Aqui ===>", t.getMessage());
+            }
+        });
+    }
+
+    private void llenarFormularioOrdenDetalle(ArrayList<OrdenTrabajoDet> ordenes) {
+
+        for (OrdenTrabajoDet var : ordenes) {
+            listaDescProductos.add(var.getDescripcion_producto());
+            listaIdProductos.add(var.getId_producto());
+        }
+        arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, listaDescProductos);
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_style);
+        listaServicios.setAdapter(arrayAdapter);
+    }
+
+    private void llenarOrdenEnc() {
+
+        txtOrden.setText("OTT-" + idOrden);
+        txtfechaOrden.setText(fechaOrden);
+        txtNombreCliente.setText("Cliente >> " + nombreCliente.toUpperCase());
+        editTextObservaciones.setText(observaciones);
+        if (!permitePiezasReemplazo) {
+            swReemplazo.setChecked(true);
+        }
+
+    }
+
+    private void obtenerResultadoPieza() {
+
+        swReemplazo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    permiteReemplazo = "1";
+                } else {
+                    permiteReemplazo = "0";
+                }
             }
         });
 
@@ -193,14 +301,12 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                 }
             }
 
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
     }
-
 
     private void ObtenerDatosMecanicos(String valor) {
         Call<RepresentanteVenta> callMecancio = AdapterRepresentante.getApiService("mecanico", valor).getMecanico();
@@ -246,7 +352,6 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     @Override
@@ -263,7 +368,6 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                     if (listaIdProductos.contains(idProducto) && listaDescProductos.contains(descProducto)) {
                         Toast.makeText(getApplicationContext(), "Este servicio ya fue agregado", Toast.LENGTH_SHORT).show();
                     } else {
-
                         listaIdProductos.add(idProducto);
                         listaDescProductos.add(descProducto);
                         arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, listaDescProductos);
@@ -272,7 +376,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                         arrayAdapter.notifyDataSetChanged();
                     }
                 }
-                Log.d("ORDEN==>", listaDescProductos.toString());
+
 
             }
         }
@@ -281,8 +385,11 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
-        getMenuInflater().inflate(R.menu.menu_main_guardar, menu);
+        if (actualizar) {
+            getMenuInflater().inflate(R.menu.menu_main_actualizar, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_main_guardar, menu);
+        }
         return true;
     }
 
@@ -313,68 +420,177 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
             alert.show();
 
             return true;
+        } else if (id == R.id.action_update) {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(OrdenTrabajoActivity.this);
+            alertBuilder.setMessage("¿Está seguro de actualizar los datos?")
+                    .setCancelable(false)
+                    .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActualizarOrdenTrabajo();
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+            AlertDialog alert = alertBuilder.create();
+            alert.setTitle("Actualizar");
+            alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+            alert.show();
+
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void GuardarOrdenTrabajo() {
+    private void ActualizarOrdenTrabajo() {
         ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
         ordenes.add(new OrdenTrabajoEnc(
-                idCliente,
-                nombreCliente,
-                null,
-                "1",
-                "1",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
+                idOrden,
                 editTextObservaciones.getText().toString().toUpperCase(),
                 idCondicion,
-                "RD",
                 idMecanico,
-                fechaOrden.getText().toString(),
-                "1",
-                idInspeccion
+                txtfechaOrden.getText().toString(),
+                permiteReemplazo
         ));
 
-        Call<String> callOrden = AdapterOrdenTrabajo.setApiService().setOrdenTrabajo(ordenes);
-        callOrden.enqueue(new Callback<String>() {
+        Call<String> callUpdate = AdapterOrdenTrabajo.updateOrdenTrabajo().setupdateOrden(ordenes);
+        callUpdate.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    String[] p = response.body().split(",");
-                    idOrden = p[1];
-                    if (p[0].equals("200")) {
-                        Toast.makeText(getApplicationContext(), "Orden guardada con éxito!", Toast.LENGTH_SHORT).show();
-                       // guardarOrdenDetalle();
-                    }
-                    else
-                    {
+                    if (response.body().toString().equals("200")) {
+                        guardarOrdenDetalle();
+                    } else {
                         Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else
-                {
+                } else {
                     Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
+
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error ", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(getApplicationContext(), "Error " + " " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("ORDEN==>", " " + t.getMessage());
             }
         });
 
+
+    }
+
+    private void GuardarOrdenTrabajo() {
+        if (idCliente != null && nombreCliente != null && idCondicion != null && idMecanico != null && idInspeccion != null && txtfechaOrden.getText().toString() != null) {
+
+            ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
+            ordenes.add(new OrdenTrabajoEnc(
+                    idCliente,
+                    nombreCliente,
+                    null,
+                    "1",
+                    "1",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    editTextObservaciones.getText().toString().toUpperCase(),
+                    idCondicion,
+                    "RD",
+                    idMecanico,
+                    txtfechaOrden.getText().toString(),
+                    "1",
+                    idInspeccion,
+                    permiteReemplazo
+            ));
+
+            Call<String> callOrden = AdapterOrdenTrabajo.setApiService().setOrdenTrabajo(ordenes);
+            callOrden.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()) {
+                        String[] p = response.body().split(",");
+                        idOrden = p[1];
+                        if (p[0].equals("200")) {
+                            guardarOrdenDetalle();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Error " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "Faltan datos por llenar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void guardarOrdenDetalle() {
+        if (listaIdProductos.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Debe seleccionar minimo un servicio", Toast.LENGTH_SHORT).show();
+        } else {
+            ArrayList<OrdenTrabajoDet> ordenes = new ArrayList<OrdenTrabajoDet>();
 
+            for (int i = 0; i < listaIdProductos.size(); i++) {
+                ordenes.add(new OrdenTrabajoDet(
+                        idOrden,
+                        listaIdProductos.get(i),
+                        "1",
+                        "ITBIS",
+                        listaDescProductos.get(i),
+                        "1",
+                        "0",
+                        "1",
+                        "0",
+                        "1",
+                        "0.5",
+                        "1",
+                        editTextObservaciones.getText().toString().toUpperCase(),
+                        "1",
+                        "1",
+                        "1",
+                        "1"
+                ));
+            }
 
+            Call<String> callOrdenDet = AdapterOrdenTrabajo.insertOrdendDetalle().setPedidoDetalle(ordenes);
+            callOrdenDet.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()) {
+                        String[] p = response.body().split(",");
+                        if (p[0].equals("200")) {
+                            myDialogProgress dialogProgress = new myDialogProgress();
+                            dialogProgress.show(getFragmentManager(), "Orden Trabajo");
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
 
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Error " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d("ORDEN==>", " " + t.getMessage());
+                }
+            });
+        }
     }
 
 
@@ -407,10 +623,9 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     private class TransaccionCallback implements retrofit2.Callback<ArrayList<TipoTransaccion>> {
         @Override
         public void onResponse(Call<ArrayList<TipoTransaccion>> call, Response<ArrayList<TipoTransaccion>> response) {
-            if (response.isSuccessful())
-            {
+            if (response.isSuccessful()) {
                 ArrayList<TipoTransaccion> tipo = response.body();
-                txtOrden.setText( "(" + tipo.get(0).getId().toUpperCase() + " - " + String.valueOf(tipo.get(0).getSecuencia()) + ")");
+                txtOrden.setText("(" + tipo.get(0).getId().toUpperCase() + " - " + String.valueOf(tipo.get(0).getSecuencia()) + ")");
             }
         }
 

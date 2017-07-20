@@ -62,7 +62,6 @@ public class InspeccionAccesoriosActivity extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         View rootView = inflater.inflate(R.layout.activity_inspeccion_accesorios, container, false);
         lvAccesorios = (ListView) rootView.findViewById(R.id.listaAccesorios);
         OntenerDatosAccesorios("60");

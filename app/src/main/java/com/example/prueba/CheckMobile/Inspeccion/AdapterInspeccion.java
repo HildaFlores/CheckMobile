@@ -2,6 +2,7 @@ package com.example.prueba.CheckMobile.Inspeccion;
 
 import com.example.prueba.CheckMobile.Cliente.ClienteService;
 import com.example.prueba.CheckMobile.MainActivity;
+import com.example.prueba.CheckMobile.OrdenTrabajo.UpdateOrdenService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -89,6 +90,39 @@ public class AdapterInspeccion {
                     .baseUrl(main.getBaseUrl())
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(httpClient.build()) //<- using the log level
+                    .build();
+            apiService = retrofit.create(com.example.prueba.CheckMobile.Inspeccion.InspeccionService.class);
+
+        }
+
+        return apiService;
+    }
+
+    public static InspeccionService getApiService(String parametro, String valor) {
+        apiService = null;
+        //Creating the interceptor , and setting the log level
+        MainActivity main = new MainActivity();
+        final String parametroFormated = main.formatearParametro(parametro, valor);
+        OkHttpClient.Builder httpClient2 = main.httpCliente();
+        httpClient2.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request original = chain.request();
+
+                RequestBody requestBody = RequestBody.create(JSON, parametroFormated);
+
+                Request request = original.newBuilder()
+                        .post(requestBody)
+                        .build();
+
+                return chain.proceed(request);
+            }
+        });
+        if (apiService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(main.getBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClient2.build()) //<- using the log level
                     .build();
             apiService = retrofit.create(com.example.prueba.CheckMobile.Inspeccion.InspeccionService.class);
 
@@ -209,5 +243,27 @@ public class AdapterInspeccion {
         }
         return updateService;
 
+    }
+
+
+    public static updateInspeccionService setUpdateInspeccionVeh() {
+
+        MainActivity main = new MainActivity();
+        OkHttpClient.Builder httpClient = main.httpCliente();
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(main.getBaseUrl())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(httpClient.build())
+                .build();
+
+
+        updateService = retrofit.create(com.example.prueba.CheckMobile.Inspeccion.updateInspeccionService.class);
+
+        return updateService;
     }
 }

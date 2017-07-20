@@ -72,9 +72,13 @@ public class InspeccionGeneralActivity extends Fragment {
     private final long DELAY = 0;
     String idCliente, idVehiculo, NombreVehiculo, NombreCliente, chasis, referencia;
     String fecha, kilo, moto, serie, notas;
-    List<String> idRespuesta;
-    List<String> descAlfrombra;
+    List<String> idRespuesta = new ArrayList<>();
+    List<String> descAlfrombra = new ArrayList<>();
     private passingData mListener;
+    boolean actualizar = false;
+    List<String> listaDescripcion = new ArrayList<>();
+    List<Integer> listaId = new ArrayList<>();
+
 
     @Override
     public void onAttach(Context context) {
@@ -93,6 +97,8 @@ public class InspeccionGeneralActivity extends Fragment {
     }
 
     public interface passingData {
+        void actualizar(boolean update);
+
         void OnPassingFecha(String fecha);
 
         void OnPassinKilo(String kilometraje);
@@ -103,9 +109,9 @@ public class InspeccionGeneralActivity extends Fragment {
 
         void OnpassingObservaciones(String observaciones);
 
-        void OnpassingIdRespuesta (List<String> idRespuesta);
+        void OnpassingIdRespuesta(List<String> idRespuesta);
 
-        void OnpassingDescAlfrombra (List<String> descAlfrombra);
+        void OnpassingDescAlfrombra(List<String> descAlfrombra);
     }
 
 
@@ -129,7 +135,6 @@ public class InspeccionGeneralActivity extends Fragment {
         // mServicioList = (RecyclerView) rootView.findViewById(R.id.rc_servicios);
         //obtenerDatosServicios("4");
 
-        obtenerProximaSecuencia("IV");
 
         Intent intent = getActivity().getIntent();
         Bundle extra = intent.getExtras();
@@ -140,9 +145,13 @@ public class InspeccionGeneralActivity extends Fragment {
             NombreVehiculo = extra.getString("VEHICULO");
             referencia = extra.getString("REFERENCIA");
             chasis = extra.getString("CHASIS");
+            actualizar = extra.getBoolean("ACTUALIZAR");
 
             cliente.setText("CLIENTE  >> " + "(" + idCliente + ")" + NombreCliente);
             vehiculo.setText("VEHICULO >> " + "(" + idVehiculo + ")" + NombreVehiculo);
+
+                obtenerProximaSecuencia("IV");
+
         }
 
         Calendar c = Calendar.getInstance();
@@ -169,17 +178,13 @@ public class InspeccionGeneralActivity extends Fragment {
         radio1.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                switch (i)
-                {
-                    case R.id.rbBien:
-                    {
+                switch (i) {
+                    case R.id.rbBien: {
                         idRespuesta.add("9");
                         descAlfrombra.add("Condicion Alfrombra");
 
-                        for (int j = 0; j<idRespuesta.size();j++)
-                        {
-                            if (idRespuesta.get(j).equals("12"))
-                            {
+                        for (int j = 0; j < idRespuesta.size(); j++) {
+                            if (idRespuesta.get(j).equals("12")) {
                                 idRespuesta.remove(j);
                                 descAlfrombra.remove(j);
                             }
@@ -192,15 +197,12 @@ public class InspeccionGeneralActivity extends Fragment {
                         }
                         break;
                     }
-                    case R.id.rbNoBien:
-                    {
+                    case R.id.rbNoBien: {
                         idRespuesta.add("12");
                         descAlfrombra.add("Condicion Alfrombra");
 
-                        for (int j = 0; j<idRespuesta.size();j++)
-                        {
-                            if (idRespuesta.get(j).equals("9"))
-                            {
+                        for (int j = 0; j < idRespuesta.size(); j++) {
+                            if (idRespuesta.get(j).equals("9")) {
                                 idRespuesta.remove(j);
                                 descAlfrombra.remove(j);
                             }
@@ -219,16 +221,12 @@ public class InspeccionGeneralActivity extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
 
-                switch (i)
-                {
-                    case R.id.rbGenuina:
-                    {
+                switch (i) {
+                    case R.id.rbGenuina: {
                         idRespuesta.add("10");
                         descAlfrombra.add("Condicion Alfrombra");
-                        for (int j = 0; j<idRespuesta.size();j++)
-                        {
-                            if (idRespuesta.get(j).equals("13"))
-                            {
+                        for (int j = 0; j < idRespuesta.size(); j++) {
+                            if (idRespuesta.get(j).equals("13")) {
                                 idRespuesta.remove(j);
                                 descAlfrombra.remove(j);
                             }
@@ -241,15 +239,12 @@ public class InspeccionGeneralActivity extends Fragment {
                         }
                         break;
                     }
-                    case R.id.rbNoGenuina:
-                    {
+                    case R.id.rbNoGenuina: {
                         idRespuesta.add("13");
                         descAlfrombra.add("Condicion Alfrombra");
 
-                        for (int j = 0; j<idRespuesta.size();j++)
-                        {
-                            if (idRespuesta.get(j).equals("10"))
-                            {
+                        for (int j = 0; j < idRespuesta.size(); j++) {
+                            if (idRespuesta.get(j).equals("10")) {
                                 idRespuesta.remove(j);
                                 descAlfrombra.remove(j);
                             }
@@ -270,17 +265,13 @@ public class InspeccionGeneralActivity extends Fragment {
         radio3.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                switch (i)
-                {
-                    case R.id.rbSoloUna:
-                    {
+                switch (i) {
+                    case R.id.rbSoloUna: {
                         idRespuesta.add("11");
                         descAlfrombra.add("Condicion Alfrombra");
 
-                        for (int j = 0; j<idRespuesta.size();j++)
-                        {
-                            if (idRespuesta.get(j).equals("14"))
-                            {
+                        for (int j = 0; j < idRespuesta.size(); j++) {
+                            if (idRespuesta.get(j).equals("14")) {
                                 idRespuesta.remove(j);
                                 descAlfrombra.remove(j);
                             }
@@ -294,15 +285,12 @@ public class InspeccionGeneralActivity extends Fragment {
                         }
                         break;
                     }
-                    case R.id.rbSDosOMas:
-                    {
+                    case R.id.rbDosOMas: {
                         idRespuesta.add("14");
                         descAlfrombra.add("Condicion Alfrombra");
 
-                        for (int j = 0; j<idRespuesta.size();j++)
-                        {
-                            if (idRespuesta.get(j).equals("11"))
-                            {
+                        for (int j = 0; j < idRespuesta.size(); j++) {
+                            if (idRespuesta.get(j).equals("11")) {
                                 idRespuesta.remove(j);
                                 descAlfrombra.remove(j);
                             }
@@ -550,8 +538,7 @@ public class InspeccionGeneralActivity extends Fragment {
     private class TransaccionCallback implements retrofit2.Callback<ArrayList<TipoTransaccion>> {
         @Override
         public void onResponse(Call<ArrayList<TipoTransaccion>> call, Response<ArrayList<TipoTransaccion>> response) {
-            if (response.isSuccessful())
-            {
+            if (response.isSuccessful()) {
                 ArrayList<TipoTransaccion> tipo = response.body();
                 idInspeccion.setText(tipo.get(0).getId().toUpperCase() + " - " + String.valueOf(tipo.get(0).getSecuencia()));
 
@@ -560,12 +547,9 @@ public class InspeccionGeneralActivity extends Fragment {
 
         @Override
         public void onFailure(Call<ArrayList<TipoTransaccion>> call, Throwable t) {
-                    Toast.makeText(getContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
 
 
 }

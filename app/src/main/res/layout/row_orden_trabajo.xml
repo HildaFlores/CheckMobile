@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@android:style/Widget.Button.Inset"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border"
+    android:orientation="vertical"
+    android:padding="10sp">
+
+
+    <TextView
+        android:id="@+id/txtRowOrden0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center"
+        android:fontFamily="monospace"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        tools:text="#42" />
+
+    <TextView
+        android:id="@+id/txtRowOrden1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="monospace"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        tools:text="#42" />
+
+
+</LinearLayout>

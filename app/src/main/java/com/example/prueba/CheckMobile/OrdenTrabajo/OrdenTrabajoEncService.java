@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.POST;
 import retrofit2.http.PUT;
 
 /**
@@ -15,4 +16,7 @@ public interface OrdenTrabajoEncService {
 
     @PUT("pedidoEnc")
     Call<String> setOrdenTrabajo(@Body ArrayList<OrdenTrabajoEnc> ordenes);
+
+    @POST("pedidoEnc")
+    Call<OrdenTrabajoEnc> getOrdenTrabajo();
 }

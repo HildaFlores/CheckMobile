@@ -33,6 +33,7 @@ public class VehiculoDocumento extends VehiculoDocumentoResponse {
                 ", id_documento='" + id_documento + '\'' +
                 ", nota='" + nota + '\'' +
                 ", estado='" + estado + '\'' +
+                ", id_lado='" + id_lado + '\'' +
                 '}';
     }
 
