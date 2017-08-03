@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.example.prueba.CheckMobile.Utils.DashBoardInspeccionActivity"
+    >
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:background="#bdbdbd">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarDashBoard"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:titleTextColor="@color/secondary_text"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingTop="10dp"
+                android:textSize="20dp"
+                android:id="@+id/txtFechaInicial"
+                android:textColor="#1b5e20" />
+
+           <ImageButton
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:src="@drawable/icon_date"
+               android:background="@android:color/transparent"
+               android:layout_gravity="center_vertical"
+               android:padding="@dimen/activity_horizontal_margin"
+               android:id="@+id/ibFechaInicial"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:textSize="20dp"
+                android:text="-"
+                android:textColor="#1b5e20" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingTop="10dp"
+                android:textSize="20dp"
+                android:id="@+id/txtFechaFinal"
+                android:textColor="#1b5e20" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_date"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:id="@+id/ibFechaFinal"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:gravity="center_horizontal"
+            android:text="Inspecciones"
+            android:textColor="#1b5e20"
+            android:textSize="35dp" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/idPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="425dp">
+
+        </com.github.mikephil.charting.charts.PieChart>
+
+
+    </LinearLayout>
+
+    <include layout="@layout/content_dash_board" />
+
+</android.support.design.widget.CoordinatorLayout>

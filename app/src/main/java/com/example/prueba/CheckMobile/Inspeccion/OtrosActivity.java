@@ -29,6 +29,7 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.prueba.CheckMobile.OtrosParametros.AdapterOtrosParametros;
 import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametros;
 import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametrosResponse;
@@ -44,9 +45,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import retrofit2.Call;
 import retrofit2.Response;
+
 import static android.app.Activity.RESULT_OK;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_CANTIDAD;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_CONDICION_ALFOMBRA;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_CONDICION_ENTRADA;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_LADOS;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_LLAVE;
 
 public class OtrosActivity extends Fragment {
     GridLayout layoutCantidades;
@@ -134,14 +142,18 @@ public class OtrosActivity extends Fragment {
         txtSeekBar.setText("Nivel --> " + sbCombustible.getProgress() + "/" + sbCombustible.getMax());
         txtAceite.setText("Nivel -->" + sbAceite.getProgress());
 
-        ObtenerDatosOtrosParametros("59,61,62,63,64");
+        ObtenerDatosOtrosParametros(KEY_LISTA_PARAM_LLAVE + "," +
+                KEY_LISTA_PARAM_LADOS + "," +
+                KEY_LISTA_PARAM_CANTIDAD + "," +
+                KEY_LISTA_PARAM_CONDICION_ALFOMBRA + "," +
+                KEY_LISTA_PARAM_CONDICION_ENTRADA);
 
         ObtenerTipoLlave();
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             tipoLlave = bundle.getString("LLAVE");
-           // Toast.makeText(getContext(), tipoLlave, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getContext(), tipoLlave, Toast.LENGTH_SHORT).show();
             if (tipoLlave.contains("15")) {
                 RadioButton rb = (RadioButton) rgLLaves.findViewById(R.id.rbLlaveSmart);
                 rb.setChecked(true);
@@ -332,24 +344,24 @@ public class OtrosActivity extends Fragment {
         List<OtrosParametros> llaves = new ArrayList<>();
 
         for (OtrosParametros varOtros : otrosParametros) {
-            switch (Integer.parseInt(varOtros.getId())) {
-                case 59: {
+            switch (varOtros.getId()) {
+                case KEY_LISTA_PARAM_LLAVE: {
                     llaves.add(varOtros);
                     break;
                 }
-                case 61: {
+                case KEY_LISTA_PARAM_LADOS: {
                     lados.add(varOtros);
                     break;
                 }
-                case 62: {
+                case KEY_LISTA_PARAM_CANTIDAD: {
                     cantidades.add(varOtros);
                     break;
                 }
-                case 63: {
+                case KEY_LISTA_PARAM_CONDICION_ALFOMBRA: {
                     condicion.add(varOtros);
                     break;
                 }
-                case 64: {
+                case KEY_LISTA_PARAM_CONDICION_ENTRADA: {
                     condicionEntrada.add(varOtros);
                     break;
                 }

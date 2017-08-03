@@ -49,6 +49,8 @@ public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse {
     private String permite_pieza_reemplazo;
     private String nombre_mecanico;
     private String condicion;
+    private int kilometraje;
+
 
 
     public OrdenTrabajoEnc(String cliente, String nombreCliente, String apellidosCte, String montoBruto, String montoNeto, String porcDescuento, String montoDesc, String montoImpuestos, String montoGravado, String montoExento, String notas, String idCondicion, String idMoneda, String idMecanico, String fechaPedido, String idSupervisor, String id_inspeccion, String permite_pieza_reemplazo) {
@@ -477,5 +479,13 @@ public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse {
 
     public void setCondicion(String condicion) {
         this.condicion = condicion;
+    }
+
+    public int getKilometraje() {
+        return kilometraje;
+    }
+
+    public void setKilometraje(int kilometraje) {
+        this.kilometraje = kilometraje;
     }
 }

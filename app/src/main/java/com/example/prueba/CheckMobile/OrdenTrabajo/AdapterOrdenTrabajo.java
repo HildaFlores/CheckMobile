@@ -173,6 +173,43 @@ public class AdapterOrdenTrabajo {
         return apiServiceDetalle;
     }
 
+
+
+    public static OrdenTrabajoEncService getApiServiceFecha(String parametro1, String valo1,String parametro2, String valo2,String parametro3, String valo3)
+    {
+        apiService = null;
+        MainActivity main = new MainActivity();
+        final String parametroFormated = main.formatearParametro(parametro1, valo1, parametro2, valo2,parametro3, valo3);
+
+        OkHttpClient.Builder httpClient = main.httpCliente();
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Interceptor.Chain chain) throws IOException {
+                Request original = chain.request();
+
+                RequestBody requestBody = RequestBody.create(JSON, parametroFormated);
+
+                Request request = original.newBuilder()
+                        .post(requestBody)
+                        .build();
+
+                return chain.proceed(request);
+            }
+        });
+
+        if (apiService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(main.getBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClient.build()) //<- using the log level
+                    .build();
+            apiService = retrofit.create(com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoEncService.class);
+
+        }
+        return apiService;
+    }
+
+
     public static UpdateOrdenService updateOrdenTrabajo() {
 
         MainActivity main = new MainActivity();

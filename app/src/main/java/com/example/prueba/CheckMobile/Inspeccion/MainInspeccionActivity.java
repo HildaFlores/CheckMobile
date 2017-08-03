@@ -1,8 +1,12 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,28 +19,52 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.example.prueba.CheckMobile.R;
+import com.example.prueba.CheckMobile.Vehiculo.*;
 import com.example.prueba.CheckMobile.VehiculoDocumento.AdapterVehiculoDocumento;
 import com.example.prueba.CheckMobile.VehiculoDocumento.VehiculoDocumento;
-
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Response;
+import static com.example.prueba.CheckMobile.Utils.Constantes.*;
 
 public class MainInspeccionActivity extends AppCompatActivity implements InspeccionGeneralActivity.passingData, InspeccionLucesActivity.sendData, InspeccionAccesoriosActivity.sendAccesorios, OtrosActivity.sendOtros {
 
     private mSectionsPagerAdapterInspeccion mSectionsPagerAdapterInspeccion;
     private ViewPager mViewPager;
-    String idVehiculo, chasis, referencia, idCliente, idInspeccion;
+    String idVehiculo, chasis, referencia, idCliente, idInspeccion, nombreCliente, nombreVehiculo;
     String tipoLlave, descLlave, nivelCombustible, nivelAceite;
     private String motor;
     private String kilometraje;
     private String fecha;
     private String observaciones;
     private String serieGomas;
+    private String placa;
+    private String color;
+    private String documentoIdentidad;
+    private String celular;
+    private String telefono;
+    private String condicionAlfombra1;
+    private String condicionAlfombra2;
+    private String condicionAlfombra3;
     String cantAlfombra, cantLlaves, cantGato, cantAlicate, cantLlaveRueda, noBateria;
     boolean actualizar = false;
 
@@ -49,6 +77,9 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     private List<String> descAlfrombra = new ArrayList<>();
     private List<String> imageRuta = new ArrayList<>();
     private List<Integer> ladoVehiculo = new ArrayList<>();
+
+    private static final String NOMBRE_CARPETA_APP = "proyecto.com.demoPdf";
+    private static final String GENERADOS = "MisArchivos";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +103,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             referencia = extra.getString("REFERENCIA");
             chasis = extra.getString("CHASIS");
             idCliente = extra.getString("IDCLIENTE");
+            nombreCliente = extra.getString("NOMBRECLIENTE");
         }
     }
 
@@ -85,6 +117,9 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         MainInspeccionActivity.this.finish();
+                        Intent intent = new Intent(MainInspeccionActivity.this, VehiculoActivity.class);
+                        startActivity(intent);
+
                     }
                 })
                 .setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -103,7 +138,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.menu_main_guardar, menu);
+        getMenuInflater().inflate(R.menu.menu_main_guardar, menu);
 
 
         return true;
@@ -136,10 +171,40 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             alert.show();
 
             return true;
+        } else if (id == R.id.action_ver) {
+            generarPdfWithImage();
         }
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void generarPdfWithImage() {
+
+        Document doc = new Document();
+        try {
+            PdfWriter.getInstance(doc, new FileOutputStream("ImageDemo.pdf"));
+            doc.open();
+
+            // Creating image by file name
+            String filename = "other-sample/src/main/resources/java.gif";
+            Image image = Image.getInstance(filename);
+            doc.add(image);
+
+            // The following line to prevent the "Server returned
+            // HTTP response code: 403" error.
+            System.setProperty("http.agent", "Chrome");
+
+            // Creating image from a URL
+            String url = "/storage/sdcard0/Pictures/JPEG_20170703_170334_778350350.jpg";
+            image = Image.getInstance(url);
+            doc.add(image);
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            doc.close();
+        }
+
     }
 
     private void guardarInspeccionVehiculo() {
@@ -223,6 +288,58 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 //        Log.d("TAG", "Activity ==> " + descAlfrombra);
 
     }
+
+    @Override
+    public void OnpassingNombreVeh(String nombre) {
+        this.nombreVehiculo = nombre;
+
+    }
+
+    @Override
+    public void OnpassingNomcreCte(String nombre) {
+        this.nombreCliente = nombre;
+    }
+
+    @Override
+    public void OnpassingPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    @Override
+    public void OnpassingColor(String color) {
+        this.color = color;
+    }
+
+    @Override
+    public void OnpassingDocIdentidad(String docIdentidad) {
+        this.documentoIdentidad = docIdentidad;
+    }
+
+    @Override
+    public void OnpassingCelular(String celular) {
+        this.celular = celular;
+    }
+
+    @Override
+    public void OnpassingTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    @Override
+    public void OnpassingCondicion1(String alfombra1) {
+        this.condicionAlfombra1 = alfombra1;
+    }
+
+    @Override
+    public void OnpassingCondicion2(String alfombra2) {
+        this.condicionAlfombra2 = alfombra2;
+    }
+
+    @Override
+    public void OnpassingCondicion3(String alfombra3) {
+        this.condicionAlfombra3 = alfombra3;
+    }
+
 
     @Override
     public void sendIdLuces(List<Integer> id) {
@@ -375,7 +492,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
                 String[] p = response.body().toString().split(",");
-                if (p[0].equals("200")) {
+                if (p[0].equals(RESPONSE_CODE_OK)) {
                     idInspeccion = p[1];
                     ArrayList<InspeccionVehiculoDetalle> inspeccionDetalle = new ArrayList<InspeccionVehiculoDetalle>();
                     for (int i = 0; i < idLuces.size(); i++) {
@@ -385,7 +502,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                 String.valueOf(idLuces.get(i)),
                                 descripcionLuces.get(i),
                                 "1",
-                                "58"
+                                KEY_LISTA_PARAM_LUZ
                         ));
                     }
 
@@ -397,7 +514,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                 String.valueOf(idAccesorios.get(j)),
                                 descAccesorios.get(j),
                                 "1",
-                                "60"
+                                KEY_LISTA_PARAM_GENERALES
                         ));
                     }
 
@@ -409,7 +526,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                 String.valueOf(j),
                                 descAlfrombra.get(j),
                                 idRespuesta.get(j),
-                                "63"
+                                KEY_LISTA_PARAM_CONDICION_ALFOMBRA
                         ));
                     }
 
@@ -422,7 +539,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                     tipoLlave,
                                     descLlave,
                                     "15",
-                                    "59"
+                                    KEY_LISTA_PARAM_LLAVE
                             ));
                             break;
                         }
@@ -433,7 +550,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                     tipoLlave,
                                     descLlave,
                                     "16",
-                                    "59"
+                                    KEY_LISTA_PARAM_LLAVE
                             ));
                         }
                     }
@@ -447,7 +564,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                     "1",
                                     "Nivel Combustible",
                                     "6",
-                                    "64"
+                                    KEY_LISTA_PARAM_CONDICION_ENTRADA
                             ));
                             break;
                         }
@@ -458,7 +575,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                     "1",
                                     "Nivel Combustible",
                                     "3",
-                                    "64"
+                                    KEY_LISTA_PARAM_CONDICION_ENTRADA
                             ));
                             break;
                         }
@@ -469,7 +586,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                     "1",
                                     "Nivel Combustible",
                                     "4",
-                                    "64"
+                                    KEY_LISTA_PARAM_CONDICION_ENTRADA
                             ));
                             break;
                         }
@@ -480,7 +597,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                     "1",
                                     "Nivel Combustible",
                                     "5",
-                                    "64"
+                                    KEY_LISTA_PARAM_CONDICION_ENTRADA
                             ));
                             break;
                         }
@@ -492,7 +609,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                                     "1",
                                     "Nivel Combustible",
                                     "8",
-                                    "64"
+                                    KEY_LISTA_PARAM_CONDICION_ENTRADA
                             ));
                             break;
                         }
@@ -505,7 +622,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                             "2",
                             "Nivel Aceite",
                             "22",
-                            "64",
+                            KEY_LISTA_PARAM_CONDICION_ENTRADA,
                             nivelAceite
 
                     ));
@@ -517,7 +634,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                             "1",
                             "Cantidad Alfombra",
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantAlfombra
 
                     ));
@@ -528,7 +645,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                             "2",
                             "Cantidad Llaves",
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantLlaves
 
                     ));
@@ -539,7 +656,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                             "3",
                             "Cantidad Gato",
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantGato
 
                     ));
@@ -550,7 +667,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                             "4",
                             "Cantidad Alicate",
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantAlicate
 
                     ));
@@ -561,7 +678,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                             "5",
                             "Cantidad Llave rueda",
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantLlaveRueda
 
                     ));
@@ -572,7 +689,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                             "6",
                             "Numero de Bateria",
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             noBateria
 
                     ));
@@ -604,12 +721,13 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
 
-                if (response.body().toString().equals("200")) {
+                if (response.body().toString().equals(RESPONSE_CODE_OK)) {
                     if (!imageRuta.isEmpty()) {
                         guardarVehiculoDocumento();
                     } else {
                         myDialogProgress dialogProgress = new myDialogProgress();
                         dialogProgress.show(getFragmentManager(), "Inspeccion");
+                         generarPdfOnClick();
                     }
                 }
             } else {
@@ -693,9 +811,10 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         @Override
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
-                if (response.body().toString().equals("200")) {
+                if (response.body().toString().equals(RESPONSE_CODE_OK)) {
                     myDialogProgress dialogProgress = new myDialogProgress();
                     dialogProgress.show(getFragmentManager(), "Inspeccion");
+                    generarPdfOnClick();
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
@@ -707,6 +826,305 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             Log.v("Error insercion ** ", t.getMessage());
             Toast.makeText(getApplicationContext(), t.getMessage() + " Error al insertar Inspeccion", Toast.LENGTH_SHORT).show();
 
+        }
+    }
+
+    public void generarPdfOnClick() {
+        String NOMBRE_ARCHIVO = "MiArchivoPDF.pdf";
+        String tarjetaSD = Environment.getExternalStorageDirectory().toString();
+        Document document = new Document(PageSize.LETTER);
+        int index = nombreVehiculo.indexOf("(");
+        nombreVehiculo = nombreVehiculo.substring(0, index);
+
+        if (telefono != null) {
+            telefono = "(" + telefono.substring(0, 3) + ")" + telefono.substring(3);
+        }
+        if (celular != null) {
+            celular = "(" + celular.substring(0, 3) + ")" + celular.substring(3);
+        }
+
+        File pdfDir = new File(tarjetaSD + File.separator + NOMBRE_CARPETA_APP);
+        if (!pdfDir.exists()) {
+            pdfDir.mkdir();
+        }
+        File pdfSubDir = new File(pdfDir.getPath() + File.separator + GENERADOS);
+        if (!pdfSubDir.exists()) {
+            pdfSubDir.mkdir();
+        }
+
+        String nombre_completo = tarjetaSD + File.separator + NOMBRE_CARPETA_APP + File.separator +
+                GENERADOS + File.separator + NOMBRE_ARCHIVO;
+
+
+        File outputfile = new File(nombre_completo);
+        if (outputfile.exists()) {
+            outputfile.delete();
+        }
+        try {
+            PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(nombre_completo));
+            //Crear documento para escribirlo
+            MyFooter footerEvent = new MyFooter();
+            pdfWriter.setPageEvent(footerEvent);
+            document.open();
+            document.addAuthor("Hilda Flores Santana");
+            document.addCreator("CREADOR");
+            document.addSubject("Inspeccion");
+            document.addCreationDate();
+            document.addTitle("Inspeccion");
+
+            String add = null;
+            String nota;
+            XMLWorkerHelper workerHelper = XMLWorkerHelper.getInstance();
+            String htmToPDF = "<html><head></head><body>" +
+                    "<table class=\"fixed\" style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: left;\" colspan=\"2\" rowspan=\"1\">Av. Pedro A. Rivera Esq. Balilo G&oacute;mez</td>\n" +
+                    "<td style=\"text-align: rigth;\" colspan=\"2\" rowspan=\"1\"><strong>Fecha:</strong>" + fecha + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: left;\" colspan=\"2\" rowspan=\"1\">La Vega, Rep&uacute;blica Dominicana</td>\n" +
+                    "<td style=\"text-align: rigth;\" colspan=\"2\" rowspan=\"1\"><strong>Inspecci&oacute;n:</strong> IV-" + idInspeccion + "</td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<p>&nbsp;</p>\n" +
+                    "<p> <strong>Cliente:</strong>" + "(" + idCliente + ")" + nombreCliente +
+                    "<br /><strong>Doc.Identidad:</strong> " + documentoIdentidad +
+                    "<br /> <strong>Tel&eacute;fono/Celular:</strong> " + telefono + "/" + celular + "</p>\n" +
+                    "<p>&nbsp;</p>\n" +
+                    "<table class=\" fixed \" style=\"width: 60%;\" border=\"1\" cellspacing=\"2\" cellpadding=\"2\" align=\"left\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"background-color: #cccccc; text-align: center;\" colspan=\"1\" rowspan=\"1\"><strong>Vehiculo Inspeccionado</strong></td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<table class=\" fixed \" style=\"width: 75%;\" border=\"0\" cellspacing=\"1\" cellpadding=\"0\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: center;\" colspan=\"2\" rowspan=\"1\"><strong>" + nombreVehiculo + "</strong></td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Chasis: </strong>" + chasis + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Referencia: </strong>" + referencia + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Color: </strong>" + color + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Placa: </strong>" + placa + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Motor: </strong>" + motor + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Kilometraje: </strong>" + kilometraje + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Nivel combustible: </strong>" + nivelCombustible + "/4" + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Nivel aceite: </strong>" + nivelAceite + "/10" + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Condici&oacute;n de llave: </strong>" + descLlave + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Serie Gomas: </strong>" + serieGomas + "</td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<p>&nbsp;</p>\n" +
+
+
+                    "<table class=\" fixed \" style=\"width: 100%;\" border=\"1\" cellspacing=\"2\" cellpadding=\"2\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Luces encendidas</strong></td>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Accesorios/Equipamientos</strong></td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+
+
+                    "</table>\n" +
+                    "<table class=\" fixed \" style=\"width: 100%;\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">\n" +
+                    "<tbody>\n";
+
+
+            if (descripcionLuces.size() == descAccesorios.size()) {
+
+                for (int i = 1; i <= descripcionLuces.size(); i++) {
+
+                    add = add + "<tr>\n" + "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                            "<td style=\"width: 45%;\">" + descripcionLuces.get(i - 1) + "</td>\n" +
+                            "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                            "<td style=\"width: 45%;\">" + descAccesorios.get(i - 1) + "</td>\n" +
+                            "</tr>\n";
+                }
+
+            } else if (descripcionLuces.size() > descAccesorios.size()) {
+
+                for (int i = 1; i <= descripcionLuces.size(); i++) {
+
+                    if (i > descAccesorios.size()) {
+                        add = add + "<tr>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\"> " + descripcionLuces.get(i - 1) + "</td>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "</tr>";
+                    } else {
+                        add = add + "<tr>\n" + "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + descripcionLuces.get(i - 1) + "</td>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + descAccesorios.get(i - 1) + "</td>\n" +
+                                "</tr>\n";
+                    }
+
+                }
+            } else if (descAccesorios.size() > descripcionLuces.size()) {
+                for (int i = 1; i <= descAccesorios.size(); i++) {
+                    if (i > descripcionLuces.size()) {
+                        add = add + "<tr>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\"> " + descAccesorios.get(i - 1) + "</td>\n" +
+                                "</tr>";
+                    } else {
+                        add = add + "<tr>\n" + "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + descripcionLuces.get(i - 1) + "</td>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + descAccesorios.get(i - 1) + "</td>\n" +
+                                "</tr>\n";
+                    }
+                }
+
+            }
+
+
+            htmToPDF = htmToPDF + add +
+                    "</tbody>\n" +
+                    "</table>\n" +
+
+                    "<p>&nbsp;</p>\n" +
+
+
+                    "<table style=\"width: 100%;\" border=\"1\" cellspacing=\"2\" cellpadding=\"2\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Cantidades</strong></td>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Condici&oacute;n Alfombra conductor</strong></td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"width: 15%; text-align: left;\"><strong>Alfombras:</strong></td>\n" +
+                    "<td style=\"width: 10%;\">" + cantAlfombra + "</td>\n" +
+                    "<td style=\"width: 15%; text-align: left;\"><strong>Llaves:</strong></td>\n" +
+                    "<td style=\"width: 10%;\">" + cantLlaves + "</td>\n" +
+                    "<td style=\"width: 50%;\">" + condicionAlfombra1 + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td><strong>Gato:</strong></td>\n" +
+                    "<td>" + cantGato + "</td>\n" +
+                    "<td><strong>Alicate:</strong></td>\n" +
+                    "<td>" + cantAlicate + "</td>\n" +
+                    "<td>" + condicionAlfombra2 + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td><strong>Llave rueda:</strong></td>\n" +
+                    "<td>" + cantLlaveRueda + "</td>\n" +
+                    "<td><strong>No. Bateria:</strong></td>\n" +
+                    "<td>" + noBateria + "</td>\n" +
+                    "<td>" + condicionAlfombra3 + "</td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<p>&nbsp;</p>\n";
+            if (observaciones != null) {
+                nota = "<p><strong>Observaciones: </strong>" + observaciones.toUpperCase() + "</p>\n";
+                htmToPDF = htmToPDF + nota + "<p>&nbsp;</p>\n" +
+                        "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
+                        "<tbody>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "</tr>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Inspeccionador</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "</tr>\n" +
+                        "</tbody>\n" +
+                        "</table>" +
+
+                        "</body>\n" +
+                        "</html>\n";
+            }
+            else{
+                htmToPDF = htmToPDF  + "<p>&nbsp;</p>\n" +
+                        "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
+                        "<tbody>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "</tr>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Inspeccionador</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "</tr>\n" +
+                        "</tbody>\n" +
+                        "</table>" +
+
+                        "</body>\n" +
+                        "</html>\n";
+            }
+            Log.d("HTML==>", htmToPDF);
+            workerHelper.parseXHtml(pdfWriter, document, new StringReader(htmToPDF));
+            document.close();
+           // Toast.makeText(this, "PDF generado", Toast.LENGTH_SHORT).show();
+            muestraPDF(nombre_completo, this);
+        } catch (DocumentException d) {
+            d.printStackTrace();
+            Log.d("Error==>", d.getLocalizedMessage());
+        } catch (FileNotFoundException f) {
+            f.printStackTrace();
+            Log.d("Error==>", f.getLocalizedMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("Error==>", e.getLocalizedMessage());
+        }
+
+    }
+
+    public void muestraPDF(String archivo, Context context) {
+        // Toast.makeText(context, "Leyendo archivo", Toast.LENGTH_SHORT).show();
+        File file = new File(archivo);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "No tiene una aplicacion para abrir este archivo", Toast.LENGTH_SHORT).show();
+
+        }
+
+    }
+
+    class MyFooter extends PdfPageEventHelper {
+        Font ffont = new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD);
+        Font ffont2 = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL);
+
+        public void onEndPage(PdfWriter writer, Document document) {
+            PdfContentByte cb = writer.getDirectContent();
+            Phrase header = new Phrase("Inspección de Vehículo", ffont);
+            Phrase footer = new Phrase("No nos hacemos responsables de todos los objetos dejados en la empresa" +
+                    " por mas de 30 dias", ffont2);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                    header,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.top() + 10, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                    footer,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.bottom() - 10, 0);
         }
     }
 

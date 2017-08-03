@@ -24,6 +24,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_PEDIDO_ID;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_TIPO_TRANS;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_ORDEN;
+
 public class ConsultaOrdenTrabajo extends AppCompatActivity {
     private String nombreCliente;
     private String idCondicion;
@@ -79,7 +83,7 @@ public class ConsultaOrdenTrabajo extends AppCompatActivity {
     }
 
     private void obtenerOrdenDetalle(int valor) {
-        Call<OrdenTrabajoDet> callOrden = AdapterOrdenTrabajo.getOrdenDetalle("id_tipo_trans", "OTT", "id_documento", String.valueOf(valor)).getPedidoDetalle();
+        Call<OrdenTrabajoDet> callOrden = AdapterOrdenTrabajo.getOrdenDetalle(JSON_KEY_TIPO_TRANS, KEY_TIPO_TRANS_ORDEN, JSON_KEY_PEDIDO_ID, String.valueOf(valor)).getPedidoDetalle();
         callOrden.enqueue(new Callback<OrdenTrabajoDet>() {
             @Override
             public void onResponse(Call<OrdenTrabajoDet> call, Response<OrdenTrabajoDet> response) {
@@ -130,7 +134,7 @@ public class ConsultaOrdenTrabajo extends AppCompatActivity {
 
     private void llenarOrdenEnc() {
         //  Log.d("ORDEN==>", String.valueOf(idOrden));
-        consultaIdOrden.setText("OTT-" + idOrden);
+        consultaIdOrden.setText(KEY_TIPO_TRANS_ORDEN + "-" + idOrden);
         consultafechaDocumento.setText(fechaOrden);
         consultaNombreCliente.setText("Cliente >> " + nombreCliente.toUpperCase());
         consultaObservaciones.setText(observaciones);

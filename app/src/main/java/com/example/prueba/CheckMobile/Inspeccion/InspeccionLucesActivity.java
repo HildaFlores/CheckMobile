@@ -2,28 +2,15 @@ package com.example.prueba.CheckMobile.Inspeccion;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.prueba.CheckMobile.LucesParametros.AdapterLucesParametros;
@@ -32,18 +19,14 @@ import com.example.prueba.CheckMobile.LucesParametros.ListaLucesResponse;
 import com.example.prueba.CheckMobile.R;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.ls.LSException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static com.example.prueba.CheckMobile.R.id.textView;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_LISTA;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_LUZ;
 
 public class InspeccionLucesActivity extends Fragment {
 
@@ -89,7 +72,7 @@ public class InspeccionLucesActivity extends Fragment {
             listaId.addAll(bundle.getIntegerArrayList("ID_LUZ"));
         }
 
-            ObtenerDatosLuces("58");
+            ObtenerDatosLuces(KEY_LISTA_PARAM_LUZ);
 
 //        for(int i=0; i<listaId.size();i++)
 //        {
@@ -102,7 +85,7 @@ public class InspeccionLucesActivity extends Fragment {
     }
 
     private void ObtenerDatosLuces(String valor) {
-        Call<ListaLuces> call = AdapterLucesParametros.getApiService("id_lista", valor).getListaLuces();
+        Call<ListaLuces> call = AdapterLucesParametros.getApiService(JSON_KEY_LISTA, valor).getListaLuces();
         call.enqueue(new LucesCallback());
     }
 
@@ -201,8 +184,7 @@ public class InspeccionLucesActivity extends Fragment {
                         holder.getCheckBox().setChecked(true);
                     }
                 }
-                listaId.clear();
-                listaDescripcion.clear();
+
             }
             holder.getCheckBox().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override

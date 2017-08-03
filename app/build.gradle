@@ -29,6 +29,9 @@ dependencies {
     //compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
     //compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile files('libs/PhotoUtil.jar')
+    compile files('libs/5.5.5/itextg-5.5.5.jar')
+    compile files('libs/xmlworker-5.5.5.jar')
+    compile files('libs/5.5.5/itextg-5.5.5-javadoc.jar')
 
     compile 'com.google.code.gson:gson:2.6.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
@@ -44,5 +47,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.1.1'
     compile 'com.android.support:support-vector-drawable:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.0-beta1'
     testCompile 'junit:junit:4.12'
 }

@@ -26,11 +26,12 @@ import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 
 /**
  * Created by Prueba on 26-may-17.
@@ -127,7 +128,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().equals("200")) {
+                    if (response.body().equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getContext(), "Inspección anulada con éxito!", Toast.LENGTH_SHORT).show();
                         ObtenerDatosInspeccion();
                     } else {
@@ -184,7 +185,15 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                                 int index1 = textView.getText().toString().indexOf("-") + 1;
                                 int index2 = textView.getText().toString().indexOf(")");
                                 idInspeccion = Integer.parseInt(textView.getText().toString().substring(index1, index2));
-                                actualizarInspeccion(idInspeccion);
+                                Intent intent = new Intent(getActivity(), OrdenTrabajoActivity.class);
+                                llenarValoresInspeccion();
+                                intent.putExtra("IDINSPECCION", String.valueOf(idInspeccion));
+                                intent.putExtra("CLIENTE", nombreCliente);
+                                intent.putExtra("VEHICULO", nombreVehiculo);
+                                intent.putExtra("IDCONDICION", idCondicion);
+                                intent.putExtra("IDCLIENTE", idCliente);
+                                startActivity(intent);
+                                Toast.makeText(getContext(), "Orden generada", Toast.LENGTH_SHORT).show();
 
                             }
                         })
@@ -233,52 +242,14 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                 break;
         }
     }
-//Cambiar estado de inspeccion a Finalizada
-    private void actualizarInspeccion(final int idInspeccion) {
-        Call<String> callActualizar = AdapterInspeccion.updateInspeccion(String.valueOf(idInspeccion)).setConvert();
-        callActualizar.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful())
-                {
-                    if (response.body().toString().equals("200"))
-                    {
-                        Intent intent = new Intent(getActivity(), OrdenTrabajoActivity.class);
-                        llenarValoresInspeccion();
-                        intent.putExtra("IDINSPECCION", String.valueOf(idInspeccion));
-                        intent.putExtra("CLIENTE", nombreCliente);
-                        intent.putExtra("VEHICULO", nombreVehiculo);
-                        intent.putExtra("IDCONDICION", idCondicion);
-                        intent.putExtra("IDCLIENTE", idCliente);
-                        startActivity(intent);
-                        Toast.makeText(getContext(), "Orden generada", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        Toast.makeText(getContext(), "Error al generar orden", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    Toast.makeText(getContext(), "Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.v("Inspeccion", t.getMessage());
-            }
-        });
-
-
-    }
 
     private class InspeccionCallback implements retrofit2.Callback<InspeccionVehiculo> {
         @Override
         public void onResponse(Call<InspeccionVehiculo> call, Response<InspeccionVehiculo> response) {
             if (response.isSuccessful()) {
                 InspeccionVehiculoResponse inspeccion = response.body();
-                if (inspeccion.getResponseCode().equals("200")) {
+                if (inspeccion.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     inspecciones = inspeccion.getInspecciones();
                     NUM_LIST_ITEMS = inspeccion.getInspecciones().size();
                     callAdapter(inspeccion.getInspecciones());

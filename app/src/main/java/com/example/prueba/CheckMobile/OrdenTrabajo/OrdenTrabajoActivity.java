@@ -13,11 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -27,8 +25,8 @@ import android.widget.Toast;
 import com.example.prueba.CheckMobile.CondicionPago.AdapterCondicion;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionPago;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionResponse;
+import com.example.prueba.CheckMobile.Inspeccion.AdapterInspeccion;
 import com.example.prueba.CheckMobile.Inspeccion.myDialogProgress;
-import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.RepresentanteVenta.AdapterRepresentante;
 import com.example.prueba.CheckMobile.RepresentanteVenta.RepresentanteVenta;
@@ -43,7 +41,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.prueba.CheckMobile.R.id.layoutServicios;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_PEDIDO_ID;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_TIPO_TRANS;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_ORDEN;
+import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
+import static com.example.prueba.CheckMobile.Utils.Constantes.SUPERVISOR;
 
 public class OrdenTrabajoActivity extends AppCompatActivity {
 
@@ -54,12 +56,12 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     TextView txtOrden;
     TextView txtNombreCliente;
     TextView txtNombreVehiculo;
+    TextView txtSupervisor;
     EditText editTextObservaciones;
     EditText txtfechaOrden;
     Spinner spinnerMecanico;
     Spinner spinnerCondicion;
     Switch swReemplazo;
-
 
     //mis variables
     int requestCode = 1;
@@ -108,8 +110,9 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                 descripcionCondicion = extra.getString("CONDICION");
                 llenarOrdenEnc();
                 obtenerOrdenDetalle(idOrden);
-                spinnerMecanico.setSelection(getIndex(spinnerMecanico, nombreMecanico));
-                spinnerCondicion.setSelection(getIndex(spinnerCondicion, descripcionCondicion));
+//                spinnerMecanico.setSelection(getIndex(spinnerMecanico, nombreMecanico));
+//                spinnerCondicion.setSelection(getIndex(spinnerCondicion, descripcionCondicion));
+
                 if (permitePiezasReemplazo) {
                     swReemplazo.setChecked(true);
                     permiteReemplazo = "1";
@@ -120,7 +123,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
 
                 txtfechaOrden.setEnabled(false);
             } else {
-                ObtenerSecuencia("OTT");
+                ObtenerSecuencia(KEY_TIPO_TRANS_ORDEN);
             }
 
         }
@@ -176,12 +179,13 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
         spinnerCondicion = (Spinner) findViewById(R.id.spCondicion2);
         txtfechaOrden = (EditText) findViewById(R.id.etxtFechaOrden);
         swReemplazo = (Switch) findViewById(R.id.switchPiezas);
+        txtSupervisor = (TextView) findViewById(R.id.textViewSupervisor);
     }
 
     private void obtenerOrdenDetalle(String valor) {
 
 
-        Call<OrdenTrabajoDet> callOrden = AdapterOrdenTrabajo.getOrdenDetalle("id_tipo_trans", "OTT", "id_documento", valor).getPedidoDetalle();
+        Call<OrdenTrabajoDet> callOrden = AdapterOrdenTrabajo.getOrdenDetalle(JSON_KEY_TIPO_TRANS, KEY_TIPO_TRANS_ORDEN, JSON_KEY_PEDIDO_ID, valor).getPedidoDetalle();
         callOrden.enqueue(new Callback<OrdenTrabajoDet>() {
             @Override
             public void onResponse(Call<OrdenTrabajoDet> call, Response<OrdenTrabajoDet> response) {
@@ -219,9 +223,10 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
 
     private void llenarOrdenEnc() {
 
-        txtOrden.setText("OTT-" + idOrden);
+        txtOrden.setText(KEY_TIPO_TRANS_ORDEN + "-" + idOrden);
         txtfechaOrden.setText(fechaOrden);
         txtNombreCliente.setText("Cliente >> " + nombreCliente.toUpperCase());
+        txtSupervisor.setText("Supervisor >> " + SUPERVISOR);
         editTextObservaciones.setText(observaciones);
         if (!permitePiezasReemplazo) {
             swReemplazo.setChecked(true);
@@ -246,7 +251,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
 
     private void ObtenerSecuencia(String valor) {
 
-        Call<ArrayList<TipoTransaccion>> callTransaccion = AdapterTipoTransaccion.getTransaccion("id_tipo_trans", valor).getTipoTransaccion();
+        Call<ArrayList<TipoTransaccion>> callTransaccion = AdapterTipoTransaccion.getTransaccion(JSON_KEY_TIPO_TRANS, valor).getTipoTransaccion();
         callTransaccion.enqueue(new TransaccionCallback());
     }
 
@@ -336,12 +341,20 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
         adapterMecanico.setDropDownViewResource(R.layout.spinner_style);
         this.spinnerMecanico.setAdapter(adapterMecanico);
 
+
+        for (int j = 0; j < representanteVentas.size(); j++) {
+            if (representanteVentas.get(j).getId().equals(idMecanico)) {
+                spinnerMecanico.setSelection(j);
+
+            }
+        }
+
         spinnerMecanico.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String mecanico = adapterMecanico.getItem(i);
                 for (int j = 0; j < representanteVentas.size(); j++) {
-                    if ((representanteVentas.get(j).getNombres().toUpperCase() + " " + representanteVentas.get(j).getApellidos().toUpperCase()).equals(mecanico)) {
+                    if ((representanteVentas.get(j).getNombres().toUpperCase() + " " + representanteVentas.get(j).getApellidos().toUpperCase()).equals(mecanico.toUpperCase())) {
                         idMecanico = representanteVentas.get(j).getId();
                     }
                 }
@@ -464,7 +477,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().toString().equals("200")) {
+                    if (response.body().toString().equals(RESPONSE_CODE_OK)) {
                         guardarOrdenDetalle();
                     } else {
                         Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
@@ -488,7 +501,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     private void GuardarOrdenTrabajo() {
         if (idCliente != null && nombreCliente != null && idCondicion != null && idMecanico != null && idInspeccion != null && txtfechaOrden.getText().toString() != null) {
 
-            ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
+            final ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
             ordenes.add(new OrdenTrabajoEnc(
                     idCliente,
                     nombreCliente,
@@ -510,33 +523,60 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                     permiteReemplazo
             ));
 
-            Call<String> callOrden = AdapterOrdenTrabajo.setApiService().setOrdenTrabajo(ordenes);
-            callOrden.enqueue(new Callback<String>() {
+            //Cambiar estado de inspeccion a Finalizada
+            Call<String> callActualizar = AdapterInspeccion.updateInspeccion(String.valueOf(idInspeccion)).setConvert();
+            callActualizar.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
-                        String[] p = response.body().split(",");
-                        idOrden = p[1];
-                        if (p[0].equals("200")) {
-                            guardarOrdenDetalle();
+                        if (response.body().toString().equals(RESPONSE_CODE_OK)) {
+                            guardarOrdenEnc(ordenes);
                         } else {
-                            Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Error al generar orden", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Error " + t.getMessage(), Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.v("Inspeccion", t.getMessage());
                 }
             });
         } else {
             Toast.makeText(getApplicationContext(), "Faltan datos por llenar", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void guardarOrdenEnc(ArrayList<OrdenTrabajoEnc> ordenes) {
+
+        Call<String> callOrden = AdapterOrdenTrabajo.setApiService().setOrdenTrabajo(ordenes);
+        callOrden.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String[] p = response.body().split(",");
+                    idOrden = p[1];
+                    if (p[0].equals(RESPONSE_CODE_OK)) {
+                        guardarOrdenDetalle();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 
     private void guardarOrdenDetalle() {
         if (listaIdProductos.isEmpty()) {
@@ -572,7 +612,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
                         String[] p = response.body().split(",");
-                        if (p[0].equals("200")) {
+                        if (p[0].equals(RESPONSE_CODE_OK)) {
                             myDialogProgress dialogProgress = new myDialogProgress();
                             dialogProgress.show(getFragmentManager(), "Orden Trabajo");
                         } else {
@@ -620,30 +660,21 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     }
 
 
-    private class TransaccionCallback implements retrofit2.Callback<ArrayList<TipoTransaccion>> {
-        @Override
-        public void onResponse(Call<ArrayList<TipoTransaccion>> call, Response<ArrayList<TipoTransaccion>> response) {
-            if (response.isSuccessful()) {
-                ArrayList<TipoTransaccion> tipo = response.body();
-                txtOrden.setText("(" + tipo.get(0).getId().toUpperCase() + " - " + String.valueOf(tipo.get(0).getSecuencia()) + ")");
-            }
-        }
-
-        @Override
-        public void onFailure(Call<ArrayList<TipoTransaccion>> call, Throwable t) {
-            Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
+private class TransaccionCallback implements retrofit2.Callback<ArrayList<TipoTransaccion>> {
+    @Override
+    public void onResponse(Call<ArrayList<TipoTransaccion>> call, Response<ArrayList<TipoTransaccion>> response) {
+        if (response.isSuccessful()) {
+            ArrayList<TipoTransaccion> tipo = response.body();
+            txtOrden.setText("(" + tipo.get(0).getId().toUpperCase() + " - " + String.valueOf(tipo.get(0).getSecuencia()) + ")");
         }
     }
 
-    private int getIndex(Spinner spinner, String myString) {
-        int index = 0;
-
-        for (int i = 0; i < spinner.getCount(); i++) {
-            if (spinner.getItemAtPosition(i).equals(myString)) {
-                index = i;
-            }
-        }
-        return index;
+    @Override
+    public void onFailure(Call<ArrayList<TipoTransaccion>> call, Throwable t) {
+        Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
     }
 
+}
+
+   
 }

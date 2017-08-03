@@ -34,12 +34,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FiltroInspeccionActivity extends AppCompatActivity {
-    android.widget.SearchView buscar;
+
     ListView listViewInspeccion;
     private ArrayList<InspeccionVehiculo> inspecciones = new ArrayList<InspeccionVehiculo>();
     InspeccionAdapter madapter;
+    boolean consultar = false;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filtro_inspeccion);
@@ -50,7 +52,20 @@ public class FiltroInspeccionActivity extends AppCompatActivity {
 
         listViewInspeccion = (ListView) findViewById(R.id.listaInspeccion);
 
-        ObtenerDatosInspeccion();
+        Bundle extra = getIntent().getExtras();
+        if (extra != null) {
+            consultar = extra.getBoolean("CONSULTAR");
+            inspecciones = extra.getParcelableArrayList("INSPECCIONES");
+        }
+
+        if (consultar) {
+            madapter = new InspeccionAdapter(getApplicationContext(), inspecciones);
+            listViewInspeccion.setAdapter(madapter);
+
+        } else {
+
+            ObtenerDatosInspeccion();
+        }
         SeleccionInspeccion();
 
     }
@@ -82,7 +97,17 @@ public class FiltroInspeccionActivity extends AppCompatActivity {
         intent.putExtra("FECHA", item.getFechaInspeccion());
         intent.putExtra("SERIEGOMAS", item.getSerieGomas());
         intent.putExtra("OBSERVACION", item.getObservaciones());
-        intent.putExtra("ACTUALIZAR", true);
+        intent.putExtra("PLACA", item.getPlaca());
+        intent.putExtra("COLOR", item.getColor());
+        intent.putExtra("TELEFONO", item.getTelefono());
+        intent.putExtra("CELULAR", item.getCelular());
+        intent.putExtra("DOCIDENTIDAD", item.getDocIdentidad());
+
+        if (consultar) {
+            intent.putExtra("CONSULTAR", true);
+        } else {
+            intent.putExtra("ACTUALIZAR", true);
+        }
         startActivity(intent);
     }
 
@@ -175,8 +200,8 @@ public class FiltroInspeccionActivity extends AppCompatActivity {
             TextView textVehiculo = (TextView) item.findViewById(R.id.txtRowUpdate2);
             TextView textCliente = (TextView) item.findViewById(R.id.txtRowUpdate3);
             textId.setText("(IV-" + listaInspecciones.get(posicion).getId() + ")");
-            textVehiculo.setText(listaInspecciones.get(posicion).getNombre_vehiculo());
-            textCliente.setText(listaInspecciones.get(posicion).getNombre_cliente());
+            textVehiculo.setText("Vehiculo >> " + listaInspecciones.get(posicion).getNombre_vehiculo());
+            textCliente.setText("Cliente >> " + listaInspecciones.get(posicion).getNombre_cliente());
             item.setId(Integer.parseInt(listaInspecciones.get(posicion).getId()));
 
             return item;

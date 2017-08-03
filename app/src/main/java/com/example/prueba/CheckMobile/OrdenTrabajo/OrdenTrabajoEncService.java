@@ -19,4 +19,7 @@ public interface OrdenTrabajoEncService {
 
     @POST("pedidoEnc")
     Call<OrdenTrabajoEnc> getOrdenTrabajo();
+
+    @POST("pedidoEncFecha")
+    Call<OrdenTrabajoEnc> getOrdenFecha();
 }

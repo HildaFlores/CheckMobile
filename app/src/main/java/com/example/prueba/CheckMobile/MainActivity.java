@@ -19,9 +19,9 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.example.prueba.CheckMobile.Actualizaciones.FiltroInspeccionActivity;
 import com.example.prueba.CheckMobile.Actualizaciones.FiltroOrdenTrabajoActivity;
+import com.example.prueba.CheckMobile.Actualizaciones.FiltroVehiculoActivity;
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
 import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterInspeccion;
 import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterOrden;
@@ -30,11 +30,16 @@ import com.example.prueba.CheckMobile.MenuPrincipal.Tab2OrdenesTrabajo;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab3Vehiculos;
 import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoEnc;
 import com.example.prueba.CheckMobile.Usuario.LoginActivity;
+import com.example.prueba.CheckMobile.Utils.DashBoardInspeccionActivity;
+import com.example.prueba.CheckMobile.Utils.DashBoardOrdenActivity;
+import com.example.prueba.CheckMobile.Utils.FullscreenActivity;
 
 import java.util.ArrayList;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+import static com.example.prueba.CheckMobile.Utils.Constantes.IPSERVIDOR;
+import static com.example.prueba.CheckMobile.Utils.Constantes.PUERTO;
 
 
 public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.sendData, Tab2OrdenesTrabajo.sendDataOrden, NavigationView.OnNavigationItemSelectedListener {
@@ -48,8 +53,7 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
     RecyclerView recyclerViewOrden;
     ArrayList<InspeccionVehiculo> inspeccionVehiculos = new ArrayList<InspeccionVehiculo>();
     ArrayList<OrdenTrabajoEnc> ordenTrabajo = new ArrayList<OrdenTrabajoEnc>();
-    public static String ipservidor = "http://192.168.2.19"; //192.168.2.19
-    public static String puerto = "4567";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +105,8 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         httpClient = new OkHttpClient().newBuilder();
         //add logging as last interceptor
         httpClient.addInterceptor(logging); //<- this is the important line;
-        setBaseUrl(ipservidor + ":" + puerto + "/");
-        ///setBaseUrl("http://192.168.2.19:4567/");
-        //192.168.0.109 //192.168.1.92//10.0.0.185  192.168.2.19 192.168.43.224
+        setBaseUrl(IPSERVIDOR + ":" + PUERTO + "/");
+
         return httpClient;
     }
 
@@ -211,6 +214,15 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         return param;
 
     }
+    public String formatearParametro(String parametro1, String valor1, String parametro2, String valor2, String parametro3, String valor3) {
+        String param;
+        param = "{ '" + parametro1 + "' :" + " '" + valor1 + "', " +
+                "'" + parametro2 + "' :" + " '" + valor2 + "', " +
+                "'" + parametro3 + "' :" + " '" + valor3 + "' }";
+
+        return param;
+
+    }
 
     @Override
     public void sendAdapter(RecyclerView recyclerView) {
@@ -238,6 +250,14 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
 
         int id = item.getItemId();
         switch (id) {
+
+            case R.id.nav_titular:
+            {
+                Intent intent = new Intent(MainActivity.this, FiltroVehiculoActivity.class);
+                startActivity(intent);
+                break;
+            }
+
             case R.id.nav_inspeccion: {
                 Intent intent = new Intent(MainActivity.this, FiltroInspeccionActivity.class);
                 startActivity(intent);
@@ -245,6 +265,18 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
             }
             case R.id.nav_orden: {
                 Intent intent = new Intent(MainActivity.this, FiltroOrdenTrabajoActivity.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.nav_consulta_inspecciones:
+            {
+                Intent intent = new Intent(MainActivity.this, DashBoardInspeccionActivity.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.nav_consulta_ordenes:
+            {
+                Intent intent = new Intent(MainActivity.this, DashBoardOrdenActivity.class);
                 startActivity(intent);
                 break;
             }

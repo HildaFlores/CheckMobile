@@ -5,17 +5,14 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,11 +54,8 @@ import com.example.prueba.CheckMobile.VehiculoTraccion.AdapterTraccion;
 import com.example.prueba.CheckMobile.VehiculoTraccion.Traccion;
 import com.example.prueba.CheckMobile.VehiculoTraccion.TraccionResponse;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,7 +63,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.R.attr.id;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_MODELO;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_VEHICULO;
+import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 import static com.example.prueba.CheckMobile.VehiculoMarca.AdapterMarca.insertarMarca;
 
 
@@ -180,6 +176,9 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                     intent.putExtra("VEHICULO", nombreVehiculo);
                     intent.putExtra("REFERENCIA", refVehiculo);
                     intent.putExtra("CHASIS", chasisVehiculo);
+                    intent.putExtra("PLACA", placa.getText().toString());
+                    intent.putExtra("COLOR", color.getText().toString().toUpperCase());
+                    finish();
                     startActivity(intent);
 
                 }
@@ -187,13 +186,6 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         });
 
 
-        FloatingActionButton fabcancel = (FloatingActionButton) findViewById(R.id.fabCancel);
-        fabcancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
     }
 
@@ -423,7 +415,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
                         String[] p = response.body().toString().split(",");
-                        if (p[0].equals("200")) {
+                        if (p[0].equals(RESPONSE_CODE_OK)) {
                             idVehiculo = p[1];
                             Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(VehiculoActivity.this.getApplicationContext(), ClienteActivity.class);
@@ -436,7 +428,10 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                             intent.putExtra("IDVEHICULO", idVehiculo);
                             intent.putExtra("REFERENCIA", refVehiculo);
                             intent.putExtra("CHASIS", chasisVehiculo);
+                            intent.putExtra("PLACA", placa.getText().toString());
+                            intent.putExtra("COLOR", color.getText().toString().toUpperCase());
                             InabilitarVistasVehiculo(false);
+                            finish();
                             startActivity(intent);
                         } else {
                             Toast.makeText(getApplicationContext(), "Error al guardar datos del vehiculo", Toast.LENGTH_SHORT).show();
@@ -501,7 +496,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
 
 
     private void ObtenerVehiculo(String valor) {
-        Call<Vehiculo> call = AdapterVehiculo.getChasis("referencia", valor).getVehiculos();
+        Call<Vehiculo> call = AdapterVehiculo.getChasis(JSON_KEY_VEHICULO, valor).getVehiculos();
         call.enqueue(new FiltroVehiculoCallback());
 
     }
@@ -560,7 +555,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     String[] p = response.body().toString().split(",");
-                    if (p[0].equals("200")) {
+                    if (p[0].equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getApplicationContext(), "Marca guardada con éxito!", Toast.LENGTH_SHORT).show();
                         obtenerDatosMarca();
                         String id = p[1];
@@ -613,7 +608,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                 if (response.isSuccessful()) {
                     String[] p = response.body().toString().split(",");
 
-                    if (p[0].equals("200")) {
+                    if (p[0].equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getApplicationContext(), "Modelo guardado con éxito!", Toast.LENGTH_SHORT).show();
                         obtenerDatosModelo(idMarca);
                         spinnerModelo.setSelection(getIndex(spinnerModelo, descModelo));
@@ -665,7 +660,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     String[] p = response.body().toString().split(",");
-                    if (p[0].equals("200")) {
+                    if (p[0].equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getApplicationContext(), "Estilo guardado con éxito!", Toast.LENGTH_SHORT).show();
                         obtenerDatosEstilo(idModelo);
                         spinnerEstilo.setSelection(getIndex(spinnerEstilo, descEstilo));
@@ -851,7 +846,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
 
     private void obtenerDatosEstilo(String valor) {
 
-        Call<ArrayList<Estilo>> call = AdapterEstilo.getApiService("id_modelo", valor).getEstilos();
+        Call<ArrayList<Estilo>> call = AdapterEstilo.getApiService(JSON_KEY_MODELO, valor).getEstilos();
         call.enqueue(new EstiloCallback());
     }
 
@@ -860,7 +855,6 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         public void onResponse(Call<ArrayList<Estilo>> call, Response<ArrayList<Estilo>> response) {
             if (response.isSuccessful()) {
                 ArrayList<Estilo> estiloResponse = response.body();
-                Log.v("AWiiii--->", response.body().toString());
                 poblarSpinnerEstilo(estiloResponse);
             } else {
 

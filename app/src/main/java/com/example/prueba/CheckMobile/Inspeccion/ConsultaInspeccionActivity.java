@@ -3,29 +3,25 @@ package com.example.prueba.CheckMobile.Inspeccion;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.IdRes;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -41,47 +37,36 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.prueba.CheckMobile.Actualizaciones.FiltroAccesoriosActivity;
-import com.example.prueba.CheckMobile.Actualizaciones.FiltroLucesActivity;
-import com.example.prueba.CheckMobile.Actualizaciones.myDialogLadosVehiculo;
-import com.example.prueba.CheckMobile.LucesParametros.ListaLuces;
+import com.example.prueba.CheckMobile.Actualizaciones.*;
 import com.example.prueba.CheckMobile.R;
-import com.example.prueba.CheckMobile.VehiculoDocumento.AdapterVehiculoDocumento;
-import com.example.prueba.CheckMobile.VehiculoDocumento.VehiculoDocumento;
-import com.example.prueba.CheckMobile.VehiculoDocumento.VehiculoDocumentoResponse;
+import com.example.prueba.CheckMobile.VehiculoDocumento.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.kosalgeek.android.photoutil.CameraPhoto;
-import com.kosalgeek.android.photoutil.ImageLoader;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.R.attr.data;
-import static android.R.attr.id;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static com.example.prueba.CheckMobile.R.id.imageView;
-import static com.example.prueba.CheckMobile.R.id.listaLuces;
-import static com.example.prueba.CheckMobile.R.id.visible;
+import static com.example.prueba.CheckMobile.Utils.Constantes.*;
 import static java.lang.Integer.parseInt;
-import static java.security.AccessController.getContext;
-import static java.util.Collections.addAll;
 
 
 public class ConsultaInspeccionActivity extends AppCompatActivity implements myDialogLadosVehiculo.OnCompleteListener {
@@ -115,6 +100,15 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
     ImageButton btnTomarFoto;
     TextView txtInfoCamara;
 
+    List<String> idluces = new ArrayList<>();
+    List<String> descLuces = new ArrayList<>();
+    List<String> accesorios = new ArrayList<>();
+    List<String> idAccesorios = new ArrayList<>();
+    List<String> cantidades = new ArrayList<>();
+    List<String> elementosCantidades = new ArrayList<>();
+    List<String> idElementoCantidades = new ArrayList<>();
+    ArrayList<VehiculoDocumento> listaDocumentos;
+
     private int idInspeccion;
     private String nombreVehiculo;
     private String nombreCliente;
@@ -124,26 +118,35 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
     private String fechaInspeccion;
     private String observaciones;
     private String idVehiculo;
-    String tipoLlave;
-    String combustible, condicionAlfombra1 = null, condicionAlfombra2 = null, condicionAlfombra3 = null;
-    int aceite;
-    private boolean buscar = false, actualizar = false, consultar = false;
-    List<String> idluces = new ArrayList<>();
-    List<String> descLuces = new ArrayList<>();
-    List<String> accesorios = new ArrayList<>();
-    List<String> idAccesorios = new ArrayList<>();
-    List<String> cantidades = new ArrayList<>();
-    List<String> elementosCantidades = new ArrayList<>();
-    List<String> idElementoCantidades = new ArrayList<>();
-    ArrayList<VehiculoDocumento> listaDocumentos;
-    String descripcionLado;
-    final int CAMERA_REQUEST = 13323;
-    private Uri imageUri;
-    CameraPhoto cameraPhoto;
-    int idPictureLados;
-    int requestCode = 1, requestCode2 = 2;
+    private String idCliente;
+    private String chasis;
+    private String referencia;
+    private String tipoLlave;
+    private String combustible;
+    private String condicionAlfombra1 = null;
+    private String condicionAlfombra2 = null;
+    private String condicionAlfombra3 = null;
+    private String placa;
+    private String color;
+    private String docIdentidad;
+    private String telefono;
+    private String celular;
+    private int aceite;
+    private boolean buscar = false;
+    private boolean actualizar = false;
+    private boolean consultar = false;
+    private String descripcionLado;
+    private String descLlave;
+    private final int CAMERA_REQUEST = 13323;
+    private CameraPhoto cameraPhoto;
+    private int idPictureLados;
+    private int requestCode = 1, requestCode2 = 2;
     private Timer timer = new Timer();
     private final long DELAY = 0;
+    private static final String NOMBRE_CARPETA_APP = "proyecto.com.demoPdf";
+    private static final String GENERADOS = "MisArchivos";
+
+    String descAlfombra1, descAlfombra2, descAlfombra3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,9 +170,18 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             serieGomas = extra.getString("SERIEGOMAS");
             fechaInspeccion = extra.getString("FECHA");
             observaciones = extra.getString("OBSERVACION");
+            idCliente = extra.getString("IDCLIENTE");
+            chasis = extra.getString("CHASIS");
+            referencia = extra.getString("REFERENCIA");
+            color = extra.getString("COLOR");
+            placa = extra.getString("PLACA");
+            docIdentidad = extra.getString("DOCIDENTIDAD");
+            telefono = extra.getString("TELEFONO");
+            celular = extra.getString("CELULAR");
             buscar = extra.getBoolean("BUSCAR");
             actualizar = extra.getBoolean("ACTUALIZAR");
             consultar = extra.getBoolean("CONSULTAR");
+
             if (actualizar) {
                 btnAgregarLuces.setVisibility(View.VISIBLE);
                 btnAgregarAccesorios.setVisibility(View.VISIBLE);
@@ -403,10 +415,14 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                 switch (i) {
                     case R.id.rbCBien: {
                         condicionAlfombra1 = "9";
+                        RadioButton rb = (RadioButton) alfombra1.findViewById(i);
+                        descAlfombra1 = rb.getText().toString();
                         break;
                     }
                     case R.id.rbCNoBien: {
                         condicionAlfombra1 = "12";
+                        RadioButton rb = (RadioButton) alfombra1.findViewById(i);
+                        descAlfombra1 = rb.getText().toString();
                         break;
                     }
                 }
@@ -417,11 +433,15 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 switch (i) {
                     case R.id.rbCGenuina: {
-                        condicionAlfombra1 = "10";
+                        condicionAlfombra2 = "10";
+                        RadioButton rb = (RadioButton) alfombra2.findViewById(i);
+                        descAlfombra2 = rb.getText().toString();
                         break;
                     }
                     case R.id.rbCNoGenuina: {
-                        condicionAlfombra1 = "13";
+                        condicionAlfombra2 = "13";
+                        RadioButton rb = (RadioButton) alfombra2.findViewById(i);
+                        descAlfombra2 = rb.getText().toString();
                         break;
                     }
                 }
@@ -433,11 +453,15 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
                 switch (i) {
                     case R.id.rbCSoloUna: {
-                        condicionAlfombra1 = "11";
+                        condicionAlfombra3 = "11";
+                        RadioButton rb = (RadioButton) alfombra3.findViewById(i);
+                        descAlfombra3 = rb.getText().toString();
                         break;
                     }
                     case R.id.rbCSDosOMas: {
-                        condicionAlfombra1 = "14";
+                        condicionAlfombra3 = "14";
+                        RadioButton rb = (RadioButton) alfombra3.findViewById(i);
+                        descAlfombra3 = rb.getText().toString();
                         break;
                     }
                 }
@@ -448,6 +472,8 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 tipoLlave = "1";
+                descLlave = "Inteligente";
+
             }
         });
 
@@ -455,6 +481,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 tipoLlave = "2";
+                descLlave = "Normal";
             }
         });
 
@@ -517,7 +544,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().equals("200")) {
+                    if (response.body().equals(RESPONSE_CODE_OK)) {
                         actualizarInspeccionDetalle();
                     } else {
                         Toast.makeText(getApplicationContext(), "Error al actualizar inspección", Toast.LENGTH_SHORT).show();
@@ -529,7 +556,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error update: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("ACTUALIZAR==>", t.getMessage());
             }
         });
@@ -547,7 +574,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                     String.valueOf(idluces.get(i)),
                     descLuces.get(i),
                     "1",
-                    "58"
+                    KEY_LISTA_PARAM_LUZ
             ));
         }
 
@@ -558,7 +585,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                     String.valueOf(idAccesorios.get(j)),
                     accesorios.get(j),
                     "1",
-                    "60"
+                    KEY_LISTA_PARAM_GENERALES
             ));
         }
         inspeccionDetalle.add(new InspeccionVehiculoDetalle(
@@ -567,7 +594,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                 String.valueOf(0),
                 "Condicion Alfrombra",
                 condicionAlfombra1,
-                "63"
+                KEY_LISTA_PARAM_CONDICION_ALFOMBRA
         ));
 
         inspeccionDetalle.add(new InspeccionVehiculoDetalle(
@@ -576,7 +603,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                 String.valueOf(1),
                 "Condicion Alfrombra",
                 condicionAlfombra2,
-                "63"
+                KEY_LISTA_PARAM_CONDICION_ALFOMBRA
         ));
         inspeccionDetalle.add(new InspeccionVehiculoDetalle(
                 String.valueOf(idInspeccion),
@@ -584,7 +611,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                 String.valueOf(2),
                 "Condicion Alfrombra",
                 condicionAlfombra3,
-                "63"
+                KEY_LISTA_PARAM_CONDICION_ALFOMBRA
         ));
 
 
@@ -597,7 +624,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         tipoLlave,
                         "Tipo llave Inteligente",
                         "15",
-                        "59"
+                        KEY_LISTA_PARAM_LLAVE
                 ));
                 break;
             }
@@ -608,7 +635,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         tipoLlave,
                         "Tipo llave Normal",
                         "16",
-                        "59"
+                        KEY_LISTA_PARAM_LLAVE
                 ));
             }
         }
@@ -622,7 +649,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         "1",
                         "Nivel Combustible",
                         "6",
-                        "64"
+                        KEY_LISTA_PARAM_CONDICION_ENTRADA
                 ));
                 break;
             }
@@ -633,7 +660,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         "1",
                         "Nivel Combustible",
                         "3",
-                        "64"
+                        KEY_LISTA_PARAM_CONDICION_ENTRADA
                 ));
                 break;
             }
@@ -644,7 +671,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         "1",
                         "Nivel Combustible",
                         "4",
-                        "64"
+                        KEY_LISTA_PARAM_CONDICION_ENTRADA
                 ));
                 break;
             }
@@ -655,7 +682,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         "1",
                         "Nivel Combustible",
                         "5",
-                        "64"
+                        KEY_LISTA_PARAM_CONDICION_ENTRADA
                 ));
                 break;
             }
@@ -667,7 +694,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         "1",
                         "Nivel Combustible",
                         "8",
-                        "64"
+                        KEY_LISTA_PARAM_CONDICION_ENTRADA
                 ));
                 break;
             }
@@ -680,7 +707,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                 "2",
                 "Nivel Aceite",
                 "22",
-                "64",
+                KEY_LISTA_PARAM_CONDICION_ENTRADA,
                 String.valueOf(aceite)
 
         ));
@@ -695,7 +722,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                             "1",
                             elementosCantidades.get(i),
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantidades.get(i)
 
                     ));
@@ -708,7 +735,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                             "2",
                             elementosCantidades.get(i),
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantidades.get(i)
 
                     ));
@@ -722,7 +749,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                             "3",
                             elementosCantidades.get(i),
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantidades.get(i)
 
                     ));
@@ -735,7 +762,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                             "4",
                             elementosCantidades.get(i),
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantidades.get(i)
 
                     ));
@@ -748,7 +775,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                             "5",
                             elementosCantidades.get(i),
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantidades.get(i)
 
                     ));
@@ -761,7 +788,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                             "6",
                             elementosCantidades.get(i),
                             "22",
-                            "62",
+                            KEY_LISTA_PARAM_CANTIDAD,
                             cantidades.get(i)
 
                     ));
@@ -775,14 +802,13 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
 
-                    if (response.body().toString().equals("200")) {
+                    if (response.body().toString().equals(RESPONSE_CODE_OK)) {
 
-                        if (listaDocumentos.isEmpty())
-                        {
-                        myDialogProgress dialogProgress = new myDialogProgress();
-                        dialogProgress.show(getFragmentManager(), "Inspeccion");}
-                        else
-                        {
+                        if (listaDocumentos.isEmpty()) {
+                            myDialogProgress dialogProgress = new myDialogProgress();
+                            dialogProgress.show(getFragmentManager(), "Inspeccion");
+                            generarPdfOnClick();
+                        } else {
                             guardarVehiculoDocumento();
                         }
                     }
@@ -794,12 +820,13 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.v("Actualizacion==> ", t.getMessage());
-                Toast.makeText(getApplicationContext(), "Error" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error update detalle" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }
+
     private void guardarVehiculoDocumento() {
 
         Call<String> callVehiculoDocumento = AdapterVehiculoDocumento.getService().setVehiculoDocumentos(listaDocumentos);
@@ -807,9 +834,10 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().toString().equals("200")) {
+                    if (response.body().toString().equals(RESPONSE_CODE_OK)) {
                         myDialogProgress dialogProgress = new myDialogProgress();
                         dialogProgress.show(getFragmentManager(), "Inspeccion");
+                        generarPdfOnClick();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
@@ -826,7 +854,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
     }
 
     private void ObtenerDatosInspeccionEnc(String valor) {
-        Call<InspeccionVehiculo> call = AdapterInspeccion.getApiService("id_inspeccion", valor).getInspecciones();
+        Call<InspeccionVehiculo> call = AdapterInspeccion.getApiService(JSON_KEY_INSPECCION, valor).getInspecciones();
         call.enqueue(new Callback<InspeccionVehiculo>() {
             @Override
             public void onResponse(Call<InspeccionVehiculo> call, Response<InspeccionVehiculo> response) {
@@ -840,13 +868,14 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                     fechaInspeccion = inspeccion.getInspecciones().get(0).getFechaInspeccion();
                     serieGomas = inspeccion.getInspecciones().get(0).getSerieGomas();
                     llenarFormulario();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error " + response.errorBody(), Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getApplicationContext(), "Error " + response.errorBody(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<InspeccionVehiculo> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error Encabezado: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.v("ENCABEZADO", t.getMessage());
             }
         });
@@ -856,7 +885,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
 
     private void ObtenerDatosVehiculoDocumento(int valor) {
 
-        Call<VehiculoDocumento> callDocumento = AdapterVehiculoDocumento.getDocumentos("id_documento", String.valueOf(valor)).getVehiculoDocumento();
+        Call<VehiculoDocumento> callDocumento = AdapterVehiculoDocumento.getDocumentos(JSON_KEY_PEDIDO_ID, String.valueOf(valor)).getVehiculoDocumento();
         callDocumento.enqueue(new DocumentoCallback());
     }
 
@@ -917,7 +946,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
 
     private void llenarFormulario() {
 
-        etxtInspeccion.setText("IV- " + idInspeccion);
+        etxtInspeccion.setText(KEY_TIPO_TRANS_INSPECCION + "-" + idInspeccion);
         etxtCliente.setText(nombreCliente);
         etxtVehiculo.setText(nombreVehiculo);
         etxtMotor.setText(motor);
@@ -930,7 +959,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
     }
 
     private void ObtenerDatosInspeccion(int valor) {
-        Call<InspeccionVehiculoDetalle> callInspeccion = AdapterInspeccion.getInspeccionDetalle("id_inspeccion", String.valueOf(valor)).getInspeccionDetalle();
+        Call<InspeccionVehiculoDetalle> callInspeccion = AdapterInspeccion.getInspeccionDetalle(JSON_KEY_INSPECCION, String.valueOf(valor)).getInspeccionDetalle();
         callInspeccion.enqueue(new InspeccionCallBack());
 
     }
@@ -967,7 +996,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
         public void onResponse(Call<InspeccionVehiculoDetalle> call, Response<InspeccionVehiculoDetalle> response) {
             if (response.isSuccessful()) {
                 InspeccionVehDetalleResponse inspeccionResponse = response.body();
-                if (inspeccionResponse.getResponseCode().equals("200")) {
+                if (inspeccionResponse.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     if (!inspeccionResponse.getInspecciones().isEmpty()) {
                         llenarFormularioDetalles(inspeccionResponse.getInspecciones());
                     } else {
@@ -993,7 +1022,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
         for (InspeccionVehiculoDetalle var : inspecciones) {
             if (var.getId_lista_parametro() != null) {
                 switch (var.getId_lista_parametro()) {
-                    case "58": {
+                    case KEY_LISTA_PARAM_LUZ: {
                         //Luces de vehiculo
                         idluces.add(var.getIdElementoInspeccion());
                         descLuces.add(var.getDesc__elemento());
@@ -1022,30 +1051,32 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         }
                         break;
                     }
-                    case "59": {
+                    case KEY_LISTA_PARAM_LLAVE: {
                         //llaves
                         tipoLlave = var.getIdRespuesta();
                         if (tipoLlave.equals("15")) {
                             llaveInteligente.setChecked(true);
+                            descLlave = "Inteligente";
                         } else {
                             llaveNormal.setChecked(true);
+                            descLlave = "Normal";
                         }
                         break;
                     }
-                    case "60": {
+                    case KEY_LISTA_PARAM_GENERALES: {
                         //accesorios
                         accesorios.add(var.getDesc__elemento());
                         idAccesorios.add(var.getIdElementoInspeccion());
                         break;
                     }
-                    case "62": {
+                    case KEY_LISTA_PARAM_CANTIDAD: {
                         //cantidades
                         cantidades.add(var.getPuntuacion());
                         elementosCantidades.add(var.getDesc__elemento());
                         idElementoCantidades.add(var.getIdElementoInspeccion());
                         break;
                     }
-                    case "63": {
+                    case KEY_LISTA_PARAM_CONDICION_ALFOMBRA: {
                         //condicion alfombra
                         if (var.getIdElementoInspeccion().equals("0")) {
                             condicionAlfombra1 = var.getIdRespuesta();
@@ -1056,7 +1087,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         }
                         break;
                     }
-                    case "64": {
+                    case KEY_LISTA_PARAM_CONDICION_ENTRADA: {
                         //condicion combustible y nivel aceite
                         if (var.getIdElementoInspeccion().equals("1")) {
                             combustible = var.getDesc_respuesta();
@@ -1232,7 +1263,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
         public void onResponse(Call<VehiculoDocumento> call, Response<VehiculoDocumento> response) {
             if (response.isSuccessful()) {
                 VehiculoDocumentoResponse documentoResponse = response.body();
-                if (documentoResponse.getResponseCode().equals("200")) {
+                if (documentoResponse.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     //  Toast.makeText(getApplicationContext(), documentoResponse.getVehiculoDocumento().toString(), Toast.LENGTH_LONG).show();
                     if (documentoResponse.getVehiculoDocumento().isEmpty()) {
                         mensajeLadosVehiculo.setVisibility(View.VISIBLE);
@@ -1258,6 +1289,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             Log.v("INSPECCION ==>", t.getMessage());
         }
     }
+
     private class AdapterLados extends ArrayAdapter<VehiculoDocumento> {
 
         private List<VehiculoDocumento> lista;
@@ -1285,4 +1317,306 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             return item;
         }
     }
+
+    public void generarPdfOnClick() {
+        String NOMBRE_ARCHIVO = "MiArchivoPDF.pdf";
+        String tarjetaSD = Environment.getExternalStorageDirectory().toString();
+        Document document = new Document(PageSize.LETTER);
+
+
+        File pdfDir = new File(tarjetaSD + File.separator + NOMBRE_CARPETA_APP);
+        if (!pdfDir.exists()) {
+            pdfDir.mkdir();
+        }
+        File pdfSubDir = new File(pdfDir.getPath() + File.separator + GENERADOS);
+        if (!pdfSubDir.exists()) {
+            pdfSubDir.mkdir();
+        }
+
+        String nombre_completo = tarjetaSD + File.separator + NOMBRE_CARPETA_APP + File.separator +
+                GENERADOS + File.separator + NOMBRE_ARCHIVO;
+
+
+        File outputfile = new File(nombre_completo);
+        if (outputfile.exists()) {
+            outputfile.delete();
+        }
+        try {
+            PdfWriter pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(nombre_completo));
+            //Crear documento para escribirlo
+            MyFooter footerEvent = new MyFooter();
+            pdfWriter.setPageEvent(footerEvent);
+            document.open();
+            document.addAuthor("Hilda Flores Santana");
+            document.addCreator("CREADOR");
+            document.addSubject("Inspeccion");
+            document.addCreationDate();
+            document.addTitle("Inspeccion");
+            if (placa == null) {
+                placa = "En trámite";
+            }
+
+            if (telefono != null) {
+                telefono = "(" + telefono.substring(0, 3) + ")" + telefono.substring(3);
+            }
+            if (celular != null) {
+                celular = "(" + celular.substring(0, 3) + ")" + celular.substring(3);
+            }
+
+            String add = null;
+            String nota;
+            XMLWorkerHelper workerHelper = XMLWorkerHelper.getInstance();
+            String htmToPDF = "<html><head></head><body>" +
+                    "<table class=\"fixed\" style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: left;\" colspan=\"2\" rowspan=\"1\">Av. Pedro A. Rivera Esq. Balilo G&oacute;mez</td>\n" +
+                    "<td style=\"text-align: rigth;\" colspan=\"2\" rowspan=\"1\"><strong>Fecha:</strong>" + fechaInspeccion + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: left;\" colspan=\"2\" rowspan=\"1\">La Vega, Rep&uacute;blica Dominicana</td>\n" +
+                    "<td style=\"text-align: rigth;\" colspan=\"2\" rowspan=\"1\"><strong>Inspecci&oacute;n:</strong> IV-" + idInspeccion + "</td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<p>&nbsp;</p>\n" +
+                    "<p> <strong>Cliente:</strong>" + "(" + idCliente + ")" + nombreCliente +
+                    "<br /><strong>Doc.Identidad:</strong> " + docIdentidad +
+                    "<br /> <strong>Tel&eacute;fono/Celular:</strong> " + telefono + " / " + celular + "</p>\n" +
+                    "<p>&nbsp;</p>\n" +
+                    "<table class=\" fixed \" style=\"width: 60%;\" border=\"1\" cellspacing=\"2\" cellpadding=\"2\" align=\"left\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"background-color: #cccccc; text-align: center;\" colspan=\"1\" rowspan=\"1\"><strong>Vehiculo Inspeccionado</strong></td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<table class=\" fixed \" style=\"width: 75%;\" border=\"0\" cellspacing=\"1\" cellpadding=\"0\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: center;\" colspan=\"2\" rowspan=\"1\"><strong>" + nombreVehiculo + "</strong></td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Chasis: </strong>" + chasis + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Referencia: </strong>" + referencia + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Color: </strong>" + color + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Placa: </strong>" + placa + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Motor: </strong>" + motor + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Kilometraje: </strong>" + kilometraje + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Nivel combustible: </strong>" + etxtCombustible.getText().toString() + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Nivel aceite: </strong>" + etxtNivelAceite.getText().toString() + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Condici&oacute;n de llave: </strong>" + descLlave + "</td>\n" +
+                    "<td style=\"vertical-align: top;\"><strong>Serie Gomas: </strong>" + serieGomas + "</td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<p>&nbsp;</p>\n" +
+
+
+                    "<table class=\" fixed \" style=\"width: 100%;\" border=\"1\" cellspacing=\"2\" cellpadding=\"2\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Luces encendidas</strong></td>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Accesorios/Equipamientos</strong></td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+
+
+                    "</table>\n" +
+                    "<table class=\" fixed \" style=\"width: 100%;\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">\n" +
+                    "<tbody>\n";
+
+
+            if (descLuces.size() == accesorios.size()) {
+
+                for (int i = 1; i <= descLuces.size(); i++) {
+
+                    add = add + "<tr>\n" + "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                            "<td style=\"width: 45%;\">" + descLuces.get(i - 1) + "</td>\n" +
+                            "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                            "<td style=\"width: 45%;\">" + accesorios.get(i - 1) + "</td>\n" +
+                            "</tr>\n";
+                }
+
+            } else if (descLuces.size() > accesorios.size()) {
+
+                for (int i = 1; i <= descLuces.size(); i++) {
+
+                    if (i > accesorios.size()) {
+                        add = add + "<tr>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\"> " + descLuces.get(i - 1) + "</td>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "</tr>";
+                    } else {
+                        add = add + "<tr>\n" + "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + descLuces.get(i - 1) + "</td>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + accesorios.get(i - 1) + "</td>\n" +
+                                "</tr>\n";
+                    }
+
+                }
+            } else if (accesorios.size() > descLuces.size()) {
+                for (int i = 1; i <= accesorios.size(); i++) {
+                    if (i > descLuces.size()) {
+                        add = add + "<tr>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "<td>&nbsp;</td>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\"> " + accesorios.get(i - 1) + "</td>\n" +
+                                "</tr>";
+                    } else {
+                        add = add + "<tr>\n" + "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + descLuces.get(i - 1) + "</td>\n" +
+                                "<td style=\"width: 5%;\">" + i + "</td>\n" +
+                                "<td style=\"width: 45%;\">" + accesorios.get(i - 1) + "</td>\n" +
+                                "</tr>\n";
+                    }
+                }
+
+            }
+
+
+            htmToPDF = htmToPDF + add +
+                    "</tbody>\n" +
+                    "</table>\n" +
+
+                    "<p>&nbsp;</p>\n" +
+
+
+                    "<table style=\"width: 100%;\" border=\"1\" cellspacing=\"2\" cellpadding=\"2\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Cantidades</strong></td>\n" +
+                    "<td style=\"background-color: #cccccc; width: 50%; text-align: center;\"><strong>Condici&oacute;n Alfombra conductor</strong></td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\">\n" +
+                    "<tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"width: 15%; text-align: left;\"><strong>Alfombras:</strong></td>\n" +
+                    "<td style=\"width: 10%;\">" + cantidades.get(0) + "</td>\n" +
+                    "<td style=\"width: 15%; text-align: left;\"><strong>Llaves:</strong></td>\n" +
+                    "<td style=\"width: 10%;\">" + cantidades.get(1) + "</td>\n" +
+                    "<td style=\"width: 50%;\">" + descAlfombra1 + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td><strong>Gato:</strong></td>\n" +
+                    "<td>" + cantidades.get(2) + "</td>\n" +
+                    "<td><strong>Alicate:</strong></td>\n" +
+                    "<td>" + cantidades.get(3) + "</td>\n" +
+                    "<td>" + descAlfombra2 + "</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td><strong>Llave rueda:</strong></td>\n" +
+                    "<td>" + cantidades.get(4) + "</td>\n" +
+                    "<td><strong>No. Bateria:</strong></td>\n" +
+                    "<td>" + cantidades.get(5) + "</td>\n" +
+                    "<td>" + descAlfombra3 + "</td>\n" +
+                    "</tr>\n" +
+                    "</tbody>\n" +
+                    "</table>\n" +
+                    "<p>&nbsp;</p>\n";
+            if (observaciones != null) {
+                nota = "<p><strong>Observaciones: </strong>" + observaciones.toUpperCase() + "</p>\n";
+                htmToPDF = htmToPDF + nota + "<p>&nbsp;</p>\n" +
+                        "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
+                        "<tbody>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "</tr>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Inspeccionador</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "</tr>\n" +
+                        "</tbody>\n" +
+                        "</table>" +
+
+                        "</body>\n" +
+                        "</html>\n";
+            } else {
+                htmToPDF = htmToPDF + "<p>&nbsp;</p>\n" +
+                        "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
+                        "<tbody>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
+                        "</tr>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Inspeccionador</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "</tr>\n" +
+                        "</tbody>\n" +
+                        "</table>" +
+
+                        "</body>\n" +
+                        "</html>\n";
+            }
+            Log.d("HTML==>", htmToPDF);
+            workerHelper.parseXHtml(pdfWriter, document, new StringReader(htmToPDF));
+            document.close();
+            // Toast.makeText(this, "PDF generado", Toast.LENGTH_SHORT).show();
+            muestraPDF(nombre_completo, this);
+        } catch (DocumentException d) {
+            d.printStackTrace();
+            Log.d("Error==>", d.getLocalizedMessage());
+        } catch (FileNotFoundException f) {
+            f.printStackTrace();
+            Log.d("Error==>", f.getLocalizedMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("Error==>", e.getLocalizedMessage());
+        }
+
+    }
+
+    public void muestraPDF(String archivo, Context context) {
+        // Toast.makeText(context, "Leyendo archivo", Toast.LENGTH_SHORT).show();
+        File file = new File(archivo);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "No tiene una aplicacion para abrir este archivo", Toast.LENGTH_SHORT).show();
+
+        }
+
+    }
+
+    class MyFooter extends PdfPageEventHelper {
+        Font ffont = new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD);
+        Font ffont2 = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL);
+
+        public void onEndPage(PdfWriter writer, Document document) {
+            PdfContentByte cb = writer.getDirectContent();
+            Phrase header = new Phrase("Inspección de Vehículo", ffont);
+            Phrase footer = new Phrase("No nos hacemos responsables de todos los objetos dejados en la empresa" +
+                    " por mas de 30 dias", ffont2);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                    header,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.top() + 10, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                    footer,
+                    (document.right() - document.left()) / 2 + document.leftMargin(),
+                    document.bottom() - 10, 0);
+        }
+    }
+
+
 }

@@ -1,43 +1,27 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompatSideChannelService;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.prueba.CheckMobile.ProductoServicio.AdapterProductoServicio;
-import com.example.prueba.CheckMobile.ProductoServicio.GreenAdapterServicio;
-import com.example.prueba.CheckMobile.ProductoServicio.ProductoServicio;
-import com.example.prueba.CheckMobile.ProductoServicio.ProductoServicioResponse;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.TipoTransaccion.AdapterTipoTransaccion;
 import com.example.prueba.CheckMobile.TipoTransaccion.TipoTransaccion;
-
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,11 +29,7 @@ import java.util.TimerTask;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import static android.R.attr.data;
-import static android.R.attr.editable;
-import static android.os.Build.VERSION_CODES.M;
-import static com.example.prueba.CheckMobile.R.id.etxtDocIdentidad;
-import static com.example.prueba.CheckMobile.R.mipmap.save;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_INSPECCION;
 
 
 public class InspeccionGeneralActivity extends Fragment {
@@ -71,7 +51,7 @@ public class InspeccionGeneralActivity extends Fragment {
     private Timer timer = new Timer();
     private final long DELAY = 0;
     String idCliente, idVehiculo, NombreVehiculo, NombreCliente, chasis, referencia;
-    String fecha, kilo, moto, serie, notas;
+    String fecha, kilo, moto, serie, notas, condicionAlfombra1, condicionAlfombra2, condicionAlfombra3;
     List<String> idRespuesta = new ArrayList<>();
     List<String> descAlfrombra = new ArrayList<>();
     private passingData mListener;
@@ -112,6 +92,17 @@ public class InspeccionGeneralActivity extends Fragment {
         void OnpassingIdRespuesta(List<String> idRespuesta);
 
         void OnpassingDescAlfrombra(List<String> descAlfrombra);
+
+        void OnpassingNombreVeh(String nombre);
+        void OnpassingNomcreCte(String nombre);
+        void OnpassingPlaca(String placa);
+        void OnpassingColor (String color);
+        void OnpassingDocIdentidad(String docIdentidad);
+        void OnpassingCelular(String celular);
+        void OnpassingTelefono(String telefono);
+        void OnpassingCondicion1(String alfombra1);
+        void OnpassingCondicion2(String alfombra2);
+        void OnpassingCondicion3(String alfombra3);
     }
 
 
@@ -147,10 +138,19 @@ public class InspeccionGeneralActivity extends Fragment {
             chasis = extra.getString("CHASIS");
             actualizar = extra.getBoolean("ACTUALIZAR");
 
+
             cliente.setText("CLIENTE  >> " + "(" + idCliente + ")" + NombreCliente);
             vehiculo.setText("VEHICULO >> " + "(" + idVehiculo + ")" + NombreVehiculo);
 
-                obtenerProximaSecuencia("IV");
+            mListener.OnpassingNombreVeh(NombreVehiculo);
+            mListener.OnpassingNomcreCte(NombreCliente);
+            mListener.OnpassingPlaca(extra.getString("PLACA"));
+            mListener.OnpassingColor(extra.getString("COLOR"));
+            mListener.OnpassingDocIdentidad(extra.getString("DOCIDENTIDAD"));
+            mListener.OnpassingTelefono(extra.getString("CELULAR"));
+            mListener.OnpassingCelular(extra.getString("TELEFONO"));
+
+                obtenerProximaSecuencia(KEY_TIPO_TRANS_INSPECCION);
 
         }
 
@@ -189,12 +189,15 @@ public class InspeccionGeneralActivity extends Fragment {
                                 descAlfrombra.remove(j);
                             }
                         }
-
+                        RadioButton rb = (RadioButton) radio1.findViewById(i);
+                        condicionAlfombra1 = rb.getText().toString();
                         if (mListener != null) {
                             Log.d("TAG", "Fragment ==> " + idRespuesta);
                             mListener.OnpassingIdRespuesta(idRespuesta);
                             mListener.OnpassingDescAlfrombra(descAlfrombra);
+                            mListener.OnpassingCondicion1(condicionAlfombra1);
                         }
+
                         break;
                     }
                     case R.id.rbNoBien: {
@@ -207,11 +210,16 @@ public class InspeccionGeneralActivity extends Fragment {
                                 descAlfrombra.remove(j);
                             }
                         }
+
+                        RadioButton rb = (RadioButton) radio1.findViewById(i);
+                        condicionAlfombra1 = rb.getText().toString();
                         if (mListener != null) {
                             Log.d("TAG", "Fragment ==> " + idRespuesta);
                             mListener.OnpassingIdRespuesta(idRespuesta);
                             mListener.OnpassingDescAlfrombra(descAlfrombra);
+                            mListener.OnpassingCondicion1(condicionAlfombra1);
                         }
+
                         break;
                     }
                 }
@@ -231,12 +239,15 @@ public class InspeccionGeneralActivity extends Fragment {
                                 descAlfrombra.remove(j);
                             }
                         }
-
+                        RadioButton rb = (RadioButton) radio2.findViewById(i);
+                        condicionAlfombra2 = rb.getText().toString();
                         if (mListener != null) {
                             Log.d("TAG", "Fragment ==> " + idRespuesta);
                             mListener.OnpassingIdRespuesta(idRespuesta);
                             mListener.OnpassingDescAlfrombra(descAlfrombra);
+                            mListener.OnpassingCondicion2(condicionAlfombra2);
                         }
+
                         break;
                     }
                     case R.id.rbNoGenuina: {
@@ -249,12 +260,14 @@ public class InspeccionGeneralActivity extends Fragment {
                                 descAlfrombra.remove(j);
                             }
                         }
-
+                        RadioButton rb = (RadioButton) radio2.findViewById(i);
+                        condicionAlfombra2 = rb.getText().toString();
                         if (mListener != null) {
                             Log.d("TAG", "Fragment ==> " + idRespuesta);
                             Log.d("TAG", "Fragment ==> " + descAlfrombra);
                             mListener.OnpassingIdRespuesta(idRespuesta);
                             mListener.OnpassingDescAlfrombra(descAlfrombra);
+                            mListener.OnpassingCondicion2(condicionAlfombra2);
                         }
                         break;
                     }
@@ -276,12 +289,14 @@ public class InspeccionGeneralActivity extends Fragment {
                                 descAlfrombra.remove(j);
                             }
                         }
-
+                        RadioButton rb = (RadioButton) radio3.findViewById(i);
+                        condicionAlfombra3 = rb.getText().toString();
                         if (mListener != null) {
                             Log.d("TAG", "Fragment ==> " + idRespuesta);
                             Log.d("TAG", "Fragment ==> " + descAlfrombra);
                             mListener.OnpassingIdRespuesta(idRespuesta);
                             mListener.OnpassingDescAlfrombra(descAlfrombra);
+                            mListener.OnpassingCondicion3(condicionAlfombra3);
                         }
                         break;
                     }
@@ -295,12 +310,14 @@ public class InspeccionGeneralActivity extends Fragment {
                                 descAlfrombra.remove(j);
                             }
                         }
-
+                        RadioButton rb = (RadioButton) radio3.findViewById(i);
+                        condicionAlfombra3 = rb.getText().toString();
                         if (mListener != null) {
                             Log.d("TAG", "Fragment ==> " + idRespuesta);
                             Log.d("TAG", "Fragment ==> " + descAlfrombra);
                             mListener.OnpassingIdRespuesta(idRespuesta);
                             mListener.OnpassingDescAlfrombra(descAlfrombra);
+                            mListener.OnpassingCondicion3(condicionAlfombra3);
 
                         }
                         break;

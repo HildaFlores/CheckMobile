@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.prueba.CheckMobile.MenuPrincipal.ConfigurationActivity">
+    tools:context="com.example.prueba.CheckMobile.Utils.ConfigurationActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

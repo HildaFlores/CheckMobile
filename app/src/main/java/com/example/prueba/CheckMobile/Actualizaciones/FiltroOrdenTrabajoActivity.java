@@ -133,7 +133,7 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
                     newText = newText.toUpperCase();
                     final ArrayList<OrdenTrabajoEnc> filterList = new ArrayList<OrdenTrabajoEnc>();
                     for (int i = 0; i < ordenTrabajo.size(); i++) {
-                        final String text = ordenTrabajo.get(i).getNombreCliente().toUpperCase() + " " +  ordenTrabajo.get(i).getApellidosCte();
+                        final String text = ordenTrabajo.get(i).getNombreCliente().toUpperCase() + " " +  ordenTrabajo.get(i).getApellidosCte().toUpperCase();
                         if (text.contains(newText)) {
                             filterList.add(ordenTrabajo.get(i));
                         }

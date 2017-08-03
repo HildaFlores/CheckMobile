@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +24,8 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
+
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_LISTA;
 
 public class InspeccionAccesoriosActivity extends Fragment {
 
@@ -69,7 +70,7 @@ public class InspeccionAccesoriosActivity extends Fragment {
     }
 
     private void OntenerDatosAccesorios(String s) {
-        Call<ListaAccesorios> call = AdapterAccesorios.getServiceAccesorios("id_lista", s).getListaAccesorios();
+        Call<ListaAccesorios> call = AdapterAccesorios.getServiceAccesorios(JSON_KEY_LISTA, s).getListaAccesorios();
         call.enqueue(new AccesoriosCallback());
     }
 
@@ -113,6 +114,17 @@ public class InspeccionAccesoriosActivity extends Fragment {
             ckAccesorios.setText(lista.get(posicion).getDescripcion());
             ckAccesorios.setId(Integer.parseInt(lista.get(posicion).getValor()));
 
+
+            if (!listaId.isEmpty() && !listaDescripcion.isEmpty())
+            {
+                for(int i = 0; i<listaId.size(); i++)
+                {
+                    if (ckAccesorios.getId() == listaId.get(i)) {
+                        ckAccesorios.setChecked(true);
+                    }
+                }
+            }
+
             ckAccesorios.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -125,9 +137,6 @@ public class InspeccionAccesoriosActivity extends Fragment {
                             mListener.sendDescAccesorio(listaDescripcion);
                             mListener.sendIdAccesorio(listaId);
                         }
-
-                        //   Toast.makeText(getContext(), "Seleccionado  >> " + listaId.toString() + " - " +listaDescripcion, Toast.LENGTH_SHORT).show();
-
 
                     } else {
                         for (int i = 0; i < listaDescripcion.size(); i++) {
@@ -146,15 +155,7 @@ public class InspeccionAccesoriosActivity extends Fragment {
                 }
             });
 
-            if (listaId != null && listaDescripcion!= null)
-            {
-                for(int i = 0; i<listaId.size(); i++)
-                {
-                    if (ckAccesorios.getId() == listaId.get(i)) {
-                        ckAccesorios.setChecked(true);
-                    }
-                }
-            }
+
 
 
             return item;

@@ -1,30 +1,14 @@
 package com.example.prueba.CheckMobile.Usuario;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,32 +16,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
 import com.example.prueba.CheckMobile.MainActivity;
-import com.example.prueba.CheckMobile.MenuPrincipal.ConfigurationActivity;
-import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterInspeccion;
-import com.example.prueba.CheckMobile.OrdenTrabajo.FiltroProductoActivity;
-import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity;
+import com.example.prueba.CheckMobile.Utils.ConfigurationActivity;
 import com.example.prueba.CheckMobile.R;
+import com.example.prueba.CheckMobile.Utils.DashBoardOrdenActivity;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_CLAVE_USUARIO_ADMIN;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_USARIO_ADMIN;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -104,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void buscarUsuario(final String valor1, String valor2) {
-        Call<Usuario> callUsuario = AdapterUsuario.getUsuario("usuario", valor1, "clave", valor2).getUsuario();
+        Call<Usuario> callUsuario = AdapterUsuario.getUsuario(JSON_USARIO_ADMIN, valor1, JSON_CLAVE_USUARIO_ADMIN, valor2).getUsuario();
         callUsuario.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
@@ -166,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             progress.setVisibility(View.INVISIBLE);
-            Toast.makeText(getApplicationContext(), "Bienvenido" + nombreUsuario, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Bienvenido " + nombreUsuario, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("IDUSUARIO", idUsuario);
             intent.putExtra("NOMBREUSUARIO", nombreUsuario);
@@ -185,25 +160,22 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-
-            if (data != null) {
-
-                ipservidor = data.getStringExtra("IP");
-                puerto = data.getStringExtra("PUERTO");
-                supervisor = data.getStringExtra("SUPERVISOR");
-
-            }
-            MainActivity main = new MainActivity();
-            main.ipservidor = ipservidor;
-            main.puerto = puerto;
-        }
-
-
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == Activity.RESULT_OK) {
+//
+//            if (data != null) {
+//
+//                ipservidor = data.getStringExtra("IP");
+//                puerto = data.getStringExtra("PUERTO");
+//                supervisor = data.getStringExtra("SUPERVISOR");
+//
+//            }
+//            }
+//
+//
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -213,8 +185,10 @@ public class LoginActivity extends AppCompatActivity {
             finish();
             return true;
         } else if (id == R.id.action_settings) {
+
             Intent intent = new Intent(LoginActivity.this, ConfigurationActivity.class);
-            startActivityForResult(intent, requestCode);
+            this.finish();
+            startActivity(intent);
             return true;
         }
 

@@ -13,6 +13,8 @@
     <color name="backGroundColor">#b2ff59</color>
     <color name="backGroundColor2">#ccff90</color>
     <color name="backGroundColor3">#c5e1a5</color>
+    <color name="orange">#ffab91</color>
+    <color name="light_red">#e57373</color>
 
     <color name="black_overlay">#66000000</color>
 </resources>

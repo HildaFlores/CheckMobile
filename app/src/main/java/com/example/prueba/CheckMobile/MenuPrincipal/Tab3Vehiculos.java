@@ -27,6 +27,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
+
 
 public class Tab3Vehiculos extends Fragment {
 
@@ -48,29 +50,13 @@ public class Tab3Vehiculos extends Fragment {
 
     private void callAdapter( ArrayList<Vehiculo> veh)
     {
-        /*
-         * A LinearLayoutManager is responsible for measuring and positioning item views within a
-         * RecyclerView into a linear list. This means that it can produce either a horizontal or
-         * vertical list depending on which parameter you pass in to the LinearLayoutManager
-         * constructor. By default, if you don't specify an orientation, you get a vertical list.
-         * In our case, we want a vertical list, so we don't need to pass in an orientation flag to
-         * the LinearLayoutManager constructor.
-         *
-         * There are other LayoutManagers available to display your data in uniform grids,
-         * staggered grids, and more! See the developer documentation for more details.
-         */
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mVehiculoList.setLayoutManager(layoutManager);
 
-        /*
-         * Use this setting to improve performance if you know that changes in content do not
-         * change the child layout size in the RecyclerView
-         */
+
         mVehiculoList.setHasFixedSize(true);
 
-        /*
-         * The GreenAdapter is responsible for displaying each item in the list.
-         */
         mAdapter = new RegistrosAdapter(NUM_LIST_ITEMS, veh);
 
         mVehiculoList.setAdapter(mAdapter);
@@ -89,7 +75,7 @@ public class Tab3Vehiculos extends Fragment {
         public void onResponse(Call<Vehiculo> call, Response<Vehiculo> response) {
             if (response.isSuccessful()) {
                 VehiculoResponse vehicle = response.body();
-                if (vehicle.getResponseCode().equals("200")) {
+                if (vehicle.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     NUM_LIST_ITEMS = vehicle.getVehiculos().size();
                     callAdapter(vehicle.getVehiculos());
                     Log.v("Problema ===>", vehicle.getMessage());

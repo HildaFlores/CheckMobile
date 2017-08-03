@@ -1,12 +1,15 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
  * Created by Prueba on 21-jun-17.
  */
 
-public class InspeccionVehiculo extends InspeccionVehiculoResponse {
+public class InspeccionVehiculo extends InspeccionVehiculoResponse implements Parcelable {
 
 
     private String id;
@@ -35,6 +38,97 @@ public class InspeccionVehiculo extends InspeccionVehiculoResponse {
     private String nombre_cliente;
     private String tipo_veh;
     private String id_condicion;
+    private String placa;
+    private int dias;
+
+    protected InspeccionVehiculo(Parcel in) {
+        id = in.readString();
+        id_empresa = in.readString();
+        idVehiculo = in.readString();
+        chasis = in.readString();
+        referencia = in.readString();
+        fechaInspeccion = in.readString();
+        serieGomas = in.readString();
+        nivelCombustible = in.readString();
+        idMecanico = in.readString();
+        supervisor = in.readString();
+        estado = in.readString();
+        usuarioInsercion = in.readString();
+        usuarioActualizacion = in.readString();
+        observaciones = in.readString();
+        idAsesor = in.readString();
+        idCliente = in.readString();
+        kilometraje = in.readString();
+        motor = in.readString();
+        estado_inspeccion = in.readString();
+        nombre_vehiculo = in.readString();
+        nombre_cliente = in.readString();
+        tipo_veh = in.readString();
+        id_condicion = in.readString();
+        placa = in.readString();
+        dias = in.readInt();
+        color = in.readString();
+        docIdentidad = in.readString();
+        telefono = in.readString();
+        celular = in.readString();
+    }
+
+    public static final Creator<InspeccionVehiculo> CREATOR = new Creator<InspeccionVehiculo>() {
+        @Override
+        public InspeccionVehiculo createFromParcel(Parcel in) {
+            return new InspeccionVehiculo(in);
+        }
+
+        @Override
+        public InspeccionVehiculo[] newArray(int size) {
+            return new InspeccionVehiculo[size];
+        }
+    };
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getDocIdentidad() {
+        return docIdentidad;
+    }
+
+    public void setDocIdentidad(String docIdentidad) {
+        this.docIdentidad = docIdentidad;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    private String color;
+    private String docIdentidad;
+    private String telefono;
+    private String celular;
 
 
     public InspeccionVehiculo(String idVehiculo, String chasis, String referencia, String fechaInspeccion, String serieGomas, String idMecanico, String supervisor, String observaciones, String idAsesor, String idCliente, String kilometraje, String motor) {
@@ -296,5 +390,51 @@ public class InspeccionVehiculo extends InspeccionVehiculoResponse {
 
     public void setId_condicion(String id_condicion) {
         this.id_condicion = id_condicion;
+    }
+
+    public int getDias() {
+        return dias;
+    }
+
+    public void setDias(int dias) {
+        this.dias = dias;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(id_empresa);
+        parcel.writeString(idVehiculo);
+        parcel.writeString(chasis);
+        parcel.writeString(referencia);
+        parcel.writeString(fechaInspeccion);
+        parcel.writeString(serieGomas);
+        parcel.writeString(nivelCombustible);
+        parcel.writeString(idMecanico);
+        parcel.writeString(supervisor);
+        parcel.writeString(estado);
+        parcel.writeString(usuarioInsercion);
+        parcel.writeString(usuarioActualizacion);
+        parcel.writeString(observaciones);
+        parcel.writeString(idAsesor);
+        parcel.writeString(idCliente);
+        parcel.writeString(kilometraje);
+        parcel.writeString(motor);
+        parcel.writeString(estado_inspeccion);
+        parcel.writeString(nombre_vehiculo);
+        parcel.writeString(nombre_cliente);
+        parcel.writeString(tipo_veh);
+        parcel.writeString(id_condicion);
+        parcel.writeString(placa);
+        parcel.writeInt(dias);
+        parcel.writeString(color);
+        parcel.writeString(docIdentidad);
+        parcel.writeString(telefono);
+        parcel.writeString(celular);
     }
 }

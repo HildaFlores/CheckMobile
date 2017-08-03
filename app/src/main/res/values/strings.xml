@@ -40,6 +40,9 @@
     <string name="title_activity_fullscreen">Acerca de</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">Check Mobile</string>
+    <string name="title_activity_dash_board_orden">Ordenes de Trabajo</string>
+    <string name="section_Orden1">Ordenes Pendientes</string>
+    <string name="section_Orden2">Ordenes Finalizadas</string>
 
 
 </resources>

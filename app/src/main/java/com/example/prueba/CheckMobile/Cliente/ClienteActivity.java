@@ -3,7 +3,6 @@ package com.example.prueba.CheckMobile.Cliente;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +10,8 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -28,6 +28,7 @@ import com.example.prueba.CheckMobile.CondicionPago.AdapterCondicion;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionPago;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionResponse;
 import com.example.prueba.CheckMobile.Inspeccion.MainInspeccionActivity;
+import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity;
 import com.example.prueba.CheckMobile.Pais.AdapterPais;
 import com.example.prueba.CheckMobile.Pais.Pais;
 import com.example.prueba.CheckMobile.Pais.PaisResponse;
@@ -36,7 +37,7 @@ import com.example.prueba.CheckMobile.TablaDgii.AdapterDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgiiResponse;
 import com.example.prueba.CheckMobile.Vehiculo.AdapterVehiculo;
-import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,7 +52,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.R.attr.format;
+import static com.example.prueba.CheckMobile.R.id.btnClienteSiguiente;
+import static com.example.prueba.CheckMobile.Utils.Constantes.*;
+
 
 public class ClienteActivity extends AppCompatActivity implements View.OnClickListener {
     //Vistas
@@ -84,16 +87,17 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     EditText email;
     EditText limiteCredito;
     EditText notas;
+    Button btnClienteSiguiente;
 
     // /Parametros
 
-    String nombreVehiculo = null, nombreCliente = null, idCliente = null, idVehiculo = null, refVehiculo, chasisVehiculo;
+    String nombreVehiculo = null, nombreCliente = null, idCliente = null, idVehiculo = null, refVehiculo, chasisVehiculo, placa, color;
     private Timer timer = new Timer();
     private final long DELAY = 0;
     String valor;
     int numCaracteres = 0;
     int contador = 0;
-    boolean insertar = true;
+    boolean insertar = true, actualizar = false;
     String valorSexo, idCondicion, desc_nacionalidad, desc_pais;
 
     @Override
@@ -123,6 +127,19 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             idVehiculo = extra.getString("IDVEHICULO");
             refVehiculo = extra.getString("REFERENCIA");
             chasisVehiculo = extra.getString("CHASIS");
+            placa = extra.getString("PLACA");
+            color = extra.getString("COLOR");
+            actualizar = extra.getBoolean("ACTUALIZAR");
+
+            if (actualizar)
+            {
+                btnClienteSiguiente.setVisibility(View.GONE);
+            }else  if (placa.isEmpty())
+            {
+                placa = "En trámite";
+            }
+
+
         }
         if (idCliente != null) {
             insertar = false;
@@ -137,7 +154,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             buscarCliente();
         }
 
-        Button btnClienteSiguiente = (Button) findViewById(R.id.btnClienteSiguiente);
+
         btnClienteSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -169,12 +186,18 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 } else {
 
                     Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainInspeccionActivity.class);
+                    ClienteActivity.this.finish();
                     intent.putExtra("IDVEHICULO", idVehiculo);
                     intent.putExtra("VEHICULO", nombreVehiculo);
                     intent.putExtra("IDCLIENTE", idCliente);
                     intent.putExtra("CLIENTE", nombreCliente);
                     intent.putExtra("REFERENCIA", refVehiculo);
                     intent.putExtra("CHASIS", chasisVehiculo);
+                    intent.putExtra("PLACA", placa);
+                    intent.putExtra("COLOR", color);
+                    intent.putExtra("DOCIDENTIDAD", etxtDocIdentidad.getText().toString());
+                    intent.putExtra("CELULAR", celular.getText().toString());
+                    intent.putExtra("TELEFONO", telefono.getText().toString());
                     ActualizaVehiculoCliente(idCliente, idVehiculo);
                     etxtDocIdentidad.setEnabled(false);
                     radioEmpresa.setEnabled(false);
@@ -185,6 +208,57 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        if (actualizar) {
+            getMenuInflater().inflate(R.menu.menu_main_actualizar, menu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+       if (id == R.id.action_update) {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ClienteActivity.this);
+            alertBuilder.setMessage("¿Está seguro de actualizar los datos?")
+                    .setCancelable(false)
+                    .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                         if(insertar)
+                         {
+                             InsertarCliente();
+
+                         }
+                         else
+                         {
+                             ActualizaVehiculoCliente(idCliente, idVehiculo);
+                         }
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+            AlertDialog alert = alertBuilder.create();
+            alert.setTitle("Actualizar");
+            alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+            alert.show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -481,19 +555,20 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     private void obtenerClientePorDocIdentidad(String valor) {
         contador++;
         if (contador == 1) {
-            Call<Cliente> call = AdapterCliente.getFiltroClliente("documento_identidad", valor).getClientes();
+            Call<Cliente> call = AdapterCliente.getFiltroClliente(JSON_KEY_CEDULA, valor).getClientes();
             call.enqueue(new FiltroClienteCallback());
         }
 
     }
 
     private void obtenerClienteFiltrado(String valor) {
-        Call<TablaDgii> call = AdapterDgii.getApiService("rnc_cedula", valor).getCliente();
+        Call<TablaDgii> call = AdapterDgii.getApiService(JSON_KEY_DOC_IDENTIDAD, valor).getCliente();
         call.enqueue(new FiltroTablaDgiiCallback());
 
     }
 
     private void inicializacionVistas() {
+        btnClienteSiguiente = (Button) findViewById(R.id.btnClienteSiguiente);
         layoutEmpresa = (LinearLayout) findViewById(R.id.layoutNombreEmpresa);
         layoutSegunDGII = (LinearLayout) findViewById(R.id.layoutNombreSegunDgii);
         layoutSegunDGII.setVisibility(View.GONE);
@@ -650,7 +725,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 CondicionResponse condicionResponse = response.body();
                 poblarSpinnerCondicion(condicionResponse.getCondicionPagos());
             } else {
-                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de condicion", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -695,7 +770,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     //Obtener Cliente teniendo su id
 
     private void ObtenerDatosFiltradosCliente(String s) {
-        Call<Cliente> call = AdapterCliente.getFiltroClliente("id_cliente", s).getClientes();
+        Call<Cliente> call = AdapterCliente.getFiltroClliente(JSON_KEY_CLIENT, s).getClientes();
         call.enqueue(new FiltroClienteCallback());
 
     }
@@ -814,6 +889,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         email.setEnabled(estado);
         spinnerCondicion.setEnabled(estado);
         limiteCredito.setEnabled(estado);
+        notas.setEnabled(estado);
 
     }
 
@@ -860,7 +936,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
                 String[] p = response.body().toString().split(",");
-                if (p[0].equals("200")) {
+                if (p[0].equals(RESPONSE_CODE_OK)) {
                     idCliente = p[1];
                     Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainInspeccionActivity.class);
@@ -899,7 +975,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
-                if (response.toString().equals("200")) {
+                if (response.toString().equals(RESPONSE_CODE_OK)) {
                     Toast.makeText(getApplicationContext(), "Cliente Actualizado", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();

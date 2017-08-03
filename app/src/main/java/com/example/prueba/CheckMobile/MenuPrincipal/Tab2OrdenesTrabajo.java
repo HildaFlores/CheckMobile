@@ -28,6 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
+
 /**
  * Created by Prueba on 26-may-17.
  */
@@ -196,7 +198,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().toString().equals("200")) {
+                    if (response.body().toString().equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getContext(), "Orden anulada!", Toast.LENGTH_SHORT).show();
                         obtenerDatosOrdenes();
                     } else {
@@ -219,7 +221,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
         public void onResponse(Call<OrdenTrabajoEnc> call, Response<OrdenTrabajoEnc> response) {
             if (response.isSuccessful()) {
                 ordenes = response.body();
-                if (ordenes.getResponseCode().equals("200")) {
+                if (ordenes.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     listaOrdenes = ordenes.getOrdenes();
                     NUM_LIST_ITEMS = ordenes.getOrdenes().size();
                     callAdapter(ordenes.getOrdenes());
