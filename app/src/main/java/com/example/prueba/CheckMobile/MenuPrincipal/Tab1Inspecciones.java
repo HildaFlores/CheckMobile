@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.prueba.CheckMobile.Inspeccion.AdapterInspeccion;
 import com.example.prueba.CheckMobile.Inspeccion.ConsultaInspeccionActivity;
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
@@ -24,6 +25,8 @@ import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculoResponse;
 import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.Vehiculo.VehiculoActivity;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -55,6 +58,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
     private String idCliente;
     private ArrayList<InspeccionVehiculo> inspecciones = new ArrayList<InspeccionVehiculo>();
     private sendData mListener;
+    private TextView mensaje;
 
     @Override
     public void onAttach(Context context) {
@@ -83,7 +87,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab1_inspecciones, container, false);
         mInspeccionList = (RecyclerView) rootView.findViewById(R.id.rc_inspeccion);
-
+        mensaje = (TextView) rootView.findViewById(R.id.textMsjInspeccion);
         ObtenerDatosInspeccion();
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.flotanteInspeccion);
@@ -173,8 +177,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
     public void onReciclyListItemClick(int idItem, final int clickedItemIndex) {
         final View view = mInspeccionList.getLayoutManager().findViewByPosition(clickedItemIndex);
         switch (idItem) {
-            case R.id.action_convert:
-            {
+            case R.id.action_convert: {
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
                 alertBuilder.setMessage("¿Está seguro de generar orden de trabajo?")
                         .setCancelable(false)
@@ -251,8 +254,16 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                 InspeccionVehiculoResponse inspeccion = response.body();
                 if (inspeccion.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     inspecciones = inspeccion.getInspecciones();
-                    NUM_LIST_ITEMS = inspeccion.getInspecciones().size();
-                    callAdapter(inspeccion.getInspecciones());
+                    if(inspecciones.isEmpty())
+                    {
+                        mensaje.setVisibility(View.VISIBLE);
+                        mInspeccionList.setVisibility(View.GONE);
+
+                    }else {
+                        mensaje.setVisibility(View.GONE);
+                        NUM_LIST_ITEMS = inspeccion.getInspecciones().size();
+                        callAdapter(inspeccion.getInspecciones());
+                    }
                 }
             } else {
                 Toast.makeText(getContext(), "Error en el formato de respuesta de inspección", Toast.LENGTH_SHORT).show();

@@ -23,5 +23,8 @@ public interface InspeccionService {
     @POST("inspeccionFecha")
     Call<InspeccionVehiculo> getInspeccionesPorFecha();
 
+    @POST("inspeccionVehiculo")
+    Call<InspeccionVehiculo> getInspeccionesPorReferencia();
+
 
 }

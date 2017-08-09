@@ -1,5 +1,6 @@
 package com.example.prueba.CheckMobile.Actualizaciones;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
@@ -22,6 +23,9 @@ import android.widget.Toast;
 import com.example.prueba.CheckMobile.Cliente.ClienteActivity;
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
 import com.example.prueba.CheckMobile.R;
+import com.example.prueba.CheckMobile.Usuario.AdapterUsuario;
+import com.example.prueba.CheckMobile.Usuario.Usuario;
+import com.example.prueba.CheckMobile.Usuario.UsuarioResponse;
 import com.example.prueba.CheckMobile.Vehiculo.AdapterVehiculo;
 import com.example.prueba.CheckMobile.Vehiculo.Vehiculo;
 import com.example.prueba.CheckMobile.Vehiculo.VehiculoResponse;
@@ -33,13 +37,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_CLAVE_USUARIO_ADMIN;
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_USARIO_ADMIN;
 import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
+import static com.example.prueba.CheckMobile.Utils.Constantes.USER_SUPERVISOR;
 
-public class FiltroVehiculoActivity extends AppCompatActivity {
+public class FiltroVehiculoActivity extends AppCompatActivity implements myDialogClaveAutorizacion.OnDialogclickListener {
 
     ArrayList<Vehiculo> vehiculos = new ArrayList<>();
     VehiculoAdapter madapter;
     ListView listViewVehiculo;
+    String claveAutorizacion;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +64,12 @@ public class FiltroVehiculoActivity extends AppCompatActivity {
         listViewVehiculo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               // InspeccionVehiculo itemInspeccion = (InspeccionVehiculo) listViewInspeccion.getAdapter().getItem(i);
                 Vehiculo itemVehiculo = (Vehiculo) listViewVehiculo.getAdapter().getItem(i);
-                Intent intent = new Intent(FiltroVehiculoActivity.this, ClienteActivity.class);
-                intent.putExtra("IDVEHICULO",itemVehiculo.getId());
+                intent = new Intent(FiltroVehiculoActivity.this, ClienteActivity.class);
+                intent.putExtra("IDVEHICULO", itemVehiculo.getId());
                 intent.putExtra("ACTUALIZAR", true);
-                startActivity(intent);
-
+                myDialogClaveAutorizacion myDialogClaveAutorizacion = new myDialogClaveAutorizacion();
+                myDialogClaveAutorizacion.show(getFragmentManager(), "Clave");
             }
         });
 
@@ -119,6 +127,24 @@ public class FiltroVehiculoActivity extends AppCompatActivity {
         call.enqueue(new VehiculoCallback());
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        buscarUsuario(claveAutorizacion);
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.dismiss();
+    }
+
+    @Override
+    public void onTextViewClave(String clave) {
+
+        this.claveAutorizacion = clave;
+
+    }
+
 
     class VehiculoCallback implements Callback<Vehiculo> {
         @Override
@@ -129,7 +155,6 @@ public class FiltroVehiculoActivity extends AppCompatActivity {
                     vehiculos = vehicle.getVehiculos();
                     madapter = new VehiculoAdapter(getApplicationContext(), vehiculos);
                     listViewVehiculo.setAdapter(madapter);
-
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de vehículo", Toast.LENGTH_SHORT).show();
@@ -170,4 +195,34 @@ public class FiltroVehiculoActivity extends AppCompatActivity {
 
     }
 
+    private void buscarUsuario(String valor2) {
+
+        Call<Usuario> callUsuario = AdapterUsuario.getUsuario(JSON_USARIO_ADMIN, USER_SUPERVISOR, JSON_CLAVE_USUARIO_ADMIN, valor2).getValidacion();
+        callUsuario.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (response.isSuccessful()) {
+                    UsuarioResponse usuarioResponse = null;
+                    if (response.body() != null) {
+
+                        usuarioResponse = response.body();
+                    }
+                    if (usuarioResponse.getResponseCode().equals("200") && usuarioResponse.getRows() > 0) {
+
+                        startActivity(intent);
+                    } else
+                        Toast.makeText(getApplicationContext(), "Contraseña incorrecta ", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error al validar usuario o contraseña ", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("CLAVE==>", t.getMessage());
+            }
+        });
+
+    }
 }

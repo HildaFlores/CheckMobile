@@ -66,4 +66,27 @@ public class AdapterUsuario {
     }
 
 
+    public static UsuarioService getSupervisor() {
+         apiService = null;
+
+        MainActivity main = new MainActivity();
+        OkHttpClient.Builder httpClient2 = main.httpCliente();
+
+        if (apiService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(main.getBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClient2.build()) //<- using the log level
+                    .build();
+
+            apiService = retrofit.create(com.example.prueba.CheckMobile.Usuario.UsuarioService.class);
+
+        }
+
+        return apiService;
+
+    }
+
+
+
 }

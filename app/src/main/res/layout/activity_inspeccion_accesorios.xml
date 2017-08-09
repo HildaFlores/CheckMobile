@@ -19,9 +19,9 @@
             android:layout_weight="1"
             android:layout_centerHorizontal="true"
             android:text="Seleccione los equipamientos o Accesorios"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:padding="15dp"/>
+            android:padding="15sp"/>
 
         <ListView
             android:layout_width="match_parent"

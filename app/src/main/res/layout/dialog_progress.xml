@@ -8,12 +8,12 @@
     <ProgressBar
         android:id="@+id/progressGuardar"
         style="?android:attr/progressBarStyle"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="100sp"
+        android:layout_height="100sp"
         android:max="100"
-        android:paddingBottom="25dp"
-        android:paddingLeft="25dp"
-        android:paddingTop="25dp"
+        android:paddingBottom="25sp"
+        android:paddingLeft="25sp"
+        android:paddingTop="25sp"
         android:progressDrawable="@color/accent" />
 
     <TextView
@@ -21,10 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:paddingBottom="25dp"
-        android:paddingLeft="25dp"
-        android:paddingTop="25dp"
+        android:paddingBottom="25sp"
+        android:paddingLeft="25sp"
+        android:paddingTop="25sp"
         android:text="Guardando..."
-        android:textSize="25dp" />
+        android:textSize="25sp" />
 
 </LinearLayout>

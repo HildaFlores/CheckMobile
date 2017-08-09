@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Referencia:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Chasis:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -80,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Año: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Placa: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -115,14 +115,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtTipo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tipo:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <Spinner
@@ -146,7 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Marca: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <AutoCompleteTextView
@@ -179,7 +179,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Modelo: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <Spinner
@@ -203,7 +203,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Estilo: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <Spinner
@@ -227,7 +227,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Combustible"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -245,7 +245,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
-            android:padding="20dp">
+            android:padding="20sp">
 
             <TextView
                 android:id="@+id/txtClindros"
@@ -254,7 +254,7 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="No. de Cilindros"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -330,7 +330,7 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="Tracción"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
 
@@ -359,16 +359,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Color: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/etxtColor"
-                android:layout_width="wrap_content"
+                android:ems="10"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:imeOptions="actionSearch"
+                android:completionThreshold="1"
                 android:hint="Color     "
-                android:inputType="textPersonName" />
+                />
 
         </LinearLayout>
 
@@ -384,16 +387,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Color Interior:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/etxtColorInterior"
-                android:layout_width="wrap_content"
+                android:ems="10"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:imeOptions="actionSearch"
+                android:completionThreshold="1"
                 android:hint="Color Interior"
-                android:inputType="textPersonName" />
+                />
 
 
         </LinearLayout>
@@ -412,7 +418,7 @@
                 android:layout_weight="0.50"
                 android:gravity="center_horizontal"
                 android:text="Condición: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -444,7 +450,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtFilaAsiento"
@@ -452,7 +458,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="Fila de asientos:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -475,7 +481,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cantidad Puertas: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -521,7 +527,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtTransmisión"
@@ -530,7 +536,7 @@
                 android:layout_weight="0.61"
                 android:gravity="center_horizontal"
                 android:text="Transmisión: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
 
@@ -550,7 +556,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Mecánica"
-                android:textSize="15dp" />
+                android:textSize="15sp" />
 
             <RadioButton
                 android:id="@+id/rbAutomatica"
@@ -558,7 +564,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Automática"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
 
             <RadioButton
                 android:id="@+id/rbSincronizada"
@@ -566,7 +572,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Sincronizada"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
         </RadioGroup>
 
 
@@ -574,7 +580,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtClindraje"
@@ -582,7 +588,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cilindraje: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -601,7 +607,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:text="Garantía? "
                 />
 
@@ -613,7 +619,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="25dp">
+        android:padding="25sp">
 
 
         <TextView
@@ -621,7 +627,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nota: "
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <EditText
@@ -641,7 +647,7 @@
             android:layout_gravity="right"
             android:background="@color/divider"
             android:orientation="horizontal"
-            android:paddingTop="15dp">
+            android:paddingTop="15sp">
 
             <Button
                 android:id="@+id/btnSiguiente"
@@ -651,7 +657,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="SIGUIENTE >"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
         </LinearLayout>
 
 

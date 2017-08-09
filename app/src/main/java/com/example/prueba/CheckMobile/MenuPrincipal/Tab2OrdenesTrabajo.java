@@ -39,11 +39,20 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
     private RecyclerView mOrdenList;
     OrdenTrabajoEncResponse ordenes;
     private ArrayList<OrdenTrabajoEnc> listaOrdenes = new ArrayList<OrdenTrabajoEnc>();
-    private String nombreCliente, idCondicion, idCliente, fechaOrden, observaciones, nombreMecanico, descripcionCondicion;
+    private String nombreCliente;
+    private String idCondicion;
+    private String idCliente;
+    private String fechaOrden;
+    private String observaciones;
+    private String nombreMecanico;
+    private String descripcionCondicion;
+    private String nombreSupervisor;
     private sendDataOrden mListener;
     private int NUM_LIST_ITEMS = 0;
     int idInspeccion, idOrden;
     Boolean buscar, permitePiezasReemplazo = false;
+    private TextView mensaje;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -53,6 +62,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
             throw new RuntimeException(context.toString());
         }
     }
+
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -69,6 +79,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab2_ordenes_trabajo, container, false);
         mOrdenList = (RecyclerView) rootView.findViewById(R.id.rc_ordenes);
+        mensaje = (TextView) rootView.findViewById(R.id.textMsjOrden);
         obtenerDatosOrdenes();
         return rootView;
     }
@@ -106,10 +117,11 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
         intent.putExtra("ORDEN", idOrden);
         intent.putExtra("FECHA", fechaOrden);
         intent.putExtra("OBSERVACIONES", observaciones);
-        intent.putExtra("PIEZAS", permitePiezasReemplazo);
+        intent.putExtra("PIEZA", permitePiezasReemplazo);
         intent.putExtra("MECANICO", nombreMecanico);
         intent.putExtra("CONDICION", descripcionCondicion);
-       // Toast.makeText(getContext(), "orden==>" + idOrden, Toast.LENGTH_SHORT).show();
+        intent.putExtra("SUPERVISOR", nombreSupervisor);
+        // Toast.makeText(getContext(), "orden==>" + idOrden, Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
 
@@ -125,11 +137,15 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
                     observaciones = listaOrdenes.get(i).getNotas();
                     nombreMecanico = listaOrdenes.get(i).getNombre_mecanico();
                     descripcionCondicion = listaOrdenes.get(i).getCondicion();
-                    if (listaOrdenes.get(i).getPermite_pieza_reemplazo().equals("1"))
-                    {
+                    nombreSupervisor = listaOrdenes.get(i).getNombreSupervisor();
+                    if (listaOrdenes.get(i).getPermite_pieza_reemplazo().equals("1")) {
                         permitePiezasReemplazo = true;
                     }
-                    Log.d("PIEZA ==> ", String.valueOf(permitePiezasReemplazo));
+                    else
+                    {
+                        permitePiezasReemplazo = false;
+                    }
+
                 }
 
             }
@@ -223,17 +239,24 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
                 ordenes = response.body();
                 if (ordenes.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     listaOrdenes = ordenes.getOrdenes();
-                    NUM_LIST_ITEMS = ordenes.getOrdenes().size();
-                    callAdapter(ordenes.getOrdenes());
+                    if (listaOrdenes.isEmpty()) {
+                        mensaje.setVisibility(View.VISIBLE);
+                        mOrdenList.setVisibility(View.GONE);
+                    } else {
+                        mensaje.setVisibility(View.GONE);
+                        NUM_LIST_ITEMS = ordenes.getOrdenes().size();
+                        callAdapter(ordenes.getOrdenes());
+                    }
                 }
             } else {
                 Toast.makeText(getContext(), "Error en el formato de respuesta de Orden", Toast.LENGTH_SHORT).show();
             }
         }
+
         @Override
         public void onFailure(Call<OrdenTrabajoEnc> call, Throwable t) {
             Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-            Log.v("Aqui===>", "Error" +  t.getMessage());
+            Log.v("Aqui===>", "Error" + t.getMessage());
         }
     }
 

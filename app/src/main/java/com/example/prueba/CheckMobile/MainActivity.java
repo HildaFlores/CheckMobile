@@ -19,6 +19,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.example.prueba.CheckMobile.Actualizaciones.FiltroInspeccionActivity;
 import com.example.prueba.CheckMobile.Actualizaciones.FiltroOrdenTrabajoActivity;
 import com.example.prueba.CheckMobile.Actualizaciones.FiltroVehiculoActivity;
@@ -27,14 +28,15 @@ import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterInspeccion;
 import com.example.prueba.CheckMobile.MenuPrincipal.GreenAdapterOrden;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab1Inspecciones;
 import com.example.prueba.CheckMobile.MenuPrincipal.Tab2OrdenesTrabajo;
-import com.example.prueba.CheckMobile.MenuPrincipal.Tab3Vehiculos;
 import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoEnc;
 import com.example.prueba.CheckMobile.Usuario.LoginActivity;
 import com.example.prueba.CheckMobile.Utils.DashBoardInspeccionActivity;
 import com.example.prueba.CheckMobile.Utils.DashBoardOrdenActivity;
 import com.example.prueba.CheckMobile.Utils.FullscreenActivity;
+import com.example.prueba.CheckMobile.Utils.HistoricoVehiculoActivity;
 
 import java.util.ArrayList;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -122,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-       }
-       //else {
+        }
+        //else {
 //            super.onBackPressed();
 //        }
     }
@@ -214,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         return param;
 
     }
+
     public String formatearParametro(String parametro1, String valor1, String parametro2, String valor2, String parametro3, String valor3) {
         String param;
         param = "{ '" + parametro1 + "' :" + " '" + valor1 + "', " +
@@ -251,8 +254,7 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         int id = item.getItemId();
         switch (id) {
 
-            case R.id.nav_titular:
-            {
+            case R.id.nav_titular: {
                 Intent intent = new Intent(MainActivity.this, FiltroVehiculoActivity.class);
                 startActivity(intent);
                 break;
@@ -268,18 +270,20 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
                 startActivity(intent);
                 break;
             }
-            case R.id.nav_consulta_inspecciones:
-            {
+            case R.id.nav_consulta_inspecciones: {
                 Intent intent = new Intent(MainActivity.this, DashBoardInspeccionActivity.class);
                 startActivity(intent);
                 break;
             }
-            case R.id.nav_consulta_ordenes:
-            {
+            case R.id.nav_consulta_ordenes: {
                 Intent intent = new Intent(MainActivity.this, DashBoardOrdenActivity.class);
                 startActivity(intent);
                 break;
             }
+            case R.id.nav_historico:
+                Intent intent = new Intent(MainActivity.this, HistoricoVehiculoActivity.class);
+                startActivity(intent);
+                break;
         }
 
 
@@ -306,11 +310,11 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
                 case 1:
                     Tab2OrdenesTrabajo ordenesTrabajo = new Tab2OrdenesTrabajo();
                     return ordenesTrabajo;
-                case 2:
-
-
-                    Tab3Vehiculos vehiculos = new Tab3Vehiculos();
-                    return vehiculos;
+//                case 2:
+//
+//
+//                    Tab3Vehiculos vehiculos = new Tab3Vehiculos();
+//                    return vehiculos;
 
                 default:
                     return null;
@@ -321,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 2;
         }
 
         @Override
@@ -335,8 +339,8 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
                     return titulo1;
                 case 1:
                     return titulo2;
-                case 2:
-                    return titulo3;
+//                case 2:
+//                    return titulo3;
             }
             return null;
         }

@@ -7,9 +7,9 @@
 
     <ImageView
         android:id="@+id/imageViewLado"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:padding="15dp"
+        android:layout_width="250sp"
+        android:layout_height="250sp"
+        android:padding="15sp"
         app:srcCompat="@mipmap/no_foto" />
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_toRightOf="@id/imageViewLado"
         android:text="TextView"
         android:layout_centerVertical="true"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"/>
 
 </RelativeLayout>

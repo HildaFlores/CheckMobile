@@ -35,10 +35,14 @@ import com.example.prueba.CheckMobile.Cliente.ClienteActivity;
 import com.example.prueba.CheckMobile.Combustible.AdapterCombustible;
 import com.example.prueba.CheckMobile.Combustible.Combustible;
 import com.example.prueba.CheckMobile.Combustible.CombustibleResponse;
+import com.example.prueba.CheckMobile.OtrosParametros.AdapterOtrosParametros;
+import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametros;
+import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametrosResponse;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.TipoVehiculo.AdaprterTipoVehiculo;
 import com.example.prueba.CheckMobile.TipoVehiculo.TipoVehiculo;
 import com.example.prueba.CheckMobile.TipoVehiculo.TipoVehiculoResponse;
+import com.example.prueba.CheckMobile.Utils.Constantes;
 import com.example.prueba.CheckMobile.VehiculoEstilo.AdapterEstilo;
 import com.example.prueba.CheckMobile.VehiculoEstilo.Estilo;
 import com.example.prueba.CheckMobile.VehiculoEstilo.myDialogEstilo;
@@ -63,8 +67,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_LISTA;
 import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_MODELO;
 import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_VEHICULO;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_COLORES;
 import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 import static com.example.prueba.CheckMobile.VehiculoMarca.AdapterMarca.insertarMarca;
 
@@ -91,8 +97,8 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
     RadioButton cilindro6;
     RadioButton cilindro7;
     RadioButton cilindro8;
-    EditText color;
-    EditText colorInterior;
+    AutoCompleteTextView color;
+    AutoCompleteTextView colorInterior;
     RadioButton condicionNuevo;
     RadioButton condicionUsado;
     EditText filaAsientos;
@@ -137,6 +143,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         obtenerCilindros();
         obtenerTransmision();
         obtenerGarantia();
+        obtenerDatosColores();
 
         //Para pasar de una actividad a otra
         Button btnSiguiente = (Button) findViewById(R.id.btnSiguiente);
@@ -186,8 +193,10 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         });
 
 
-
     }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -360,8 +369,8 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         cilindro6 = (RadioButton) findViewById(R.id.rbNoClindro6);
         cilindro7 = (RadioButton) findViewById(R.id.rbNoClindro7);
         cilindro8 = (RadioButton) findViewById(R.id.rbNoClindro8);
-        color = (EditText) findViewById(R.id.etxtColor);
-        colorInterior = (EditText) findViewById(R.id.etxtColorInterior);
+        color = (AutoCompleteTextView) findViewById(R.id.etxtColor);
+        colorInterior = (AutoCompleteTextView) findViewById(R.id.etxtColorInterior);
         condicionNuevo = (RadioButton) findViewById(R.id.rbNuevo);
         condicionUsado = (RadioButton) findViewById(R.id.rbUsado);
         filaAsientos = (EditText) findViewById(R.id.etxtFilaAsiento);
@@ -529,6 +538,46 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         call.enqueue(new MarcaCallback());
     }
 
+    private void obtenerDatosColores() {
+        Call<OtrosParametros> callColores = AdapterOtrosParametros.getServiceOtros(JSON_KEY_LISTA, KEY_LISTA_PARAM_COLORES).getOtrosParametros();
+        callColores.enqueue(new Callback<OtrosParametros>() {
+            @Override
+            public void onResponse(Call<OtrosParametros> call, Response<OtrosParametros> response) {
+                OtrosParametrosResponse otrosParametros = response.body();
+                if(otrosParametros.getResponseCode().equals(RESPONSE_CODE_OK))
+                {
+                    llenarAutocompletarColores(otrosParametros.getOtrosParametros());
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Error de respuesta de colores", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OtrosParametros> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error: "  + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
+    }
+
+    private void llenarAutocompletarColores(ArrayList<OtrosParametros> otrosParametros) {
+
+        List<String> lista = new ArrayList<>();
+        for(OtrosParametros color:otrosParametros)
+        {
+            lista.add(color.getDescripcion());
+        }
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
+        color.setAdapter(arrayAdapter);
+        colorInterior.setAdapter(arrayAdapter);
+
+    }
+
+
     @Override
     public void onComplete(String id) {
 
@@ -557,8 +606,10 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                     String[] p = response.body().toString().split(",");
                     if (p[0].equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getApplicationContext(), "Marca guardada con éxito!", Toast.LENGTH_SHORT).show();
-                        obtenerDatosMarca();
                         String id = p[1];
+                        idMarca =id;
+                        obtenerDatosMarca();
+
 
                     }
                 } else {
@@ -610,8 +661,9 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
 
                     if (p[0].equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getApplicationContext(), "Modelo guardado con éxito!", Toast.LENGTH_SHORT).show();
+                        idModelo = p[1];
                         obtenerDatosModelo(idMarca);
-                        spinnerModelo.setSelection(getIndex(spinnerModelo, descModelo));
+
 
                     }
                 } else {
@@ -662,8 +714,9 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                     String[] p = response.body().toString().split(",");
                     if (p[0].equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getApplicationContext(), "Estilo guardado con éxito!", Toast.LENGTH_SHORT).show();
+                        idEstilo = p[1];
                         obtenerDatosEstilo(idModelo);
-                        spinnerEstilo.setSelection(getIndex(spinnerEstilo, descEstilo));
+
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Error al guardar registro", Toast.LENGTH_SHORT).show();
@@ -714,7 +767,6 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         public void onResponse(Call<Marca> call, Response<Marca> response) {
             if (response.isSuccessful()) {
                 MarcaResponse marcaRes = response.body();
-                Log.d("PASE POR AQUI", "==>" + idMarca);
                 poblarSpinnerMarca(marcaRes.getMarcas());
 
                 //marcaResponse = marcaRes.getMarcas();
@@ -792,8 +844,18 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             lista.add(varMarca.getDescripcion());
         }
 
+
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
         marca.setAdapter(arrayAdapter);
+
+        for(int i=0; i<marcas.size(); i++)
+        {
+            if(marcas.get(i).getId().equals(idMarca))
+            {
+                marca.setText(marcas.get(i).getDescripcion());
+            }
+        }
+
         marca.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -823,6 +885,14 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);
         spinnerEstilo.setAdapter(spinnerArrayAdapter);
+
+        for (int i=0; i<estilos.size(); i++)
+        {
+            if(estilos.get(i).getId().equals(idEstilo))
+            {
+                spinnerEstilo.setSelection(i);
+            }
+        }
 
         spinnerEstilo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -900,6 +970,14 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);
         spinnerModelo.setAdapter(spinnerArrayAdapter);
+
+        for(int i= 1; i<=modelos.size();i++ )
+        {
+            if(modelos.get(i-1).getId().equals(idModelo))
+            {
+                spinnerModelo.setSelection(i);
+            }
+        }
 
         spinnerModelo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -1159,9 +1237,13 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             listaEstilo.add(varVehiculo.getDesc_estilo());
             ArrayAdapter<String> spinnerAdapterEstilo = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, listaEstilo);
             spinnerEstilo.setAdapter(spinnerAdapterEstilo);
-            View vista = radioCombustible.findViewById(Integer.parseInt(varVehiculo.getIdCombustible()));
-            RadioButton radioCom = (RadioButton) vista;
-            radioCom.setChecked(true);
+
+            //Combustible
+            if (varVehiculo.getIdCombustible() != null) {
+                View vista = radioCombustible.findViewById(Integer.parseInt(varVehiculo.getIdCombustible()));
+                RadioButton radioCom = (RadioButton) vista;
+                radioCom.setChecked(true);
+            }
 
             switch (varVehiculo.getCilindros()) {
 
@@ -1223,42 +1305,48 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             }
 
             filaAsientos.setText(varVehiculo.getFilaAsiento().toString());
+            if (varVehiculo.getCantPuerta() != null) {
+                switch (Integer.parseInt(varVehiculo.getCantPuerta())) {
+                    case 2: {
+                        cantPuerta2.setChecked(true);
+                        break;
+                    }
+                    case 3: {
+                        cantPuerta3.setChecked(true);
+                        break;
+                    }
+                    case 4: {
+                        cantPuerta4.setChecked(true);
+                        break;
+                    }
+                    case 5: {
+                        cantPuerta5.setChecked(true);
+                        break;
 
-            switch (Integer.parseInt(varVehiculo.getCantPuerta())) {
-                case 2: {
-                    cantPuerta2.setChecked(true);
-                    break;
+                    }
                 }
-                case 3: {
-                    cantPuerta3.setChecked(true);
-                    break;
-                }
-                case 4: {
-                    cantPuerta4.setChecked(true);
-                    break;
-                }
-                case 5: {
-                    cantPuerta5.setChecked(true);
-                    break;
+            }
+
+            if (varVehiculo.getIdTransmision() != null) {
+
+                switch (Integer.parseInt(varVehiculo.getIdTransmision())) {
+                    case 1: {
+                        transmisionMec.setChecked(true);
+                        break;
+                    }
+                    case 2: {
+                        transmisionAut.setChecked(true);
+                        break;
+                    }
+                    case 3: {
+                        transmisionSin.setChecked(true);
+                        break;
+                    }
 
                 }
             }
 
-            switch (Integer.parseInt(varVehiculo.getIdTransmision())) {
-                case 1: {
-                    transmisionMec.setChecked(true);
-                    break;
-                }
-                case 2: {
-                    transmisionAut.setChecked(true);
-                    break;
-                }
-                case 3: {
-                    transmisionSin.setChecked(true);
-                    break;
-                }
 
-            }
             cilindraje.setText(varVehiculo.getCilindraje());
             nota.setText(varVehiculo.getNota());
 

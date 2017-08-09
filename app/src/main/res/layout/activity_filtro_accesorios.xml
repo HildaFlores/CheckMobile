@@ -28,8 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/app_barLuces"
-        android:layout_marginTop="10dp"
-        android:padding="15dp" />
+        android:layout_marginTop="10sp"
+        android:padding="15sp" />
 
 </RelativeLayout>
 

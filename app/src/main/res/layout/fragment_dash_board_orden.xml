@@ -23,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:paddingTop="10dp"
-                android:textSize="20dp"
+                android:paddingTop="10sp"
+                android:textSize="20sp"
                 android:id="@+id/txtOrdenFechaInicial"
                 android:textColor="#1b5e20" />
 
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/activity_horizontal_margin"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:text="-"
                 android:textColor="#1b5e20" />
 
@@ -51,8 +51,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:paddingTop="10dp"
-                android:textSize="20dp"
+                android:paddingTop="10sp"
+                android:textSize="20sp"
                 android:id="@+id/txtOrdenFechaFinal"
                 android:textColor="#1b5e20" />
 
@@ -75,13 +75,13 @@
             android:gravity="center_horizontal"
             android:text="Ordenes pendientes"
             android:textColor="#1b5e20"
-            android:textSize="35dp"
+            android:textSize="35sp"
             android:id="@+id/txtTitleSection"/>
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/idPieChartOrden"
             android:layout_width="match_parent"
-            android:layout_height="425dp">
+            android:layout_height="425sp">
 
         </com.github.mikephil.charting.charts.PieChart>
 
@@ -91,7 +91,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="545dp"
+        android:layout_marginTop="545sp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.example.prueba.CheckMobile.Utils.DashBoardInspeccionActivity"
         tools:showIn="@layout/activity_dash_board_inspeccion">
@@ -99,13 +99,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="25dp"
+            android:padding="25sp"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="10sp"
                 >
 
                 <TextView
@@ -113,10 +113,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_accent"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"/>
+                    android:paddingTop="10sp"
+                    android:paddingBottom="10sp"
+                    android:paddingLeft="20sp"
+                    android:paddingRight="20sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -124,15 +124,15 @@
                     android:layout_toRightOf="@id/txtViewMilKm"
                     android:text="Mantenimientos 1,000 KMs"
                     android:textColor="@color/accent"
-                    android:textSize="20dp"
-                    android:padding="10dp"/>
+                    android:textSize="20sp"
+                    android:padding="10sp"/>
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="10sp"
                 >
 
                 <TextView
@@ -140,26 +140,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_orange"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:paddingTop="10sp"
+                    android:paddingBottom="10sp"
+                    android:paddingLeft="20sp"
+                    android:paddingRight="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/txtViewCincoMilKM"
-                    android:padding="10dp"
+                    android:padding="10sp"
                     android:text="Mantenimientos 5,000 KMs"
                     android:textColor="@color/orange"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="10sp"
                 >
 
                 <TextView
@@ -167,10 +167,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_ligth_red"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    android:paddingTop="10sp"
+                    android:paddingBottom="10sp"
+                    android:paddingLeft="20sp"
+                    android:paddingRight="20sp"
                      />
 
                 <TextView
@@ -178,17 +178,17 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/txtViewDiezMilKM"
                     android:layout_centerHorizontal="true"
-                    android:padding="10dp"
+                    android:padding="10sp"
                     android:text="Mantenimientos 10,000 KMs"
                     android:textColor="@color/light_red"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="10sp"
                 >
 
                 <TextView
@@ -196,19 +196,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle_gray"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"/>
+                    android:paddingTop="10sp"
+                    android:paddingBottom="10sp"
+                    android:paddingLeft="20sp"
+                    android:paddingRight="20sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/txtViewCuarentaMilKM"
-                    android:padding="15dp"
+                    android:padding="15sp"
                     android:text="Mantenimientos 40,000 KMs"
                     android:textColor="@color/black_overlay"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
             </RelativeLayout>
 

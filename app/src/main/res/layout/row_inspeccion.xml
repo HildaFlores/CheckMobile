@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|center"
         android:fontFamily="monospace"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"
         tools:text="#42" />
 
@@ -25,9 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:fontFamily="monospace"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:textSize="20dp"
+        android:paddingBottom="10sp"
+        android:paddingTop="10sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         tools:text="#42" />
 
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:fontFamily="monospace"
-        android:textSize="15dp"
+        android:textSize="15sp"
         tools:text="#42" />
 
 </LinearLayout>

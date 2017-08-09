@@ -43,6 +43,9 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progress;
     private String idUsuario, nombreUsuario, ipservidor, puerto, supervisor;
     int requestCode = 1;
+    int contador = 0;
+    Button mEmailSignInButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,19 +69,21 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         progress.setProgress(0);
-        Button mEmailSignInButton = (Button) findViewById(R.id.user_sign_in_button);
+       mEmailSignInButton = (Button) findViewById(R.id.user_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                String usuario = muserView.getText().toString().toLowerCase();
-                String clave = mPasswordView.getText().toString().toLowerCase();
-                buscarUsuario(usuario, clave);
+                    String usuario = muserView.getText().toString().toLowerCase();
+                    String clave = mPasswordView.getText().toString().toLowerCase();
+                    buscarUsuario(usuario, clave);
+
             }
         });
 
     }
 
     private void buscarUsuario(final String valor1, String valor2) {
+
         Call<Usuario> callUsuario = AdapterUsuario.getUsuario(JSON_USARIO_ADMIN, valor1, JSON_CLAVE_USUARIO_ADMIN, valor2).getUsuario();
         callUsuario.enqueue(new Callback<Usuario>() {
             @Override
@@ -86,18 +91,22 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     UsuarioResponse usuarioResponse = null;
                     if (response.body() != null) {
+
                         usuarioResponse = response.body();
                     }
                     if (usuarioResponse.getResponseCode().equals("200") && usuarioResponse.getRows() > 0) {
-                        idUsuario = usuarioResponse.getUsuarios().get(0).getId();
-                        nombreUsuario = usuarioResponse.getUsuarios().get(0).getNombres() + " " + usuarioResponse.getUsuarios().get(0).getApellidos();
-                        new AsyncTask_load().execute();
-                        progress.setClickable(false);
+                        contador = contador +1;
+                        if(contador ==1) {
+                            idUsuario = usuarioResponse.getUsuarios().get(0).getId();
+                            nombreUsuario = usuarioResponse.getUsuarios().get(0).getNombres() + " " + usuarioResponse.getUsuarios().get(0).getApellidos();
+                            new AsyncTask_load().execute();
+                            progress.setClickable(false);
+                        }
 
-                    } else {
+                    } else
                         Toast.makeText(getApplicationContext(), "Usuario o contraseña incorrectos ", Toast.LENGTH_SHORT).show();
                     }
-                } else {
+                 else {
                     Toast.makeText(getApplicationContext(), "Error al validar usuario o contraseña ", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -187,7 +196,6 @@ public class LoginActivity extends AppCompatActivity {
         } else if (id == R.id.action_settings) {
 
             Intent intent = new Intent(LoginActivity.this, ConfigurationActivity.class);
-            this.finish();
             startActivity(intent);
             return true;
         }

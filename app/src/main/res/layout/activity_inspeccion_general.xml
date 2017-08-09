@@ -11,22 +11,22 @@
     <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="25dp"
+    android:padding="25sp"
     android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="25dp">
+            android:paddingBottom="25sp">
 
             <TextView
                 android:id="@+id/txtNoInspeccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
+                android:padding="20sp"
                 android:text="Inspeccion: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -43,11 +43,11 @@
                 android:id="@+id/txtFechaInspeccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="20dp"
+                android:paddingBottom="20sp"
                 android:layout_weight="1"
-                android:padding="20dp"
+                android:padding="20sp"
                 android:text="Fecha: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="right|end"
                 />
@@ -65,8 +65,8 @@
             android:id="@+id/txtDatosVehiculo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="25dp"
-            android:textSize="20dp"
+            android:padding="25sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:text="Vehiculo"/>
 
@@ -74,8 +74,8 @@
             android:id="@+id/txtDatosCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="25dp"
-            android:textSize="20dp"
+            android:padding="25sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:text="Cliente">
 
@@ -85,13 +85,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtMotor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:text="Motor: ">
 
@@ -104,14 +104,14 @@
                 android:hint="Motor "
                 android:layout_weight="1"
                 android:inputType="number"
-                android:paddingBottom="20dp" />
+                android:paddingBottom="20sp" />
 
             <TextView
                 android:id="@+id/txtSerieGomas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="25dp"
-                android:textSize="20dp"
+                android:paddingLeft="25sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:text="Serie de Gomas: ">
 
@@ -125,7 +125,7 @@
                 android:hint="     /    / "
                 android:ems="3"
                 android:inputType="text"
-                android:paddingBottom="20dp" />
+                android:paddingBottom="20sp" />
 
         </LinearLayout>
 
@@ -133,13 +133,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <ImageView
                 android:id="@+id/imgKilometraje"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="25dp"
+                android:paddingBottom="25sp"
                 app:srcCompat="@mipmap/kilometraje" />
 
             <EditText
@@ -148,16 +148,16 @@
                 android:layout_height="wrap_content"
                 android:hint="Kilometraje"
                 android:inputType="number"
-                android:padding="20dp" />
+                android:padding="20sp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtNotasCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="25dp"
+            android:padding="25sp"
             android:text="Observaciones: "
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <EditText
@@ -170,7 +170,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="25dp"
+            android:padding="25sp"
 
             >
 
@@ -179,10 +179,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:padding="20dp"
+                android:padding="20sp"
                 android:layout_weight="1"
                 android:text="Condición alfombra conductor"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <RadioGroup

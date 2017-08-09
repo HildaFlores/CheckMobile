@@ -36,15 +36,17 @@ public class ConsultaOrdenTrabajo extends AppCompatActivity {
     private String nombreMecanico;
     private String fechaOrden;
     private String observaciones;
+    private String nombreSupervisor;
     private int idInspeccion;
     private int idOrden;
-    private Boolean permitePiezasReemplazo;
+    private Boolean permitePiezasReemplazo = false;
 
     TextView consultaNombreCliente;
     EditText consultafechaDocumento;
     TextView consultaIdOrden;
     TextView consultaCondicion;
     TextView consultaMecanico;
+    TextView consultaSupervisor;
     EditText consultaObservaciones;
     LinearLayout layoutServicios;
     Switch swReemplazo;
@@ -76,6 +78,7 @@ public class ConsultaOrdenTrabajo extends AppCompatActivity {
             permitePiezasReemplazo = extras.getBoolean("PIEZA");
             nombreMecanico = extras.getString("MECANICO");
             descripcionCondicion = extras.getString("CONDICION");
+            nombreSupervisor = extras.getString("SUPERVISOR");
         }
 
         llenarOrdenEnc();
@@ -127,6 +130,7 @@ public class ConsultaOrdenTrabajo extends AppCompatActivity {
         consultaCondicion = (TextView) findViewById(R.id.textCCondicion);
         consultaMecanico = (TextView) findViewById(R.id.textViewCMec);
         consultaObservaciones = (EditText) findViewById(R.id.etxtCObervaciones);
+        consultaSupervisor = (TextView) findViewById(R.id.textViewCSupervisor);
         layoutServicios = (LinearLayout) findViewById(R.id.layoutServicios);
         swReemplazo = (Switch) findViewById(R.id.switchCPiezas);
 
@@ -140,10 +144,15 @@ public class ConsultaOrdenTrabajo extends AppCompatActivity {
         consultaObservaciones.setText(observaciones);
         consultaCondicion.setText(descripcionCondicion);
         consultaMecanico.setText(nombreMecanico.toUpperCase());
+        consultaSupervisor.setText(nombreSupervisor.toUpperCase());
 
-        if (!permitePiezasReemplazo)
+        if (permitePiezasReemplazo)
         {
             swReemplazo.setChecked(true);
+        }
+        else
+        {
+            swReemplazo.setChecked(false);
         }
 
     }

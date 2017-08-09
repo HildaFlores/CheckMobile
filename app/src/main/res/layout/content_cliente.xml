@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
-            android:paddingTop="15dp">
+            android:paddingTop="15sp">
 
             <RadioButton
                 android:id="@+id/rbPersona"
@@ -39,14 +39,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtDocIdentidad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Documento Identidad:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -65,14 +65,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtNombreSegunDgii"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre según DGII:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -90,14 +90,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtNombreEmpresa"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre empresa: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -123,7 +123,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
 
             <TextView
@@ -131,7 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombres:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -157,14 +157,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="20sp">
 
             <TextView
                 android:id="@+id/txtApellido"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Apellidos: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -180,14 +180,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="20sp">
 
             <TextView
                 android:id="@+id/txtApodo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Apodo: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -203,18 +203,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtFechaNacimiento"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fecha nacimiento: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
-                android:id="@+id/imageView7"
+                android:id="@+id/ibFechaNac"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/icon_date"
@@ -226,15 +226,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="01-05-1995"
-                android:inputType="date" />
+                android:hint="01/05/1995"
+                android:inputType="date"
+                android:enabled="false"/>
 
             <TextView
                 android:id="@+id/txtEdad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edad: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -251,14 +252,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtSexo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sexo "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -288,7 +289,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nacionalidad"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <Spinner
@@ -303,14 +304,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtPais"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pais"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <Spinner
@@ -326,14 +327,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtProvincia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Provincia"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -349,14 +350,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtDireccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dirección "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -381,14 +382,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtProximoA"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Próximo A "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -405,7 +406,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
 
             <TextView
@@ -413,7 +414,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tel/Oficina "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -438,7 +439,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Celular "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -463,7 +464,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
 
             <TextView
@@ -471,7 +472,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Email: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -495,7 +496,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
 
             <TextView
@@ -503,7 +504,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Condición "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <Spinner
@@ -516,7 +517,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Límite crédito "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -540,7 +541,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
 
             <TextView
@@ -548,7 +549,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notas:  "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -575,7 +576,7 @@
             android:layout_gravity="bottom|end"
             android:background="@color/divider"
             android:orientation="horizontal"
-            android:paddingTop="15dp">
+            android:paddingTop="15sp">
 
             <Button
                 android:id="@+id/btnClienteSiguiente"
@@ -585,7 +586,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="SIGUIENTE >"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
         </LinearLayout>
 
 

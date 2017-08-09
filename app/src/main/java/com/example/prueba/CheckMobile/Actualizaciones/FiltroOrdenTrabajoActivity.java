@@ -18,11 +18,14 @@ import android.widget.ListView;
 import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.prueba.CheckMobile.OrdenTrabajo.AdapterOrdenTrabajo;
+import com.example.prueba.CheckMobile.OrdenTrabajo.ConsultaOrdenTrabajo;
 import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity;
 import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoEnc;
 import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoEncResponse;
 import com.example.prueba.CheckMobile.R;
+import com.example.prueba.CheckMobile.Utils.Constantes;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.prueba.CheckMobile.R.id.listaLuces;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_ORDEN;
 import static java.security.AccessController.getContext;
 
 public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
@@ -41,6 +45,7 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
     ArrayList<OrdenTrabajoEnc> ordenTrabajo = new ArrayList<OrdenTrabajoEnc>();
     AdapterOrden madapter;
     boolean permitePiezas = false;
+    boolean consultar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,21 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         listaOrden = (ListView) findViewById(R.id.listaOrdenTrabajo);
-        obtenerDatosOrdenTrabajo();
+
+        Bundle extra = getIntent().getExtras();
+        if (extra != null) {
+            consultar = extra.getBoolean("CONSULTAR");
+            ordenTrabajo = extra.getParcelableArrayList("ORDENES");
+        }
+
+        if (consultar) {
+            madapter = new AdapterOrden(getApplicationContext(), ordenTrabajo);
+            listaOrden.setAdapter(madapter);
+
+        } else {
+
+            obtenerDatosOrdenTrabajo();
+        }
         seleccionOrdenTrabajo();
     }
 
@@ -61,26 +80,47 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 OrdenTrabajoEnc ordenItem = (OrdenTrabajoEnc) listaOrden.getAdapter().getItem(i);
-                Intent intent = new Intent(FiltroOrdenTrabajoActivity.this, OrdenTrabajoActivity.class);
-                intent.putExtra("ORDEN", ordenItem.getId());
-                intent.putExtra("CLIENTE", ordenItem.getNombreCliente() + " " + ordenItem.getApellidosCte());
-                intent.putExtra("FECHA", ordenItem.getFechaPedido());
-                intent.putExtra("OBSERVACION", ordenItem.getNotas());
-                if (ordenItem.getPermite_pieza_reemplazo().toString().equals("1")) {
-                    permitePiezas = true;
-                }
-                else
-                {
-                    permitePiezas = false;
-                }
+                Intent intent;
+                if (consultar) {
+                    intent  = new Intent(FiltroOrdenTrabajoActivity.this, ConsultaOrdenTrabajo.class);
+                    intent.putExtra("ORDEN", Integer.parseInt(ordenItem.getId()));
+                    intent.putExtra("CLIENTE", ordenItem.getNombreCliente() + " " + ordenItem.getApellidosCte());
+                    intent.putExtra("FECHA", ordenItem.getFechaPedido());
+                    intent.putExtra("OBSERVACIONES", ordenItem.getNotas());
+                    if (ordenItem.getPermite_pieza_reemplazo().equals("1")) {
+                        permitePiezas = true;
+                    } else {
+                        permitePiezas = false;
+                    }
+                    intent.putExtra("PIEZA", permitePiezas);
+                    intent.putExtra("MECANICO", ordenItem.getNombre_mecanico());
+                    intent.putExtra("IDMECANICO", ordenItem.getIdMecanico());
+                    intent.putExtra("IDCONDICION", ordenItem.getIdCondicion());
+                    intent.putExtra("CONDICION", ordenItem.getCondicion());
+                    intent.putExtra("IDINSPECCION", ordenItem.getId_inspeccion());
+                    intent.putExtra("SUPERVISOR", ordenItem.getNombreSupervisor());
 
-                intent.putExtra("PIEZAS", permitePiezas);
-                intent.putExtra("MECANICO", ordenItem.getNombre_mecanico());
-                intent.putExtra("IDMECANICO", ordenItem.getIdMecanico());
-                intent.putExtra("IDCONDICION", ordenItem.getIdCondicion());
-                intent.putExtra("CONDICION", ordenItem.getCondicion());
-                intent.putExtra("IDINSPECCION", ordenItem.getId_inspeccion());
-                intent.putExtra("ACTUALIZAR", true);
+                }else {
+                 intent  = new Intent(FiltroOrdenTrabajoActivity.this, OrdenTrabajoActivity.class);
+                    intent.putExtra("ORDEN", ordenItem.getId());
+                    intent.putExtra("CLIENTE", ordenItem.getNombreCliente() + " " + ordenItem.getApellidosCte());
+                    intent.putExtra("FECHA", ordenItem.getFechaPedido());
+                    intent.putExtra("OBSERVACIONES", ordenItem.getNotas());
+                    if (ordenItem.getPermite_pieza_reemplazo().equals("1")) {
+                        permitePiezas = true;
+                    } else {
+                        permitePiezas = false;
+                    }
+
+                    intent.putExtra("PIEZAS", permitePiezas);
+                    intent.putExtra("MECANICO", ordenItem.getNombre_mecanico());
+                    intent.putExtra("IDMECANICO", ordenItem.getIdMecanico());
+                    intent.putExtra("IDCONDICION", ordenItem.getIdCondicion());
+                    intent.putExtra("CONDICION", ordenItem.getCondicion());
+                    intent.putExtra("IDINSPECCION", ordenItem.getId_inspeccion());
+                    intent.putExtra("SUPERVISOR", ordenItem.getNombreSupervisor());
+                    intent.putExtra("ACTUALIZAR", true);
+                }
                 startActivity(intent);
             }
         });
@@ -133,7 +173,7 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
                     newText = newText.toUpperCase();
                     final ArrayList<OrdenTrabajoEnc> filterList = new ArrayList<OrdenTrabajoEnc>();
                     for (int i = 0; i < ordenTrabajo.size(); i++) {
-                        final String text = ordenTrabajo.get(i).getNombreCliente().toUpperCase() + " " +  ordenTrabajo.get(i).getApellidosCte().toUpperCase();
+                        final String text = ordenTrabajo.get(i).getNombreCliente().toUpperCase() + " " + ordenTrabajo.get(i).getApellidosCte().toUpperCase();
                         if (text.contains(newText)) {
                             filterList.add(ordenTrabajo.get(i));
                         }
@@ -168,7 +208,7 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
             TextView textId = (TextView) item.findViewById(R.id.txtRowUpdate1);
             TextView textVehiculo = (TextView) item.findViewById(R.id.txtRowUpdate2);
             TextView textCliente = (TextView) item.findViewById(R.id.txtRowUpdate3);
-            textId.setText("(OTT-" + listOrden.get(posicion).getId() + ")");
+            textId.setText("( " + KEY_TIPO_TRANS_ORDEN + "-" + listOrden.get(posicion).getId() + ")");
             textCliente.setText("CLIENTE >> " + listOrden.get(posicion).getNombreCliente() + " " + listOrden.get(posicion).getApellidosCte());
             item.setId(Integer.parseInt(listOrden.get(posicion).getId()));
             textVehiculo.setVisibility(View.GONE);

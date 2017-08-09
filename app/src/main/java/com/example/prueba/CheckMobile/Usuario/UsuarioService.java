@@ -12,4 +12,12 @@ public interface UsuarioService {
     @POST("admin-users")
     Call<Usuario> getUsuario();
 
+    @POST("user-supervisor")
+    Call<Usuario> getPersonal();
+
+
+    @POST("validacion-clave")
+    Call<Usuario> getValidacion();
+
+
 }

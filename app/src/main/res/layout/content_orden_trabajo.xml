@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="20sp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity"
     tools:showIn="@layout/activity_orden_trabajo">
@@ -20,28 +20,38 @@
             android:id="@+id/textViewOrden"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:padding="20sp"
             android:text="OTT-2"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:layout_weight="1"
             android:textStyle="bold" />
+
 
         <TextView
             android:id="@+id/textViewFecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:padding="20sp"
             android:text="Fecha:"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/ibFechaOrden"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_date"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center_vertical"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="date"
             android:id="@+id/etxtFechaOrden"
-            android:hint="2007/12/02"
-            android:maxLength="10"/>
+            android:hint="20/05/2010"
+            android:maxLength="10"
+            android:enabled="false"/>
 
     </LinearLayout>
 
@@ -49,31 +59,31 @@
         android:id="@+id/textViewDatosVehiculo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:padding="10sp"
         android:text="NOMBRE VEHICULO"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textViewDatosCliente"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:padding="10sp"
         android:text="NOMBRE CLIENTE"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="25dp">
+        android:padding="10sp">
         <TextView
             android:id="@+id/txtCondicion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Condición "
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <Spinner
@@ -87,16 +97,16 @@
         android:id="@+id/switchPiezas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:padding="10sp"
         android:switchTextAppearance="@style/MooTextAppearanceSpinnerItem"
         android:text="¿Piezas Reemplazadas? "
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="20dp">
+        android:padding="10sp">
 
         <TextView
             android:id="@+id/textView2"
@@ -104,8 +114,8 @@
             android:layout_height="wrap_content"
             android:text="Mecánico asignado"
             android:textStyle="bold"
-            android:textSize="20dp"
-            android:paddingRight="20dp"
+            android:textSize="20sp"
+            android:paddingRight="20sp"
             />
         <Spinner
             android:id="@+id/spinnerMec"
@@ -114,16 +124,33 @@
             android:layout_weight="1"
             />
 
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10sp">
+
         <TextView
-            android:id="@+id/textViewSupervisor"
+            android:id="@+id/textViewSup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Supervisor >> "
+            android:text="Supervisor: "
             android:textStyle="bold"
-            android:textSize="20dp"
-            android:paddingRight="20dp"
-            android:layout_weight="1"
+            android:textSize="20sp"
+            android:paddingRight="20sp"
             />
+
+    <TextView
+        android:id="@+id/textViewSupervisor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dato"
+        android:paddingRight="20sp"
+        android:layout_weight="1"
+        />
 
     </LinearLayout>
 
@@ -137,7 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Observaciones: "
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"/>
 
         <EditText
@@ -155,7 +182,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="20dp">
+        android:padding="10sp">
 
         <TextView
             android:id="@+id/TextHeaderServicios"
@@ -164,7 +191,7 @@
             android:layout_weight="1"
             android:text="Servicios Solicitados"
             android:textColor="@color/accent"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -184,13 +211,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|end"
         android:text="Presione para agregar servicio"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="italic" />
 
     <ListView
         android:id="@+id/listaAddServicios"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="20dp" />
+        android:paddingTop="20sp" />
 
 </LinearLayout>

@@ -27,14 +27,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="25dp">
+    android:padding="25sp">
     <TextView
         android:id="@+id/txtDireccionServidor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dirección servidor: "
-        android:paddingTop="20dp"
-        android:textSize="20dp"
+        android:paddingTop="20sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         />
 
@@ -49,9 +49,9 @@
         android:id="@+id/txtPuerto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
+        android:paddingTop="20sp"
         android:text="Puerto: "
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"/>
 
     <EditText
@@ -66,29 +66,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Supervisor: "
-        android:paddingTop="20dp"
-        android:textSize="20dp"
+        android:paddingTop="20sp"
+        android:textSize="20sp"
         android:textStyle="bold"/>
 
-    <EditText
-        android:id="@+id/etxtSupervisor"
+    <Spinner
+        android:id="@+id/spSupervisor"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        />
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="25dp">
+        android:padding="25sp">
 
         <Button
             android:id="@+id/botonAceptar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="25dp"
+            android:padding="25sp"
             android:text="Aceptar" />
 
         <Button
@@ -96,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="25dp"
+            android:padding="25sp"
             android:text="Cancelar" />
 </LinearLayout>
 

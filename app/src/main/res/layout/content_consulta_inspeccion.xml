@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20sp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,15 +20,15 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/border"
             android:orientation="horizontal"
-            android:paddingBottom="25dp">
+            android:paddingBottom="25sp">
 
             <TextView
                 android:id="@+id/txtCNoInspeccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
+                android:padding="20sp"
                 android:text="Inspeccion: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -46,10 +46,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right|end"
-                android:padding="20dp"
-                android:paddingBottom="20dp"
+                android:padding="20sp"
+                android:paddingBottom="20sp"
                 android:text="Fecha: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -65,18 +65,18 @@
             android:id="@+id/txtCDatosVehiculo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="25dp"
+            android:padding="25sp"
             android:text="Vehiculo"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtCDatosCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="25dp"
+            android:padding="25sp"
             android:text="Cliente"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold">
 
         </TextView>
@@ -85,14 +85,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtMotor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Motor: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold">
 
             </TextView>
@@ -105,15 +105,15 @@
                 android:enabled="false"
                 android:hint="Motor "
                 android:inputType="number"
-                android:paddingBottom="20dp" />
+                android:paddingBottom="20sp" />
 
             <TextView
                 android:id="@+id/txtCSerieGomas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="25dp"
+                android:paddingLeft="25sp"
                 android:text="Serie de Gomas: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold">
 
             </TextView>
@@ -127,7 +127,7 @@
                 android:enabled="false"
                 android:hint="     /    / "
                 android:inputType="text"
-                android:paddingBottom="20dp" />
+                android:paddingBottom="20sp" />
 
         </LinearLayout>
 
@@ -135,13 +135,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <ImageView
                 android:id="@+id/imgCKilometraje"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="25dp"
+                android:paddingBottom="25sp"
                 app:srcCompat="@mipmap/kilometraje"
                 android:background="@android:color/transparent"/>
 
@@ -152,16 +152,16 @@
                 android:enabled="false"
                 android:hint="Kilometraje"
                 android:inputType="number"
-                android:padding="20dp" />
+                android:padding="20sp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtCNotasCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="25dp"
+            android:padding="25sp"
             android:text="Observaciones: "
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <EditText
@@ -175,17 +175,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtCLlaves"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:padding="25dp"
+                android:padding="25sp"
                 android:text="Tipo de llave"
                 android:textColor="@color/accent"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -229,17 +229,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtCCombustible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:padding="25dp"
+                android:padding="25sp"
                 android:text="Nivel Combustible"
                 android:textColor="@color/accent"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -249,7 +249,7 @@
                 android:drawableLeft="@mipmap/combustible"
                 android:gravity="center"
                 android:text="1/2"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:textStyle="bold" />
 
             <SeekBar
@@ -267,16 +267,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
             <TextView
                 android:id="@+id/txtCNivelAceite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
+                android:padding="20sp"
                 android:text="Nivel Aceite"
                 android:textColor="@color/accent"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -284,7 +284,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5/10"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:textStyle="bold" />
 
 
@@ -304,10 +304,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingTop="20dp"
+            android:paddingTop="20sp"
             android:text="Luces encendidas"
             android:textColor="@color/accent"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -326,7 +326,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|end"
             android:text="Presione para agregar luces"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textStyle="italic"
             android:visibility="gone"/>
 
@@ -335,7 +335,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="20sp">
 
         </LinearLayout>
 
@@ -344,10 +344,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingTop="20dp"
+            android:paddingTop="20sp"
             android:text="Accesorios y/o equipamientos"
             android:textColor="@color/accent"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -366,7 +366,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|end"
             android:text="Presione para agregar accesorios y/o equipamientos"
-            android:textSize="14dp"
+            android:textSize="14sp"
             android:textStyle="italic"
             android:visibility="gone"/>
 
@@ -375,17 +375,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="2"
-            android:padding="20dp"></GridLayout>
+            android:padding="20sp"></GridLayout>
 
         <TextView
             android:id="@+id/txtCAlfombra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:padding="20dp"
+            android:padding="20sp"
             android:text="Condición alfombra conductor"
             android:textColor="@color/accent"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <RadioGroup
@@ -462,10 +462,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:padding="20dp"
+            android:padding="20sp"
             android:text="Cantidades"
             android:textColor="@color/accent"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <GridLayout
@@ -473,9 +473,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="4"
-            android:horizontalSpacing="20dp"
-            android:padding="20dp"
-            android:verticalSpacing="20dp">
+            android:horizontalSpacing="20sp"
+            android:padding="20sp"
+            android:verticalSpacing="20sp">
 
         </GridLayout>
 
@@ -484,10 +484,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:padding="20dp"
+            android:padding="20sp"
             android:text="Lados del vehículo"
             android:textColor="@color/accent"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -508,12 +508,12 @@
             android:textStyle="italic"
             android:id="@+id/txtMensajeCam"
             android:visibility="gone"
-            android:textSize="14dp"/>
+            android:textSize="14sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="50dp"
+            android:padding="50sp"
             android:text="No hay ninguna fotografía de rayones en la inspección"
             android:visibility="gone"
             android:textStyle="italic"
@@ -522,8 +522,8 @@
         <ListView
             android:id="@+id/gridLadosVehiculo"
             android:layout_width="match_parent"
-            android:layout_height="1250dp"
-            android:padding="20dp">
+            android:layout_height="1250sp"
+            android:padding="20sp">
 
         </ListView>
 

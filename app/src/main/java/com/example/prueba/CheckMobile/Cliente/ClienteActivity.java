@@ -1,8 +1,11 @@
 package com.example.prueba.CheckMobile.Cliente;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,7 +20,9 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -36,6 +41,7 @@ import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.TablaDgii.AdapterDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgiiResponse;
+import com.example.prueba.CheckMobile.Utils.DashBoardInspeccionActivity;
 import com.example.prueba.CheckMobile.Vehiculo.AdapterVehiculo;
 
 
@@ -53,6 +59,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.prueba.CheckMobile.R.id.btnClienteSiguiente;
+import static com.example.prueba.CheckMobile.R.id.txtFechaInicial;
 import static com.example.prueba.CheckMobile.Utils.Constantes.*;
 
 
@@ -88,6 +95,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     EditText limiteCredito;
     EditText notas;
     Button btnClienteSiguiente;
+    ImageButton ibFechaNacimiento;
 
     // /Parametros
 
@@ -99,6 +107,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     int contador = 0;
     boolean insertar = true, actualizar = false;
     String valorSexo, idCondicion, desc_nacionalidad, desc_pais;
+    private DatePickerDialog.OnDateSetListener mDateSetListenerFecha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +163,54 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             buscarCliente();
         }
 
+        ibFechaNacimiento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(
+                        ClienteActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                        mDateSetListenerFecha,
+                        year, month, day);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+
+                mDateSetListenerFecha = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        month = month + 1;
+                        String date = day + "/" + month + "/" + year;
+                        fechaNac.setText(date);
+                        try {
+                            Calendar cal = Calendar.getInstance();
+                            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                            Date myDate = null;
+                            try {
+                                myDate = df.parse(fechaNac.getText().toString());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            cal.setTime(myDate);
+                            if (insertar) {
+                                edad.setText(String.valueOf(calculaEdad(cal)));
+                            }
+
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                };
+
+            }
+        });
+
 
         btnClienteSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,8 +223,6 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     InsertarCliente();
-
-
                                 }
                             })
                             .setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -210,7 +265,9 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    @Override
+
+
+        @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         if (actualizar) {
@@ -233,6 +290,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                          if(insertar)
                          {
                              InsertarCliente();
+                             etxtDocIdentidad.getText().clear();
+                             limpiarVistasCliente();
 
                          }
                          else
@@ -326,7 +385,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                                 public void run() {
                                     try {
                                         Calendar cal = Calendar.getInstance();
-                                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                                        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                                         Date myDate = null;
                                         try {
                                             myDate = df.parse(fechaNac.getText().toString());
@@ -418,23 +477,23 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
     private void InsertarCliente() {
 
-        String fechaNacimiento = fechaNac.getText().toString();
-        String date = null;
-        try {
-
-            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            Date newDate = null;
-            try {
-                newDate = format.parse(fechaNacimiento);
-            } catch (Exception e) {
-                Log.d("TAG", e.getMessage());
-            }
-
-            format = new SimpleDateFormat("yyyy-MM-dd");
-            date = format.format(newDate);
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+//        String fechaNacimiento = fechaNac.getText().toString();
+//
+//        try {
+//
+//            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+//            Date newDate = null;
+//            try {
+//                newDate = format.parse(fechaNacimiento);
+//            } catch (Exception e) {
+//                Log.d("TAG", e.getMessage());
+//            }
+//
+//            format = new SimpleDateFormat("yyyy-MM-dd");
+//            date = format.format(newDate);
+//        } catch (Exception e) {
+//            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//        }
 
         ArrayList<Cliente> clientes = new ArrayList<Cliente>();
         if (radioPersona.isChecked()) {
@@ -452,7 +511,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     apodo.getText().toString().toUpperCase(),
                     notas.getText().toString().toUpperCase(),
                     desc_pais,
-                    date,
+                    fechaNac.getText().toString(),
                     limiteCredito.getText().toString(),
                     telefono.getText().toString(),
                     celular.getText().toString(),
@@ -488,7 +547,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     apodo.getText().toString().toUpperCase(),
                     notas.getText().toString().toUpperCase(),
                     desc_pais,
-                    date,
+                    fechaNac.getText().toString(),
                     limiteCredito.getText().toString(),
                     telefono.getText().toString(),
                     celular.getText().toString(),
@@ -602,6 +661,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         email = (EditText) findViewById(R.id.etxtCorreo);
         limiteCredito = (EditText) findViewById(R.id.etxtLimite);
         notas = (EditText) findViewById(R.id.etxtNotasCliente);
+        ibFechaNacimiento = (ImageButton) findViewById(R.id.ibFechaNac);
 
     }
 
@@ -844,11 +904,20 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             }
             nombres.setText(varCte.getNombres().toUpperCase());
             apellidos.setText(varCte.getApellidos().toUpperCase());
-            Log.v("EDAD==>", Integer.toString(varCte.getEdad()));
+
             apodo.setText(varCte.getApodo());
+
             edad.setText(Integer.toString(varCte.getEdad()));
+
             if (varCte.getfechaNac() != null) {
-                fechaNac.setText(varCte.getfechaNac().substring(0, 10));
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                Date myDate = null;
+                try {
+                    myDate = df.parse(varCte.getfechaNac().substring(0, 10));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                fechaNac.setText(myDate.toString());
             }
             if (varCte.getSexo().equals("F")) {
                 sexoF.setChecked(true);
@@ -978,7 +1047,13 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 if (response.toString().equals(RESPONSE_CODE_OK)) {
                     Toast.makeText(getApplicationContext(), "Cliente Actualizado", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();
+                    if(actualizar) {
+                        Toast.makeText(getApplicationContext(), "Tutorial actualizado", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();

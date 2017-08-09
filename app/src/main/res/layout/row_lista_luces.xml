@@ -4,16 +4,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp"
+    android:padding="10sp"
     >
 
     <ImageView
         android:id="@+id/ivLuces"
-        android:layout_width="70dp"
-        android:layout_height="48dp"
+        android:layout_width="70sp"
+        android:layout_height="48sp"
         android:layout_alignParentLeft="true"
         android:background="@android:color/transparent"
-        android:padding="5dp"
+        android:padding="5sp"
         android:src="@mipmap/ic_launcher" />
 
     <CheckBox

@@ -8,7 +8,7 @@
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rc_inspeccion"
+        android:id="@+id/rc_historicoMantenimiento"
         android:textAlignment="center"
         >
 
@@ -17,22 +17,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No hay ninguna inspección pendiente"
+        android:text="No existe ningún manteniniento para este vehículo"
         android:textSize="15sp"
         android:textStyle="italic"
         android:gravity="center"
         android:layout_gravity="center_vertical"
         android:id="@+id/textMsjInspeccion"
-        android:visibility="gone"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/flotanteInspeccion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/accent"
-        app:srcCompat="@drawable/ic_action_name" />
-
+        android:visibility="visible"/>
 
 </FrameLayout>

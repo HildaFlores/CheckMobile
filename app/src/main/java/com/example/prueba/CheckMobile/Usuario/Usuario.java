@@ -12,7 +12,7 @@ public class Usuario extends UsuarioResponse {
     private String fechaNacimiento;
     private String lugarNac;
     private String estadoCivil;
-    private int documentoIdentidad;
+    private String documentoIdentidad;
     private String sexo;
     private String telefono;
     private String clave;
@@ -91,11 +91,11 @@ public class Usuario extends UsuarioResponse {
         this.estadoCivil = estadoCivil;
     }
 
-    public int getDocumentoIdentidad() {
+    public String getDocumentoIdentidad() {
         return documentoIdentidad;
     }
 
-    public void setDocumentoIdentidad(int documentoIdentidad) {
+    public void setDocumentoIdentidad(String documentoIdentidad) {
         this.documentoIdentidad = documentoIdentidad;
     }
 

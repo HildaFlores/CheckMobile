@@ -78,8 +78,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     private List<String> imageRuta = new ArrayList<>();
     private List<Integer> ladoVehiculo = new ArrayList<>();
 
-    private static final String NOMBRE_CARPETA_APP = "proyecto.com.demoPdf";
-    private static final String GENERADOS = "MisArchivos";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -836,10 +835,10 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         int index = nombreVehiculo.indexOf("(");
         nombreVehiculo = nombreVehiculo.substring(0, index);
 
-        if (telefono != null) {
+        if (!telefono.isEmpty()) {
             telefono = "(" + telefono.substring(0, 3) + ")" + telefono.substring(3);
         }
-        if (celular != null) {
+        if (!celular.isEmpty()) {
             celular = "(" + celular.substring(0, 3) + ")" + celular.substring(3);
         }
 

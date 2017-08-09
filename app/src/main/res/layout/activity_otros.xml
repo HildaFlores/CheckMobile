@@ -30,9 +30,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:padding="25dp"
+                android:padding="25sp"
                 android:text="Tipo de llave"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -88,9 +88,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:paddingTop="15dp"
+                    android:paddingTop="15sp"
                     android:text="Nivel Combustible"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txtNivelCombustible"
                     android:layout_centerHorizontal="true"
-                    android:padding="15dp"
+                    android:padding="15sp"
                     android:scaleType="center"
                     android:src="@mipmap/combustible"
                     android:background="@android:color/transparent"/>
@@ -120,7 +120,7 @@
                     android:layout_below="@id/seekBarCombustible"
                     android:layout_centerHorizontal="true"
                     android:text="5555"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
 
                 <TextView
@@ -129,9 +129,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txtProgress"
                     android:layout_centerHorizontal="true"
-                    android:padding="15dp"
+                    android:padding="15sp"
                     android:text="Nivel Aceite"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
 
@@ -163,7 +163,7 @@
                     android:layout_below="@+id/seekBarAceite"
                     android:layout_centerHorizontal="true"
                     android:text=" "
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
             </RelativeLayout>
 
@@ -175,8 +175,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/layoutHorizontal"
             android:text="Cantidades"
-            android:textSize="20dp"
-            android:padding="25dp"
+            android:textSize="20sp"
+            android:padding="25sp"
             android:textStyle="bold" />
 
         <GridLayout
@@ -184,7 +184,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtCantidades"
-            android:padding="20dp"
+            android:padding="20sp"
             android:columnCount="2"
            >
 
@@ -198,16 +198,16 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/layoutCantidades"
             android:background="@android:drawable/ic_menu_upload_you_tube"
-            android:padding="20dp" />
+            android:padding="20sp" />
         <TextView
             android:id="@+id/etxtLadosVehiculo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:padding="20dp"
+            android:padding="20sp"
             android:layout_below="@id/btnUpLoad"
             android:text="Lados con rayones"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <GridLayout
@@ -216,7 +216,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/etxtLadosVehiculo"
             android:columnCount="1"
-            android:padding="25dp">
+            android:padding="25sp">
 
         </GridLayout>
 

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20sp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,21 +22,21 @@
 
             <TextView
                 android:id="@+id/textViewCOrden"
-                android:layout_width="wrap_content"
+                android:layout_width="0sp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="20dp"
+                android:padding="20sp"
                 android:text="OTT-2"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textViewCFecha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
+                android:padding="20sp"
                 android:text="Fecha:"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -54,16 +54,16 @@
             android:id="@+id/textViewCDatosCliente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:padding="20sp"
             android:text="NOMBRE CLIENTE"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="25dp">
+            android:padding="25sp">
 
 
             <TextView
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Condición >> "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -86,25 +86,25 @@
             android:id="@+id/switchCPiezas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:padding="20sp"
             android:switchTextAppearance="@style/MooTextAppearanceSpinnerItem"
             android:text="¿Piezas Reemplazadas? "
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:enabled="false"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="20sp">
 
             <TextView
                 android:id="@+id/textView2C"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="20dp"
+                android:paddingRight="20sp"
                 android:text="Mecánico asignado >> "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold"
 
                 />
@@ -116,17 +116,37 @@
                 android:layout_weight="1"
               />
 
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20sp">
+
             <TextView
-                android:id="@+id/textViewSupervisor"
+                android:id="@+id/textViewConsulta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingRight="20sp"
                 android:text="Supervisor >> "
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:textSize="20dp"
-                android:paddingRight="20dp"
-                android:layout_weight="1"
+
                 />
 
+            <TextView
+                android:id="@+id/textViewCSupervisor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" "
+                android:textStyle="bold"
+                android:paddingRight="20sp"
+                android:layout_weight="1"
+                />
 
         </LinearLayout>
 
@@ -140,7 +160,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Observaciones: "
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -159,7 +179,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="20sp">
 
             <TextView
                 android:id="@+id/TextHeaderCServicios"
@@ -168,7 +188,7 @@
                 android:layout_weight="1"
                 android:text="Servicios Solicitados"
                 android:textColor="@color/accent"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -177,7 +197,7 @@
             android:id="@+id/layoutServicios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
+            android:paddingTop="20sp"
             android:orientation="vertical"/>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

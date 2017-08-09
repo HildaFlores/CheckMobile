@@ -1,10 +1,13 @@
 package com.example.prueba.CheckMobile.OrdenTrabajo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Prueba on 07-jul-17.
  */
 
-public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse {
+public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse implements Parcelable {
     private String id;
     private String id_empresa;
     private String id_centroCostos;
@@ -50,6 +53,7 @@ public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse {
     private String nombre_mecanico;
     private String condicion;
     private int kilometraje;
+    private String nombreSupervisor;
 
 
 
@@ -82,6 +86,60 @@ public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse {
         this.fechaPedido = fechaPedido;
         this.permite_pieza_reemplazo = permite_pieza_reemplazo;
     }
+
+    protected OrdenTrabajoEnc(Parcel in) {
+        id = in.readString();
+        id_empresa = in.readString();
+        id_centroCostos = in.readString();
+        cliente = in.readString();
+        id_documento = in.readString();
+        estadoFactura = in.readString();
+        tipoTransaccion = in.readString();
+        nombreCliente = in.readString();
+        apellidosCte = in.readString();
+        montoBruto = in.readString();
+        montoNeto = in.readString();
+        porcDescuento = in.readString();
+        montoDesc = in.readString();
+        montoImpuestos = in.readString();
+        montoGravado = in.readString();
+        montoExento = in.readString();
+        idAsesor = in.readString();
+        notas = in.readString();
+        idCondicion = in.readString();
+        idMoneda = in.readString();
+        calDesc = in.readString();
+        idMecanico = in.readString();
+        idTipoTransFac = in.readString();
+        idDocumento = in.readString();
+        idTipoNcf = in.readString();
+        notaDescuento = in.readString();
+        noOrden = in.readString();
+        fechaPedido = in.readString();
+        idTipoServicio = in.readString();
+        idSupervisor = in.readString();
+        recibidoPor = in.readString();
+        realizadoPor = in.readString();
+        id_inspeccion = in.readString();
+        fechaDocumento = in.readString();
+        permite_pieza_reemplazo = in.readString();
+        nombre_mecanico = in.readString();
+        condicion = in.readString();
+        kilometraje = in.readInt();
+        nombreSupervisor = in.readString();
+    }
+
+    public static final Creator<OrdenTrabajoEnc> CREATOR = new Creator<OrdenTrabajoEnc>() {
+        @Override
+        public OrdenTrabajoEnc createFromParcel(Parcel in) {
+            return new OrdenTrabajoEnc(in);
+        }
+
+        @Override
+        public OrdenTrabajoEnc[] newArray(int size) {
+            return new OrdenTrabajoEnc[size];
+        }
+    };
 
     @Override
     public String toString() {
@@ -487,5 +545,61 @@ public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse {
 
     public void setKilometraje(int kilometraje) {
         this.kilometraje = kilometraje;
+    }
+
+    public String getNombreSupervisor() {
+        return nombreSupervisor;
+    }
+
+    public void setNombreSupervisor(String nombreSupervisor) {
+        this.nombreSupervisor = nombreSupervisor;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(id_empresa);
+        parcel.writeString(id_centroCostos);
+        parcel.writeString(cliente);
+        parcel.writeString(id_documento);
+        parcel.writeString(estadoFactura);
+        parcel.writeString(tipoTransaccion);
+        parcel.writeString(nombreCliente);
+        parcel.writeString(apellidosCte);
+        parcel.writeString(montoBruto);
+        parcel.writeString(montoNeto);
+        parcel.writeString(porcDescuento);
+        parcel.writeString(montoDesc);
+        parcel.writeString(montoImpuestos);
+        parcel.writeString(montoGravado);
+        parcel.writeString(montoExento);
+        parcel.writeString(idAsesor);
+        parcel.writeString(notas);
+        parcel.writeString(idCondicion);
+        parcel.writeString(idMoneda);
+        parcel.writeString(calDesc);
+        parcel.writeString(idMecanico);
+        parcel.writeString(idTipoTransFac);
+        parcel.writeString(idDocumento);
+        parcel.writeString(idTipoNcf);
+        parcel.writeString(notaDescuento);
+        parcel.writeString(noOrden);
+        parcel.writeString(fechaPedido);
+        parcel.writeString(idTipoServicio);
+        parcel.writeString(idSupervisor);
+        parcel.writeString(recibidoPor);
+        parcel.writeString(realizadoPor);
+        parcel.writeString(id_inspeccion);
+        parcel.writeString(fechaDocumento);
+        parcel.writeString(permite_pieza_reemplazo);
+        parcel.writeString(nombre_mecanico);
+        parcel.writeString(condicion);
+        parcel.writeInt(kilometraje);
+        parcel.writeString(nombreSupervisor);
     }
 }

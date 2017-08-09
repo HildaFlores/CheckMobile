@@ -33,16 +33,14 @@
 
     <string name="title_activity_orden_trabajo">Orden de Trabajo</string>
     <string name="title_activity_consulta_orden_trabajo">Orden de trabajo</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="title_activity_fullscreen">Acerca de</string>
-    <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">Check Mobile</string>
     <string name="title_activity_dash_board_orden">Ordenes de Trabajo</string>
     <string name="section_Orden1">Ordenes Pendientes</string>
     <string name="section_Orden2">Ordenes Finalizadas</string>
-
+    <string name="title_activity_historico_vehiculo">Histórico Vehículo</string>
 
 </resources>

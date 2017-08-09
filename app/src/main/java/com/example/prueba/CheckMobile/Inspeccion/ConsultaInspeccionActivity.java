@@ -1493,7 +1493,6 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
 
                     "<p>&nbsp;</p>\n" +
 
-
                     "<table style=\"width: 100%;\" border=\"1\" cellspacing=\"2\" cellpadding=\"2\">\n" +
                     "<tbody>\n" +
                     "<tr>\n" +

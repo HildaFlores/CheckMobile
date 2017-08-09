@@ -83,11 +83,6 @@
             android:label="@string/title_activity_consulta_orden_trabajo"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".Utils.FullscreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_fullscreen"
-            android:theme="@style/FullscreenTheme" />
         <activity android:name=".Actualizaciones.FiltroInspeccionActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -116,13 +111,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".Actualizaciones.FiltroVehiculoActivity"
+        <activity
+            android:name=".Actualizaciones.FiltroVehiculoActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity">
-            </meta-data>
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".Utils.HistoricoVehiculoActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/title_activity_historico_vehiculo"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+
         </activity>
     </application>
 
