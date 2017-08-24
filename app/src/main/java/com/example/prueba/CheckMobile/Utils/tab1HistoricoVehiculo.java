@@ -205,7 +205,9 @@ public class tab1HistoricoVehiculo extends Fragment {
 //                } catch (ParseException e) {
 //                    e.printStackTrace();
 //                }
-                textFecha.setText(listOrden.get(posicion).getFechaPedido());
+                if(listOrden.get(posicion).getFechaPedido() != null) {
+                    textFecha.setText(listOrden.get(posicion).getFechaPedido().substring(0,10));
+                }
             }
             textMecanico.setText(listOrden.get(posicion).getNombre_mecanico());
             item.setId(Integer.parseInt(listOrden.get(posicion).getId()));

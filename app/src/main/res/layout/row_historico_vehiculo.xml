@@ -17,22 +17,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="7sp">
-
-
-        <TextView
-            android:id="@+id/etiqueta1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Orden >> "
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OTT-15"
-            android:layout_weight="1"/>
-
         <TextView
             android:id="@+id/etiqueta4"
             android:layout_width="wrap_content"
@@ -49,6 +33,22 @@
             android:text="IV-20"
             android:layout_weight="1"
             android:layout_gravity="end"/>
+
+        <TextView
+            android:id="@+id/etiqueta1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Orden >> "
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OTT-15"
+            android:layout_weight="1"/>
+
+
 
     </LinearLayout>
 

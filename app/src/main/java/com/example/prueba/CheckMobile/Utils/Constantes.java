@@ -13,7 +13,7 @@ public class Constantes {
 
     // codigos de respuestas
     public static final String RESPONSE_CODE_OK = "200";
-    public static String IPSERVIDOR = "http://192.168.0.115"; //192.168.2.19
+    public static String IPSERVIDOR = "http://192.168.0.102"; //192.168.2.19
     public static String PUERTO = "4567";
     public static String SUPERVISOR = "PAUL PEREZ";
     public static String ID_SUPERVISOR = "18";
@@ -22,7 +22,7 @@ public class Constantes {
     public static final String KEY_PAIS = "REPUBLICA DOMINICANA";
     public static final String FB_DATABASE_PATH = "image";
     public static final String FB_STORAGE_PATH = "image/";
-    public static String NOMBRE_USUARIO = "TRANSACCIONAL";
+    public static final String NOMBRE_USUARIO = "TRANSACCIONAL";
 
     // claves Json - parametros
 

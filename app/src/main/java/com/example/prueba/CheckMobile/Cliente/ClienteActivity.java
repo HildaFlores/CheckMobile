@@ -308,8 +308,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     private void llenarAutoCompleteProvincias(ArrayList<provincias> provinciasResponse) {
 
         List<String> lista = new ArrayList<>();
-        for(provincias prov: provinciasResponse)
-        {
+        for (provincias prov : provinciasResponse) {
             lista.add(prov.getDescProvincia());
         }
 
@@ -401,7 +400,16 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     private void ActualizaVehiculoCliente(String idCte, String idVeh) {
 
         String parametro = idCte + "," + idVeh;
+
         Call<String> callUpdate = AdapterVehiculo.setUpdateService(parametro).updatesVehiculos();
+        if (actualizar) {
+            dialog = new ProgressDialog(this);
+            dialog.setTitle(null);
+            dialog.setMax(100);
+            dialog.setMessage("Actualzando Titular...");
+            // show it
+            dialog.show();
+        }
         callUpdate.enqueue(new updateVehiculoCallback());
 
     }
@@ -450,7 +458,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
                                     } catch (Exception e) {
                                         Log.d(getApplicationContext().getClass().getSimpleName(), "Error en formato de fecha!");
-                                       // Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
+                                        // Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
 
                                     }
                                 }
@@ -529,7 +537,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     private void InsertarCliente() {
 
         ArrayList<Cliente> clientes = new ArrayList<Cliente>();
-        if(limiteCredito.getText().toString() == null){
+        if (limiteCredito.getText().toString() == null) {
             limiteCredito.setText("0");
         }
         if (radioPersona.isChecked()) {
@@ -821,7 +829,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 desc_pais = spinnerArrayAdapter2.getItem(i).toString();
-                if (desc_pais.equals(KEY_PAIS)){
+                if (desc_pais.equals(KEY_PAIS)) {
                     ObtenerDatosProvincias();
                 }
             }
@@ -968,7 +976,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
             if (varCte.getfechaNac() != null) {
 
-                fechaNac.setText(varCte.getfechaNac().substring(0,10));
+                fechaNac.setText(varCte.getfechaNac().substring(0, 10));
             }
             if (varCte.getSexo().equals("F")) {
                 sexoF.setChecked(true);
@@ -1104,20 +1112,28 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
-                if (response.toString().equals(RESPONSE_CODE_OK)) {
-                    if (actualizar) {
-                        Toast.makeText(getApplicationContext(), "Titular actualizado", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();
-                    }
+                Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();
+                limpiarVistasCliente();
+                Log.d("AQUI==> ", response.body().toString());
+                if (actualizar) {
+                    dialog.dismiss();
+                    Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
                 }
             } else {
+                if (actualizar) {
+                    dialog.dismiss();
+                }
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
             }
         }
+
         @Override
         public void onFailure(Call<String> call, Throwable t) {
             Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
+            if (actualizar) {
+                dialog.dismiss();
+            }
             Log.v("Actualizar---> ", t.getMessage());
         }
     }

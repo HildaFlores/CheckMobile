@@ -54,13 +54,14 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private String baseUrl;
-    private String idUsuario, nombreusuario;
+    //private String idUsuario, nombreusuario;
     RecyclerView recyclerViewInspeccion;
     RecyclerView recyclerViewOrden;
     ArrayList<InspeccionVehiculo> inspeccionVehiculos = new ArrayList<InspeccionVehiculo>();
     ArrayList<OrdenTrabajoEnc> ordenTrabajo = new ArrayList<OrdenTrabajoEnc>();
 
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,24 +76,24 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
+//
+//        Intent intent = getIntent();
+//        Bundle extra = intent.getExtras();
+//
+//        if (extra != null) {
+//            nombreusuario = extra.getString("NOMBREUSUARIO");
+//
+//        }
 
-        Intent intent = getIntent();
-        Bundle extra = intent.getExtras();
-
-        if (extra != null) {
-            nombreusuario = extra.getString("NOMBREUSUARIO");
-
-        }
-        NOMBRE_USUARIO = nombreusuario;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        NavigationView vista =(NavigationView) drawer.findViewById(R.id.nav_view);
+        NavigationView vista = (NavigationView) drawer.findViewById(R.id.nav_view);
         View header = vista.getHeaderView(0);
         TextView user = (TextView) header.findViewById(R.id.textViewUsuario);
         TextView empresa = (TextView) header.findViewById(R.id.textViewEmpresa);
-        user.setText(nombreusuario);
+        user.setText(NOMBRE_USUARIO);
         empresa.setText(NOMBRE_EMPRESA);
 
         drawer.setDrawerListener(toggle);
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
                             final ArrayList<InspeccionVehiculo> filterList = new ArrayList<InspeccionVehiculo>();
                             for (int i = 0; i < inspeccionVehiculos.size(); i++) {
                                 final String text = inspeccionVehiculos.get(i).getNombre_vehiculo().toUpperCase() + " " +
-                                        inspeccionVehiculos.get(i).getNombre_cliente().toUpperCase()  + " " +
+                                        inspeccionVehiculos.get(i).getNombre_cliente().toUpperCase() + " " +
                                         inspeccionVehiculos.get(i).getReferencia() + " " + NOMBRE_USUARIO;
                                 if (text.contains(newText)) {
                                     filterList.add(inspeccionVehiculos.get(i));

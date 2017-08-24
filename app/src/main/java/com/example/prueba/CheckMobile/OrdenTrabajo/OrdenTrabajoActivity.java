@@ -193,6 +193,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
         //Llenando datos de encabezado
         if (actualizar) {
             txtNombreVehiculo.setVisibility(View.GONE);
+            ibFecha.setEnabled(false);
         } else {
             txtNombreVehiculo.setText("VEHICULO >> " + nombreVehiculo);
             txtNombreCliente.setText("CLIENTE >> " + nombreCliente);
@@ -601,8 +602,9 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     }
 
     private void ActualizarOrdenTrabajo() {
-        if (idCliente != null && nombreCliente != null && idCondicion != null && idMecanico != null
-                && idInspeccion != null && txtfechaOrden.getText().toString() != null && !listaIdProductos.isEmpty()) {
+
+        if (nombreCliente != null && idCondicion != null && idMecanico != null && idInspeccion != null &&
+                !listaIdProductos.isEmpty()) {
             ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
             ordenes.add(new OrdenTrabajoEnc(
                     idOrden,
@@ -617,7 +619,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
             dialog = new ProgressDialog(this);
             dialog.setTitle(null);
             dialog.setMax(100);
-            dialog.setMessage("Guardando Orden...");
+            dialog.setMessage("Actualizando Orden...");
             // show it
             dialog.show();
             callUpdate.enqueue(new Callback<String>() {

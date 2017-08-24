@@ -837,10 +837,11 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
                                 ));
                                }
+                        Toast.makeText(getApplicationContext(), "Imagen(es) cargada(s) con éxito!", Toast.LENGTH_SHORT).show();
                         Call<String> callVehiculoDocumento = AdapterVehiculoDocumento.getService().setVehiculoDocumentos(documento);
                         callVehiculoDocumento.enqueue(new VehDocumentoCallback());
 
-                        Toast.makeText(getApplicationContext(), "Imagen(es) cargada(s) con éxito!", Toast.LENGTH_SHORT).show();
+
 
                     }
                 }
@@ -910,8 +911,6 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
     }
 
-
-
     private class VehDocumentoCallback implements retrofit2.Callback<String> {
         @Override
         public void onResponse(Call<String> call, Response<String> response) {
@@ -920,9 +919,10 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 //                    myDialogProgress dialogProgress = new myDialogProgress();
 //                    dialogProgress.show(getFragmentManager(), "Inspeccion");
                     Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
+                    generarPdfOnClick();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
-                    generarPdfOnClick();
+
                 }
             } else {
                 dialog.dismiss();
@@ -946,10 +946,10 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         int index = nombreVehiculo.indexOf("(");
         nombreVehiculo = nombreVehiculo.substring(0, index);
 
-        if (!telefono.isEmpty() && telefono != null) {
+        if (!telefono.isEmpty() || telefono != null) {
             telefono = "(" + telefono.substring(0, 3) + ")" + telefono.substring(3);
         }
-        if (!celular.isEmpty() && celular != null) {
+        if (!celular.isEmpty() || celular != null) {
             celular = "(" + celular.substring(0, 3) + ")" + celular.substring(3);
         }
 

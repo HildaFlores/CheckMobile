@@ -124,7 +124,7 @@ public class GreenAdapterInspeccion extends RecyclerView.Adapter<GreenAdapterIns
             listIdInspeccion.setText("(IV-" + inspeccionVeh.get(listIndex).getId() + ")");
             listItemNumberView.setText(encabezado);
             listClienteName.setText(detalle);
-            listAsesor.setText(Constantes.NOMBRE_USUARIO);
+            listAsesor.setText(inspeccionVeh.get(listIndex).getUsuarioInsercion());
             etiqueta1.setText("Inspección >> ");
             etiqueta2.setText("Vehículo >> ");
             etiqueta3.setText("Cliente >> ");

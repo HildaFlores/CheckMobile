@@ -104,7 +104,11 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
                 } else {
                     intent = new Intent(FiltroOrdenTrabajoActivity.this, OrdenTrabajoActivity.class);
                     intent.putExtra("ORDEN", ordenItem.getId());
-                    intent.putExtra("CLIENTE", ordenItem.getNombreCliente() + " " + ordenItem.getApellidosCte());
+                    if (ordenItem.getApellidosCte() != null) {
+                        intent.putExtra("CLIENTE", ordenItem.getNombreCliente() + " " + ordenItem.getApellidosCte());
+                    } else {
+                        intent.putExtra("CLIENTE", ordenItem.getNombreCliente());
+                    }
                     intent.putExtra("FECHA", ordenItem.getFechaPedido());
                     intent.putExtra("OBSERVACION", ordenItem.getNotas());
                     if (ordenItem.getPermite_pieza_reemplazo().equals("1")) {

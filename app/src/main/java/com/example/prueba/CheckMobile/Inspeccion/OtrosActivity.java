@@ -213,7 +213,6 @@ public class OtrosActivity extends Fragment {
                     Log.d("TAG", "Fragment ==> " + nivelAceite);
                     mListener.sendNivelAceite(nivelAceite);
                 }
-
             }
 
             @Override

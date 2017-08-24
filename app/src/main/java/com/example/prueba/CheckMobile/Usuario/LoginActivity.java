@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.Utils.ConfigurationActivity;
 import com.example.prueba.CheckMobile.R;
+import com.example.prueba.CheckMobile.Utils.Constantes;
 import com.example.prueba.CheckMobile.Utils.DashBoardOrdenActivity;
 
 import retrofit2.Call;
@@ -106,6 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("IDUSUARIO", idUsuario);
                             intent.putExtra("NOMBREUSUARIO", nombreUsuario);
+                           // Constantes.NOMBRE_USUARIO = nombreUsuario;
                             finish();
                             startActivity(intent);
 

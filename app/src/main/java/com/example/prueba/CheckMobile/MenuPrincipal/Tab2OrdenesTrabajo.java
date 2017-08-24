@@ -134,7 +134,13 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
         if (idOrden != 0) {
             for (int i = 0; i < listaOrdenes.size(); i++) {
                 if (listaOrdenes.get(i).getId().equals(String.valueOf(idOrden))) {
-                    nombreCliente = listaOrdenes.get(i).getNombreCliente() + " " + listaOrdenes.get(i).getApellidosCte();
+                    if(listaOrdenes.get(i).getApellidosCte() != null) {
+                        nombreCliente = listaOrdenes.get(i).getNombreCliente() + " " + listaOrdenes.get(i).getApellidosCte();
+                    }
+                    else
+                    {
+                        nombreCliente = listaOrdenes.get(i).getNombreCliente();
+                    }
                     idCondicion = listaOrdenes.get(i).getIdCondicion();
                     idInspeccion = Integer.parseInt(listaOrdenes.get(i).getId_inspeccion());
                     idCliente = listaOrdenes.get(i).getCliente();
@@ -223,6 +229,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
                         Toast.makeText(getContext(), "Orden anulada!", Toast.LENGTH_SHORT).show();
                         obtenerDatosOrdenes();
                     } else {
+                        Log.d("Error orden","==>" + response.body().toString());
                         Toast.makeText(getContext(), "Orden no pudo ser anulada!", Toast.LENGTH_SHORT).show();
                     }
                 } else {
