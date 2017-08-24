@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AdapterRepresentante {
 
     public static RepresentanteService apiService;
+    public static IdRepresentateService apiIdService;
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     public static RepresentanteService  getApiService(String parametro, String valor) {
@@ -61,6 +62,27 @@ public class AdapterRepresentante {
         }
 
             return apiService;
+
+    }
+
+    public static IdRepresentateService  getIdService() {
+        apiIdService = null;
+        MainActivity main = new MainActivity();
+
+
+        OkHttpClient.Builder httpClient2 = main.httpCliente();
+
+        if (apiIdService == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(main.getBaseUrl())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClient2.build()) //<- using the log level
+                    .build();
+
+            apiIdService =  retrofit.create(IdRepresentateService.class);
+        }
+
+        return apiIdService;
 
     }
 }

@@ -16,9 +16,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.TipoTransaccion.AdapterTipoTransaccion;
 import com.example.prueba.CheckMobile.TipoTransaccion.TipoTransaccion;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,14 +96,23 @@ public class InspeccionGeneralActivity extends Fragment {
         void OnpassingDescAlfrombra(List<String> descAlfrombra);
 
         void OnpassingNombreVeh(String nombre);
+
         void OnpassingNomcreCte(String nombre);
+
         void OnpassingPlaca(String placa);
-        void OnpassingColor (String color);
+
+        void OnpassingColor(String color);
+
         void OnpassingDocIdentidad(String docIdentidad);
+
         void OnpassingCelular(String celular);
+
         void OnpassingTelefono(String telefono);
+
         void OnpassingCondicion1(String alfombra1);
+
         void OnpassingCondicion2(String alfombra2);
+
         void OnpassingCondicion3(String alfombra3);
     }
 
@@ -150,7 +161,7 @@ public class InspeccionGeneralActivity extends Fragment {
             mListener.OnpassingTelefono(extra.getString("CELULAR"));
             mListener.OnpassingCelular(extra.getString("TELEFONO"));
 
-                obtenerProximaSecuencia(KEY_TIPO_TRANS_INSPECCION);
+            obtenerProximaSecuencia(KEY_TIPO_TRANS_INSPECCION);
 
         }
 
@@ -557,8 +568,13 @@ public class InspeccionGeneralActivity extends Fragment {
         public void onResponse(Call<ArrayList<TipoTransaccion>> call, Response<ArrayList<TipoTransaccion>> response) {
             if (response.isSuccessful()) {
                 ArrayList<TipoTransaccion> tipo = response.body();
-                idInspeccion.setText(tipo.get(0).getId().toUpperCase() + " - " + String.valueOf(tipo.get(0).getSecuencia()));
+                if (!tipo.isEmpty()) {
+                    idInspeccion.setText(tipo.get(0).getId().toUpperCase() + " - " + String.valueOf(tipo.get(0).getSecuencia()));
+                }
 
+            }else
+            {
+                Toast.makeText(getContext(), "Error el respuesta de transacción", Toast.LENGTH_SHORT).show();
             }
         }
 

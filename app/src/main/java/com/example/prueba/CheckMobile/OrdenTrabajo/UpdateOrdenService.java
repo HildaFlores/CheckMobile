@@ -17,7 +17,13 @@ public interface UpdateOrdenService {
     Call<String> setAnulacion();
 
 
+    @POST("mantenimiento")
+    Call<OrdenTrabajoEnc> getMantenimientos();
+
+
     @PUT("actualizarPedido")
     Call<String> setupdateOrden(@Body ArrayList<OrdenTrabajoEnc> ordenes);
+
+
 
 }

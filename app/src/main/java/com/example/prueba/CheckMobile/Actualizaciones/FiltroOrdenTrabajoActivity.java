@@ -37,6 +37,7 @@ import retrofit2.Response;
 
 import static com.example.prueba.CheckMobile.R.id.listaLuces;
 import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_ORDEN;
+import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 import static java.security.AccessController.getContext;
 
 public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
@@ -82,7 +83,7 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
                 OrdenTrabajoEnc ordenItem = (OrdenTrabajoEnc) listaOrden.getAdapter().getItem(i);
                 Intent intent;
                 if (consultar) {
-                    intent  = new Intent(FiltroOrdenTrabajoActivity.this, ConsultaOrdenTrabajo.class);
+                    intent = new Intent(FiltroOrdenTrabajoActivity.this, ConsultaOrdenTrabajo.class);
                     intent.putExtra("ORDEN", Integer.parseInt(ordenItem.getId()));
                     intent.putExtra("CLIENTE", ordenItem.getNombreCliente() + " " + ordenItem.getApellidosCte());
                     intent.putExtra("FECHA", ordenItem.getFechaPedido());
@@ -100,12 +101,12 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
                     intent.putExtra("IDINSPECCION", ordenItem.getId_inspeccion());
                     intent.putExtra("SUPERVISOR", ordenItem.getNombreSupervisor());
 
-                }else {
-                 intent  = new Intent(FiltroOrdenTrabajoActivity.this, OrdenTrabajoActivity.class);
+                } else {
+                    intent = new Intent(FiltroOrdenTrabajoActivity.this, OrdenTrabajoActivity.class);
                     intent.putExtra("ORDEN", ordenItem.getId());
                     intent.putExtra("CLIENTE", ordenItem.getNombreCliente() + " " + ordenItem.getApellidosCte());
                     intent.putExtra("FECHA", ordenItem.getFechaPedido());
-                    intent.putExtra("OBSERVACIONES", ordenItem.getNotas());
+                    intent.putExtra("OBSERVACION", ordenItem.getNotas());
                     if (ordenItem.getPermite_pieza_reemplazo().equals("1")) {
                         permitePiezas = true;
                     } else {
@@ -132,7 +133,7 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<OrdenTrabajoEnc> call, Response<OrdenTrabajoEnc> response) {
                 OrdenTrabajoEncResponse ordenes = response.body();
-                if (ordenes.getResponseCode().equals("200")) {
+                if (ordenes.getResponseCode().equals(RESPONSE_CODE_OK)) {
                     ordenTrabajo = ordenes.getOrdenes();
                     madapter = new AdapterOrden(getApplicationContext(), ordenTrabajo);
                     listaOrden.setAdapter(madapter);
@@ -209,7 +210,12 @@ public class FiltroOrdenTrabajoActivity extends AppCompatActivity {
             TextView textVehiculo = (TextView) item.findViewById(R.id.txtRowUpdate2);
             TextView textCliente = (TextView) item.findViewById(R.id.txtRowUpdate3);
             textId.setText("( " + KEY_TIPO_TRANS_ORDEN + "-" + listOrden.get(posicion).getId() + ")");
-            textCliente.setText("CLIENTE >> " + listOrden.get(posicion).getNombreCliente() + " " + listOrden.get(posicion).getApellidosCte());
+            if (listOrden.get(posicion).getApellidosCte() != null) {
+                textCliente.setText("CLIENTE >> " + listOrden.get(posicion).getNombreCliente() + " " + listOrden.get(posicion).getApellidosCte());
+            } else {
+                textCliente.setText("CLIENTE >> " + listOrden.get(posicion).getNombreCliente());
+
+            }
             item.setId(Integer.parseInt(listOrden.get(posicion).getId()));
             textVehiculo.setVisibility(View.GONE);
             return item;

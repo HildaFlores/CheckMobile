@@ -156,7 +156,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(Tab1Inspecciones.this.getContext(), ConsultaInspeccionActivity.class);
         vista = mInspeccionList.getLayoutManager().findViewByPosition(clickedItemIndex);
-        TextView textView = (TextView) vista.findViewById(R.id.txtRowInspeccion0);
+        TextView textView = (TextView) vista.findViewById(R.id.txtRowInspeccion1);
         int index1 = textView.getText().toString().indexOf("-") + 1;
         int index2 = textView.getText().toString().indexOf(")");
         idInspeccion = Integer.parseInt(textView.getText().toString().substring(index1, index2));
@@ -184,7 +184,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                         .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                TextView textView = (TextView) view.findViewById(R.id.txtRowInspeccion0);
+                                TextView textView = (TextView) view.findViewById(R.id.txtRowInspeccion1);
                                 int index1 = textView.getText().toString().indexOf("-") + 1;
                                 int index2 = textView.getText().toString().indexOf(")");
                                 idInspeccion = Integer.parseInt(textView.getText().toString().substring(index1, index2));
@@ -222,7 +222,7 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                         .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                TextView textView = (TextView) view.findViewById(R.id.txtRowInspeccion0);
+                                TextView textView = (TextView) view.findViewById(R.id.txtRowInspeccion1);
                                 int index1 = textView.getText().toString().indexOf("-") + 1;
                                 int index2 = textView.getText().toString().indexOf(")");
                                 idInspeccion = Integer.parseInt(textView.getText().toString().substring(index1, index2));
@@ -240,8 +240,6 @@ public class Tab1Inspecciones extends Fragment implements GreenAdapterInspeccion
                 alert.setTitle("Anular");
                 alert.setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert));
                 alert.show();
-
-
                 break;
         }
     }

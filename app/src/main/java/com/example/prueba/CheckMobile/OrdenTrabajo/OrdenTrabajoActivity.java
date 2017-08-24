@@ -3,6 +3,7 @@ package com.example.prueba.CheckMobile.OrdenTrabajo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,6 +37,7 @@ import com.example.prueba.CheckMobile.CondicionPago.CondicionPago;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionResponse;
 import com.example.prueba.CheckMobile.Inspeccion.AdapterInspeccion;
 import com.example.prueba.CheckMobile.Inspeccion.myDialogProgress;
+import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.RepresentanteVenta.AdapterRepresentante;
 import com.example.prueba.CheckMobile.RepresentanteVenta.RepresentanteVenta;
@@ -77,6 +79,7 @@ import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_TIPO_TRAN
 import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_INSPECCION;
 import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_ORDEN;
 import static com.example.prueba.CheckMobile.Utils.Constantes.NOMBRE_CARPETA_APP;
+import static com.example.prueba.CheckMobile.Utils.Constantes.NOMBRE_USUARIO;
 import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 import static com.example.prueba.CheckMobile.Utils.Constantes.SUPERVISOR;
 
@@ -95,6 +98,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     Spinner spinnerMecanico;
     Spinner spinnerCondicion;
     Switch swReemplazo;
+    ProgressDialog dialog;
 
     //mis variables
     int requestCode = 1;
@@ -118,6 +122,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     private String nombreMecanico;
     ImageButton ibFecha;
 
+
     private DatePickerDialog.OnDateSetListener mDateSetListenerFecha;
 
 
@@ -129,8 +134,10 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         inicializacionVistas();
+        ObtenerIdMecanico();
         ObtenerDatosMecanicos("1");
         ObtenerDatosCondicion();
+
 
         //obtentiendo datos de intent
         Intent intent = getIntent();
@@ -258,6 +265,33 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void ObtenerIdMecanico() {
+        Call<String> callMecanico = AdapterRepresentante.getIdService().getIdMecanico();
+        callMecanico.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.isSuccessful())
+                {
+                    if(response.body().toString() != null)
+                    {
+                        idMecanico = response.body().toString();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Error en respuesta de mecánico", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("Mecanico", "Error ==> " +  t.getMessage());
+            }
+        });
 
     }
 
@@ -416,14 +450,20 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<RepresentanteVenta> call, Response<RepresentanteVenta> response) {
                 if (response.isSuccessful()) {
-                    RepresentanteVentaResponse representante = response.body();
-                    poblarSpinnerMecanico(representante.getRepresentanteVentas());
+                    if (response.body().getResponseCode().equals(RESPONSE_CODE_OK)) {
+                        RepresentanteVentaResponse representante = response.body();
+                        poblarSpinnerMecanico(representante.getRepresentanteVentas());
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error en datos de mecánicos", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error en respuesta de mecánicos", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<RepresentanteVenta> call, Throwable t) {
-
+                Toast.makeText(getApplicationContext(), "Error de respuesta de mecánicos", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -561,45 +601,58 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
     }
 
     private void ActualizarOrdenTrabajo() {
-        ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
-        ordenes.add(new OrdenTrabajoEnc(
-                idOrden,
-                editTextObservaciones.getText().toString().toUpperCase(),
-                idCondicion,
-                idMecanico,
-                txtfechaOrden.getText().toString(),
-                permiteReemplazo
-        ));
+        if (idCliente != null && nombreCliente != null && idCondicion != null && idMecanico != null
+                && idInspeccion != null && txtfechaOrden.getText().toString() != null && !listaIdProductos.isEmpty()) {
+            ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
+            ordenes.add(new OrdenTrabajoEnc(
+                    idOrden,
+                    editTextObservaciones.getText().toString().toUpperCase(),
+                    idCondicion,
+                    idMecanico,
+                    txtfechaOrden.getText().toString(),
+                    permiteReemplazo
+            ));
 
-        Call<String> callUpdate = AdapterOrdenTrabajo.updateOrdenTrabajo().setupdateOrden(ordenes);
-        callUpdate.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-                    if (response.body().toString().equals(RESPONSE_CODE_OK)) {
-                        guardarOrdenDetalle();
+            Call<String> callUpdate = AdapterOrdenTrabajo.updateOrdenTrabajo().setupdateOrden(ordenes);
+            dialog = new ProgressDialog(this);
+            dialog.setTitle(null);
+            dialog.setMax(100);
+            dialog.setMessage("Guardando Orden...");
+            // show it
+            dialog.show();
+            callUpdate.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body().toString().equals(RESPONSE_CODE_OK)) {
+                            guardarOrdenDetalle();
+                        } else {
+                            dialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
+
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
-
                 }
-            }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error " + " " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d("ORDEN==>", " " + t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    dialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Error " + " " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d("ORDEN==>", " " + t.getMessage());
+                }
+            });
 
-
+        } else {
+            Toast.makeText(getApplicationContext(), "Faltan datos por llenar!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void GuardarOrdenTrabajo() {
-        if (idCliente != null && nombreCliente != null && idCondicion != null && idMecanico != null && idInspeccion != null && txtfechaOrden.getText().toString() != null) {
-
+        if (idCliente != null && nombreCliente != null && idCondicion != null && idMecanico != null
+                && idInspeccion != null && txtfechaOrden.getText().toString() != null && !listaIdProductos.isEmpty()) {
             final ArrayList<OrdenTrabajoEnc> ordenes = new ArrayList<OrdenTrabajoEnc>();
             ordenes.add(new OrdenTrabajoEnc(
                     idCliente,
@@ -624,6 +677,12 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
 
             //Cambiar estado de inspeccion a Finalizada
             Call<String> callActualizar = AdapterInspeccion.updateInspeccion(String.valueOf(idInspeccion)).setConvert();
+            dialog = new ProgressDialog(this);
+            dialog.setTitle(null);
+            dialog.setMax(100);
+            dialog.setMessage("Guardando Orden...");
+            // show it
+            dialog.show();
             callActualizar.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -631,15 +690,18 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                         if (response.body().toString().equals(RESPONSE_CODE_OK)) {
                             guardarOrdenEnc(ordenes);
                         } else {
+                            dialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Error al generar orden", Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        dialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Error: " + response.errorBody(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.v("Inspeccion", t.getMessage());
                 }
@@ -661,15 +723,18 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                     if (p[0].equals(RESPONSE_CODE_OK)) {
                         guardarOrdenDetalle();
                     } else {
+                        dialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Error " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -677,59 +742,62 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
 
 
     private void guardarOrdenDetalle() {
-        if (listaIdProductos.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Debe seleccionar minimo un servicio", Toast.LENGTH_SHORT).show();
-        } else {
-            ArrayList<OrdenTrabajoDet> ordenes = new ArrayList<OrdenTrabajoDet>();
+        ArrayList<OrdenTrabajoDet> ordenes = new ArrayList<OrdenTrabajoDet>();
 
-            for (int i = 0; i < listaIdProductos.size(); i++) {
-                ordenes.add(new OrdenTrabajoDet(
-                        idOrden,
-                        listaIdProductos.get(i),
-                        "1",
-                        "ITBIS",
-                        listaDescProductos.get(i),
-                        "1",
-                        "0",
-                        "1",
-                        "0",
-                        "1",
-                        "0.5",
-                        "1",
-                        editTextObservaciones.getText().toString().toUpperCase(),
-                        "1",
-                        "1",
-                        "1",
-                        "1"
-                ));
+        for (int i = 0; i < listaIdProductos.size(); i++) {
+            ordenes.add(new OrdenTrabajoDet(
+                    idOrden,
+                    listaIdProductos.get(i),
+                    "1",
+                    "ITBIS",
+                    listaDescProductos.get(i),
+                    "1",
+                    "0",
+                    "1",
+                    "0",
+                    "1",
+                    "0.5",
+                    "1",
+                    editTextObservaciones.getText().toString().toUpperCase(),
+                    "1",
+                    "1",
+                    "1",
+                    "1"
+            ));
+        }
+
+        Call<String> callOrdenDet = AdapterOrdenTrabajo.insertOrdendDetalle().setPedidoDetalle(ordenes);
+        callOrdenDet.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String[] p = response.body().split(",");
+                    if (p[0].equals(RESPONSE_CODE_OK)) {
+//                            myDialogProgress dialogProgress = new myDialogProgress();
+//                            dialogProgress.show(getFragmentManager(), "Orden Trabajo");
+                        dialog.dismiss();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                        generarPdfOnClick();
+                    } else {
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    dialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
+
+                }
             }
 
-            Call<String> callOrdenDet = AdapterOrdenTrabajo.insertOrdendDetalle().setPedidoDetalle(ordenes);
-            callOrdenDet.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    if (response.isSuccessful()) {
-                        String[] p = response.body().split(",");
-                        if (p[0].equals(RESPONSE_CODE_OK)) {
-                            myDialogProgress dialogProgress = new myDialogProgress();
-                            dialogProgress.show(getFragmentManager(), "Orden Trabajo");
-                            generarPdfOnClick();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Error al guardar los datos", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Error de respuesta al guardar", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                dialog.dismiss();
+                Toast.makeText(getApplicationContext(), "Error " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("ORDEN==>", " " + t.getMessage());
+            }
+        });
 
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Error " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d("ORDEN==>", " " + t.getMessage());
-                }
-            });
-        }
     }
 
 
@@ -791,8 +859,7 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
 
         if (idCondicion.equals("0")) {
             condicion = "ORDEN AL CONTADO";
-        }else
-        {
+        } else {
             condicion = "ORDEN A CRÉDITO";
         }
 
@@ -858,37 +925,56 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                     "</tbody>\n" +
                     "</table>" +
                     "<p>&nbsp;</p>\n" +
-                    "<p style=\"text-align: center;\">"+ condicion + "</p>\n" +
+                    "<p style=\"text-align: center;\">" + condicion + "</p>\n" +
+
                     "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"2\" cellpadding=\"2\" align=\"\\left\">\n" +
                     "<tbody>\n" +
                     "<tr>\n" +
-                    "<td style=\"text-align: left;\" colspan=\"1\" rowspan=\"1\"><strong>Cliente: </strong>"+ nombreCliente+"</td>\n" +
-                    "</tr>\n" +
-                    "<tr>\n" +
-                    "<td style=\"text-align: left;\"><strong>Vehiculo:</strong>"+ nombreVehiculo +"</td>\n" +
-                    "</tr>\n" +
-                    "</tbody>\n" +
-                    "</table>\n" +
-                    "<p>&nbsp;</p>\n" +
-                    "<table style=\"width: 75%;\" cellspacing=\"2\" cellpadding=\"1\">\n" +
-                    "<tbody>\n" +
-                    "<tr>\n" +
-                    "<td style=\"background-color: #cccccc; text-align: center;\" colspan=\"4\" rowspan=\"1\"><strong>Servicios solicitados</strong></td>\n" +
-                    "</tr>\n" +
-                    "<tr>\n" +
-                    "<td style=\"width: 10%;\"><strong>Sec.</strong></td>\n" +
-                    "<td style=\"width: 15%;\"><strong>C&oacute;digo</strong></td>\n" +
-                    "<td style=\"width: 85%;\"><strong>Descripci&oacute;n</strong></td>\n" +
+                    "<td style=\"text-align: left;\" colspan=\"1\" rowspan=\"1\"><strong>Cliente: </strong>" + nombreCliente + "</td>\n" +
                     "</tr>\n";
-            for(int i=1; i<= listaIdProductos.size(); i++)
-            {
-                add = add + "<tr>\n" +
-                        "<td style=\"width: 10%;\">"+i+"</td>\n" +
-                        "<td style=\"width: 10%;\">"+listaIdProductos.get(i-1)+"</td>\n" +
-                        "<td style=\"width: 90%;\">"+listaDescProductos.get(i-1)+"</td>\n" +
-                        "</tr>\n" ;
+
+            if (nombreVehiculo != null) {
+                htmToPDF = htmToPDF + "<tr>\n" +
+                        "<td style=\"text-align: left;\"><strong>Vehiculo:</strong>" + nombreVehiculo + "</td>\n" +
+                        "</tr>\n" +
+                        "</tbody> \n" +
+                        "</table>\n" +
+                       "<p>&nbsp;</p>\n" +
+                        "<table style=\"width: 75%;\" cellspacing=\"2\" cellpadding=\"1\">\n" +
+                        "<tbody>\\n\" +\n" +
+                        "<tr>\\n\" +\n" +
+                        "<td style=\"background-color: #cccccc; text-align: center;\" colspan=\"4\" rowspan=\"1\"><strong>Servicios solicitados</strong></td>\n" +
+                        "</tr>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 10%;\"><strong>Sec.</strong></td>\n" +
+                        "<td style=\"width: 15%;\"><strong>C&oacute;digo</strong></td>\n" +
+                        "<td style=\"width: 85%;\"><strong>Descripci&oacute;n</strong></td>\n" +
+                         "</tr>\n";
+            } else {
+
+                htmToPDF = htmToPDF +
+                        "</tbody>\n" +
+                        "</table>\n" +
+                        "<p>&nbsp;</p>\n" +
+                        "<table style=\"width: 75%;\" cellspacing=\"2\" cellpadding=\"1\">\n" +
+                        "<tbody>\n" +
+                        "<tr>\n" +
+                        "<td style=\"background-color: #cccccc; text-align: center;\" colspan=\"4\" rowspan=\"1\"><strong>Servicios solicitados</strong></td>\n" +
+                        "</tr>\n" +
+                        "<tr>\n" +
+                        "<td style=\"width: 10%;\"><strong>Sec.</strong></td>\n" +
+                        "<td style=\"width: 15%;\"><strong>C&oacute;digo</strong></td>\n" +
+                        "<td style=\"width: 85%;\"><strong>Descripci&oacute;n</strong></td>\n" +
+                        "</tr>\n";
             }
-                   htmToPDF = htmToPDF + add + "</tbody>\n" +
+            for (int i = 1; i <= listaIdProductos.size(); i++) {
+                add = add + "<tr>\n" +
+                        "<td style=\"width: 10%;\">" + i + "</td>\n" +
+                        "<td style=\"width: 10%;\">" + listaIdProductos.get(i - 1) + "</td>\n" +
+                        "<td style=\"width: 90%;\">" + listaDescProductos.get(i - 1) + "</td>\n" +
+                        "</tr>\n";
+            }
+            htmToPDF = htmToPDF + add + "</tbody>\n" +
                     "</table>";
 
 
@@ -902,8 +988,8 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                         "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Realizado por: </td>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+NOMBRE_USUARIO+"</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+nombreCliente+"</td>\n" +
                         "</tr>\n" +
                         "</tbody>\n" +
                         "</table>" +
@@ -918,8 +1004,8 @@ public class OrdenTrabajoActivity extends AppCompatActivity {
                         "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Realizado por</td>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+NOMBRE_USUARIO+"</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+nombreCliente+"</td>\n" +
                         "</tr>\n" +
                         "</tbody>\n" +
                         "</table>" +

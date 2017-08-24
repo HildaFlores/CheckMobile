@@ -1,12 +1,14 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,10 +21,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.Vehiculo.*;
 import com.example.prueba.CheckMobile.VehiculoDocumento.AdapterVehiculoDocumento;
 import com.example.prueba.CheckMobile.VehiculoDocumento.VehiculoDocumento;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -32,9 +44,15 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImage;
+import com.itextpdf.text.pdf.PdfIndirectObject;
+import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -42,16 +60,29 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Response;
+
 import static com.example.prueba.CheckMobile.Utils.Constantes.*;
+import static com.itextpdf.text.pdf.PdfName.DEST;
+import static java.security.AccessController.getContext;
 
 public class MainInspeccionActivity extends AppCompatActivity implements InspeccionGeneralActivity.passingData, InspeccionLucesActivity.sendData, InspeccionAccesoriosActivity.sendAccesorios, OtrosActivity.sendOtros {
 
     private mSectionsPagerAdapterInspeccion mSectionsPagerAdapterInspeccion;
     private ViewPager mViewPager;
-    String idVehiculo, chasis, referencia, idCliente, idInspeccion, nombreCliente, nombreVehiculo;
-    String tipoLlave, descLlave, nivelCombustible, nivelAceite;
+    private String idVehiculo;
+    private String chasis;
+    private String referencia;
+    private String idCliente;
+    private String idInspeccion;
+    private String nombreCliente;
+    private String nombreVehiculo;
+    private String tipoLlave;
+    private String descLlave;
+    private String nivelCombustible;
+    private String nivelAceite;
     private String motor;
     private String kilometraje;
     private String fecha;
@@ -65,7 +96,12 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     private String condicionAlfombra1;
     private String condicionAlfombra2;
     private String condicionAlfombra3;
-    String cantAlfombra, cantLlaves, cantGato, cantAlicate, cantLlaveRueda, noBateria;
+    private String cantAlfombra;
+    private String cantLlaves;
+    private String cantGato;
+    private String cantAlicate;
+    private String cantLlaveRueda;
+    private String noBateria;
     boolean actualizar = false;
 
     //Views
@@ -77,8 +113,18 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
     private List<String> descAlfrombra = new ArrayList<>();
     private List<String> imageRuta = new ArrayList<>();
     private List<Integer> ladoVehiculo = new ArrayList<>();
-
-
+    private List<Uri> imageRutaWeb = new ArrayList<>();
+    private List<Uri> imageUriUploaded = new ArrayList<>();
+    ProgressDialog dialog;
+    private StorageReference mStorageRef;
+    private DatabaseReference mDataBase;
+    //You tab icons
+    private int[] icons = {
+            R.drawable.ic_action_assignment,
+            R.drawable.ic_action_highlight,
+            R.drawable.ic_action_view_list,
+            R.drawable.ic_action_extension
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +132,24 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         setContentView(R.layout.activity_main_inspeccion);
 
         mSectionsPagerAdapterInspeccion = new mSectionsPagerAdapterInspeccion(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container2);
         mViewPager.setAdapter(mSectionsPagerAdapterInspeccion);
 
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs2);
         tabLayout.setupWithViewPager(mViewPager);
+
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            tabLayout.getTabAt(i).setIcon(icons[i]);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main_inspeccion);
         setSupportActionBar(toolbar);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mDataBase = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
+
         Intent intent = this.getIntent();
         Bundle extra = intent.getExtras();
         if (extra != null) {
@@ -114,7 +169,6 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                 .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
                         MainInspeccionActivity.this.finish();
                         Intent intent = new Intent(MainInspeccionActivity.this, VehiculoActivity.class);
                         startActivity(intent);
@@ -153,6 +207,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+
                             guardarInspeccionVehiculo();
 
                         }
@@ -170,41 +225,34 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             alert.show();
 
             return true;
-        } else if (id == R.id.action_ver) {
-            generarPdfWithImage();
         }
 
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void generarPdfWithImage() {
-
-        Document doc = new Document();
-        try {
-            PdfWriter.getInstance(doc, new FileOutputStream("ImageDemo.pdf"));
-            doc.open();
-
-            // Creating image by file name
-            String filename = "other-sample/src/main/resources/java.gif";
-            Image image = Image.getInstance(filename);
-            doc.add(image);
-
-            // The following line to prevent the "Server returned
-            // HTTP response code: 403" error.
-            System.setProperty("http.agent", "Chrome");
-
-            // Creating image from a URL
-            String url = "/storage/sdcard0/Pictures/JPEG_20170703_170334_778350350.jpg";
-            image = Image.getInstance(url);
-            doc.add(image);
-        } catch (DocumentException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            doc.close();
-        }
-
-    }
+//    private void generarPdfWithImage() throws IOException, DocumentException {
+//
+//        File file = new File("/storage/sdcard0/proyecto.com.demoPdf/MisArchivos/MiArchivoPDF.pdf");
+//        file.getParentFile().mkdirs();
+//       manipulatePdf("/storage/sdcard0/proyecto.com.demoPdf/MisArchivos/MiArchivoPDF.pdf","/storage/sdcard0/proyecto.com.demoPdf/MisArchivos/MiArchivoPDF.pdf");
+//
+//    }
+//
+//    public void manipulatePdf(String src, String dest) throws IOException, DocumentException {
+//        PdfReader reader = new PdfReader(src);
+//        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
+//        Image image = Image.getInstance("/storage/sdcard0/Pictures/JPEG_20170703_170334_778350350.jpg");
+//        PdfImage stream = new PdfImage(image, "", null);
+//        stream.put(new PdfName("ITXT_SpecialId"), new PdfName("123456789"));
+//        PdfIndirectObject ref = stamper.getWriter().addToBody(stream);
+//        image.setDirectReference(ref.getIndirectReference());
+//        image.setAbsolutePosition(36, 400);
+//        PdfContentByte over = stamper.getOverContent(1);
+//        over.addImage(image);
+//        stamper.close();
+//        reader.close();
+//    }
 
     private void guardarInspeccionVehiculo() {
 
@@ -232,6 +280,12 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             Toast.makeText(getApplicationContext(), "Faltan datos por llenar!!", Toast.LENGTH_SHORT).show();
         } else {
             Call<String> callInspeccion = AdapterInspeccion.setInspeccionVehiculo().insertInspeccion(inspeccionEnc);
+            dialog = new ProgressDialog(this);
+            dialog.setTitle(null);
+            dialog.setMax(100);
+            dialog.setMessage("Guardando Inspección...");
+            // show it
+            dialog.show();
             callInspeccion.enqueue(new InspeccionCallback());
         }
     }
@@ -429,6 +483,12 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         this.ladoVehiculo = lado;
     }
 
+    @Override
+    public void sendImageRutaWeb(List<Uri> rutaweb) {
+        this.imageRutaWeb = rutaweb;
+
+    }
+
     public class mSectionsPagerAdapterInspeccion extends FragmentPagerAdapter {
 
         public mSectionsPagerAdapterInspeccion(FragmentManager fm) {
@@ -447,7 +507,6 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     return Luces;
 
                 case 2:
-
                     InspeccionAccesoriosActivity accesorios = new InspeccionAccesoriosActivity();
                     return accesorios;
                 case 3:
@@ -696,6 +755,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
 
                     insertarInspeccionDetalle(inspeccionDetalle);
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
 
                 }
@@ -705,6 +765,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         @Override
         public void onFailure(Call<String> call, Throwable t) {
             Log.v("Error insercion ** ", t.getMessage());
+            dialog.dismiss();
             Toast.makeText(getApplicationContext(), t.getMessage() + " Error al insertar inspeccion", Toast.LENGTH_SHORT).show();
         }
     }
@@ -719,17 +780,21 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         @Override
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
-
                 if (response.body().toString().equals(RESPONSE_CODE_OK)) {
                     if (!imageRuta.isEmpty()) {
-                        guardarVehiculoDocumento();
+                       subirImagen();
                     } else {
-                        myDialogProgress dialogProgress = new myDialogProgress();
-                        dialogProgress.show(getFragmentManager(), "Inspeccion");
-                         generarPdfOnClick();
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+//                        myDialogProgress dialogProgress = new myDialogProgress();
+//                        dialogProgress.show(getFragmentManager(), "Inspeccion");
+                        generarPdfOnClick();
                     }
                 }
             } else {
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
 
             }
@@ -743,85 +808,131 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         }
     }
 
-    private void guardarVehiculoDocumento() {
+    @SuppressWarnings("VisibleForTests")
+    public void subirImagen() {
+        final ArrayList<VehiculoDocumento> documento = new ArrayList<VehiculoDocumento>();
 
-        ArrayList<VehiculoDocumento> documento = new ArrayList<VehiculoDocumento>();
-        for (int i = 0; i < imageRuta.size(); i++) {
-            switch (ladoVehiculo.get(i)) {
-                case 1: {
-                    documento.add(new VehiculoDocumento(
-                            idVehiculo,
-                            imageRuta.get(i),
-                            idInspeccion,
-                            "Izquierda",
-                            String.valueOf(ladoVehiculo.get(i))
-                    ));
-                    break;
+        //ImageRutaWeb, lista de tipo URi que guarda todas las direcciones locales de las imagenes que tienen que subirse
+        for (int i = 0; i < imageRutaWeb.size(); i++) {
+            StorageReference ref = mStorageRef.child(FB_STORAGE_PATH + System.currentTimeMillis() + "." + "jpg");
+            final int finalI = i;
+            ref.putFile(imageRutaWeb.get(i)).addOnSuccessListener(
+                    new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    ImageUpload imageUpload = new ImageUpload(obtenerDescLado(ladoVehiculo.get(finalI)), taskSnapshot.getDownloadUrl().toString(), idInspeccion);
+                    String uploadId = mDataBase.push().getKey();
+                    mDataBase.child(uploadId).setValue(imageUpload);
+                    imageUriUploaded.add(taskSnapshot.getDownloadUrl());
+                    if (finalI == imageRutaWeb.size() - 1) {
+                        dialog.dismiss();
+                            for (int j = 0; j < imageRuta.size(); j++) {
+                                documento.add(new VehiculoDocumento(
+                                        idVehiculo,
+                                        imageRuta.get(j),
+                                        idInspeccion,
+                                        obtenerDescLado(ladoVehiculo.get(j)),
+                                        String.valueOf(ladoVehiculo.get(j)),
+                                        imageUriUploaded.get(j).toString()
+
+                                ));
+                               }
+                        Call<String> callVehiculoDocumento = AdapterVehiculoDocumento.getService().setVehiculoDocumentos(documento);
+                        callVehiculoDocumento.enqueue(new VehDocumentoCallback());
+
+                        Toast.makeText(getApplicationContext(), "Imagen(es) cargada(s) con éxito!", Toast.LENGTH_SHORT).show();
+
+                    }
                 }
-                case 2: {
-                    documento.add(new VehiculoDocumento(
-                            idVehiculo,
-                            imageRuta.get(i),
-                            idInspeccion,
-                            "Derecha",
-                            String.valueOf(ladoVehiculo.get(i))
-                    ));
-                    break;
-                }
-                case 3: {
-                    documento.add(new VehiculoDocumento(
-                            idVehiculo,
-                            imageRuta.get(i),
-                            idInspeccion,
-                            "Delantero",
-                            String.valueOf(ladoVehiculo.get(i))
-                    ));
-                    break;
-                }
-                case 4: {
-                    documento.add(new VehiculoDocumento(
-                            idVehiculo,
-                            imageRuta.get(i),
-                            idInspeccion,
-                            "Detrás",
-                            String.valueOf(ladoVehiculo.get(i))
-                    ));
-                    break;
-                }
-                case 5: {
-                    documento.add(new VehiculoDocumento(
-                            idVehiculo,
-                            imageRuta.get(i),
-                            idInspeccion,
-                            "Encima",
-                            String.valueOf(ladoVehiculo.get(i))
-                    ));
-                    break;
-                }
-            }
+            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            dialog.dismiss();
+                            if(finalI == imageRutaWeb.size() - 1) {
+                                for (int i = 0; i < imageRuta.size(); i++) {
+                                    documento.add(new VehiculoDocumento(
+                                            idVehiculo,
+                                            imageRuta.get(i),
+                                            idInspeccion,
+                                            obtenerDescLado(ladoVehiculo.get(i)),
+                                            String.valueOf(ladoVehiculo.get(i)),
+                                            null
+
+                                    ));
+                                }
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Call<String> callVehiculoDocumento = AdapterVehiculoDocumento.getService().setVehiculoDocumentos(documento);
+                                callVehiculoDocumento.enqueue(new VehDocumentoCallback());
+                            }
+                        }
+                    })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = (100 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                                dialog.setMessage("Subiendo imágen(es)...: " + (int) progress + "%");
+                            }
+                        });
 
         }
 
-        Call<String> callVehiculoDocumento = AdapterVehiculoDocumento.getService().setVehiculoDocumentos(documento);
-        callVehiculoDocumento.enqueue(new VehDocumentoCallback());
     }
+
+    private String obtenerDescLado(int idLado) {
+
+        switch (idLado) {
+
+            case 1:
+            {
+                return "Izquierda";
+            }
+            case 2:
+            {
+                return "Derecha";
+            }
+            case 3:
+            {
+                return "Delantero";
+            }
+            case 4:
+            {
+                return "Detrás";
+            }
+            case 5:
+            {
+                return "Encima";
+            }
+            default:
+                return null;
+        }
+
+    }
+
+
 
     private class VehDocumentoCallback implements retrofit2.Callback<String> {
         @Override
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
                 if (response.body().toString().equals(RESPONSE_CODE_OK)) {
-                    myDialogProgress dialogProgress = new myDialogProgress();
-                    dialogProgress.show(getFragmentManager(), "Inspeccion");
+//                    myDialogProgress dialogProgress = new myDialogProgress();
+//                    dialogProgress.show(getFragmentManager(), "Inspeccion");
+                    Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
                     generarPdfOnClick();
                 }
             } else {
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void onFailure(Call<String> call, Throwable t) {
+            dialog.dismiss();
             Log.v("Error insercion ** ", t.getMessage());
             Toast.makeText(getApplicationContext(), t.getMessage() + " Error al insertar Inspeccion", Toast.LENGTH_SHORT).show();
 
@@ -835,10 +946,10 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         int index = nombreVehiculo.indexOf("(");
         nombreVehiculo = nombreVehiculo.substring(0, index);
 
-        if (!telefono.isEmpty()) {
+        if (!telefono.isEmpty() && telefono != null) {
             telefono = "(" + telefono.substring(0, 3) + ")" + telefono.substring(3);
         }
-        if (!celular.isEmpty()) {
+        if (!celular.isEmpty() && celular != null) {
             celular = "(" + celular.substring(0, 3) + ")" + celular.substring(3);
         }
 
@@ -1046,17 +1157,16 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                         "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Inspeccionador</td>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+NOMBRE_USUARIO+"</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+nombreCliente+"</td>\n" +
                         "</tr>\n" +
                         "</tbody>\n" +
                         "</table>" +
 
                         "</body>\n" +
                         "</html>\n";
-            }
-            else{
-                htmToPDF = htmToPDF  + "<p>&nbsp;</p>\n" +
+            } else {
+                htmToPDF = htmToPDF + "<p>&nbsp;</p>\n" +
                         "<table style=\"width: 100%;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                         "<tbody>\n" +
                         "<tr>\n" +
@@ -1064,8 +1174,8 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                         "<td style=\"width: 50%; text-align: center;\">__________________________________</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Inspeccionador</td>\n" +
-                        "<td style=\"width: 50%; text-align: center;\">Cliente</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+NOMBRE_USUARIO+"</td>\n" +
+                        "<td style=\"width: 50%; text-align: center;\">"+nombreCliente+"</td>\n" +
                         "</tr>\n" +
                         "</tbody>\n" +
                         "</table>" +
@@ -1076,7 +1186,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
             Log.d("HTML==>", htmToPDF);
             workerHelper.parseXHtml(pdfWriter, document, new StringReader(htmToPDF));
             document.close();
-           // Toast.makeText(this, "PDF generado", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "PDF generado", Toast.LENGTH_SHORT).show();
             muestraPDF(nombre_completo, this);
         } catch (DocumentException d) {
             d.printStackTrace();
@@ -1101,7 +1211,7 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "No tiene una aplicacion para abrir este archivo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "No tiene una aplicación para abrir este archivo", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -1126,6 +1236,4 @@ public class MainInspeccionActivity extends AppCompatActivity implements Inspecc
                     document.bottom() - 10, 0);
         }
     }
-
-
 }

@@ -46,9 +46,10 @@ public class Cliente extends ClienteResponse {
     private String ciudad_provincia;
     private String linea2;
     private String descripcion_condicion;
+    private String tipoEntidad;
 
 
-    public Cliente( String idTipoCliente, String nombres, String apellidos, int edad, String sexo, String documentoIdentidad, String rnc, String nombreEmpresa, String idCondicion, String nacionalidad, String apodo,  String notas, String pais, String fechaNac,  String limiteCredito, String telefono, String telefono_movil, String direccion_email, String linea1, String ciudad_provincia, String linea2) {
+    public Cliente( String idTipoCliente, String nombres, String apellidos, int edad, String sexo, String documentoIdentidad, String rnc, String nombreEmpresa, String idCondicion, String nacionalidad, String apodo,  String notas, String pais, String fechaNac,  String limiteCredito, String telefono, String telefono_movil, String direccion_email, String linea1, String ciudad_provincia, String linea2, String tipoEntidad) {
         this.idTipoCliente = idTipoCliente;
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -70,6 +71,7 @@ public class Cliente extends ClienteResponse {
         this.linea1 = linea1;
         this.ciudad_provincia = ciudad_provincia;
         this.linea2 = linea2;
+        this.tipoEntidad = tipoEntidad;
     }
 
     @Override

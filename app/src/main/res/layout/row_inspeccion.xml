@@ -1,43 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@android:style/Widget.Button.Inset"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/border"
-    android:orientation="vertical"
     android:padding="10sp">
 
+<!--Fecha-->
 
     <TextView
         android:id="@+id/txtRowInspeccion0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center"
-        android:fontFamily="monospace"
-        android:textSize="20sp"
         android:textStyle="bold"
-        tools:text="#42" />
+        tools:text="01/02/2015"
+        android:layout_alignParentRight="true"/>
+
+<!--Inspeccion-->
 
     <TextView
-        android:id="@+id/txtRowInspeccion"
+        android:id="@+id/txtEtiqueta1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:fontFamily="monospace"
-        android:paddingBottom="10sp"
-        android:paddingTop="10sp"
+        android:layout_below="@id/txtRowInspeccion0"
+        android:layout_centerHorizontal="true"
+        android:padding="10sp"
         android:textSize="20sp"
         android:textStyle="bold"
-        tools:text="#42" />
+        tools:text="Inspección >> " />
+
+    <TextView
+        android:id="@+id/txtRowInspeccion1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        tools:text="#42"
+        android:layout_marginTop="15sp"
+        android:layout_below="@id/txtRowInspeccion0"
+        android:layout_toRightOf="@id/txtEtiqueta1"/>
+
+    <!--Vehiculo-->
+
+    <TextView
+        android:id="@+id/txtEtiqueta2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowInspeccion1"
+        android:padding="10sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Vehículo >> " />
+
 
     <TextView
         android:id="@+id/txtRowInspeccion2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:fontFamily="monospace"
-        android:textSize="15sp"
-        tools:text="#42" />
+        tools:text="TOYOTA RAV4"
+        android:layout_toRightOf="@id/txtEtiqueta2"
+        android:layout_below="@id/txtRowInspeccion1"
+        android:layout_marginTop="15sp"/>
 
-</LinearLayout>
+
+    <!--Cliente-->
+
+
+    <TextView
+        android:id="@+id/txtEtiqueta3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowInspeccion2"
+        android:padding="10sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Cliente >> " />
+
+
+    <TextView
+        android:id="@+id/txtRowInspeccion3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="HILDA FLORES SANTANA"
+        android:layout_below="@id/txtRowInspeccion2"
+        android:layout_marginTop="15sp"
+        android:layout_toRightOf="@id/txtEtiqueta3"/>
+
+
+    <TextView
+        android:id="@+id/txtEtiqueta4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowInspeccion3"
+        android:padding="10sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Asesor >> " />
+
+
+    <TextView
+        android:id="@+id/txtRowInspeccion4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="FRANCISCO GONGALEZ"
+        android:layout_below="@id/txtRowInspeccion3"
+        android:layout_marginTop="15sp"
+        android:layout_toRightOf="@id/txtEtiqueta4"/>
+
+</RelativeLayout>

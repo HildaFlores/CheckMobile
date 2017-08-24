@@ -32,6 +32,7 @@ public class AdapterVehiculo {
 
 
     public static VehiculoService getApiService() {
+        apiService = null;
         MainActivity main = new MainActivity();
         OkHttpClient.Builder httpClient = main.httpCliente();
 

@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/icons"
-        android:padding="25sp">
+        android:padding="10sp">
 
 
         <LinearLayout
@@ -46,9 +46,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:padding="15sp"
+                android:paddingLeft="10sp"
+                android:paddingRight="10sp"
                 android:text="@string/app_name"
-                android:textSize="40sp" />
+                android:textSize="30sp" />
 
 
             <LinearLayout
@@ -57,8 +58,7 @@
                 android:layout_weight="1"
                 android:background="#eeeeee"
                 android:orientation="vertical"
-                android:padding="50sp">
-
+                android:padding="40sp">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -67,14 +67,13 @@
                     <EditText
                         android:id="@+id/user"
                         android:layout_width="wrap_content"
-                        android:layout_height="55sp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
+                        android:drawableLeft="@drawable/icon_user"
                         android:ems="20"
                         android:hint="@string/prompt_user"
                         android:inputType="textPersonName"
-                        android:maxLines="1"
-                        android:drawableLeft="@drawable/icon_user"
-                        />
+                        android:maxLines="1" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -82,13 +81,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="20sp"
-                    app:passwordToggleEnabled="true"
-                    >
+                    app:passwordToggleEnabled="true">
 
                     <EditText
                         android:id="@+id/password"
                         android:layout_width="wrap_content"
-                        android:layout_height="55sp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal|center_vertical"
                         android:drawableLeft="@drawable/icon_password"
                         android:ems="20"
@@ -104,36 +102,18 @@
 
             </LinearLayout>
 
-
-            <LinearLayout
+            <Button
+                android:id="@+id/user_sign_in_button"
+                style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/user_sign_in_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="75sp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="25sp"
-                    android:background="?attr/colorAccent"
-                    android:text="@string/action_sign_in"
-                    android:textColor="@color/icons"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <ProgressBar
-                    android:id="@+id/progressBarCircle"
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:layout_gravity="center_horizontal"
-                    android:indeterminate="false"
-                    android:max="100"
-                    android:padding="20sp"
-                    android:progressDrawable="@color/accent"
-                    android:visibility="invisible" />
-            </LinearLayout>
+                android:layout_height="75sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="25sp"
+                android:background="?attr/colorAccent"
+                android:text="@string/action_sign_in"
+                android:textColor="@color/icons"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

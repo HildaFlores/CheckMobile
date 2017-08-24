@@ -6,9 +6,6 @@
         >
 
     </item>
-    <item
-        android:id="@+id/action_editar"
-        android:title="Editar">
-    </item>
+
 
 </menu>

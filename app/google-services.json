@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1000849725553",
+    "firebase_url": "https://check-mobile-991e0.firebaseio.com",
+    "project_id": "check-mobile-991e0",
+    "storage_bucket": "check-mobile-991e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000849725553:android:873bf6170b894d3e",
+        "android_client_info": {
+          "package_name": "com.example.prueba.CheckMobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1000849725553-14th0908shte0nro9no64enagqt06ne2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.prueba.CheckMobile",
+            "certificate_hash": "eeececcc8eb5ffd6875d71c7d8bbcda89a34b316"
+          }
+        },
+        {
+          "client_id": "1000849725553-b9jujjtbg9mtoh7lehufpml14du0eg0f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2CHBDGmsAgGQVi31cR7vbOgbqOr4rjkc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1000849725553-b9jujjtbg9mtoh7lehufpml14du0eg0f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

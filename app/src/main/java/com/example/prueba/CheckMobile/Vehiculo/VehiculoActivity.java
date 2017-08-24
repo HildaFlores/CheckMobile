@@ -2,6 +2,7 @@ package com.example.prueba.CheckMobile.Vehiculo;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,6 +77,9 @@ import static com.example.prueba.CheckMobile.VehiculoMarca.AdapterMarca.insertar
 
 
 public class VehiculoActivity extends AppCompatActivity implements myDialogMarca.OnCompleteListener, myDialogModelo.OnCompleteListenerModelo, myDialogEstilo.OnCompleteListenerEstilo {
+
+    //vistas
+
     Spinner spinnerEstilo;
     Spinner spinnerTipoVehiculo;
     Spinner spinnerModelo;
@@ -112,13 +116,28 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
     EditText cilindraje;
     EditText nota;
     Switch swgarantia;
-    private String idCliente, idTipoVeh, idMarca, idModelo, idEstilo, cantidadPuertas,
-            idCombustible, idTraccion, estadoVeh, garantia, idTransmision, idVehiculo, refVehiculo,
-            chasisVehiculo, descMarca, descModelo, descEstilo;
+    private String idCliente;
+    private String idTipoVeh;
+    private String idMarca;
+    private String idModelo;
+    private String idEstilo;
+    private String cantidadPuertas;
+    private String idCombustible;
+    private String idTraccion;
+    private String estadoVeh;
+    private String garantia;
+    private String idTransmision;
+    private String idVehiculo;
+    private String refVehiculo;
+    private String chasisVehiculo;
+    private String descMarca;
+    private String descModelo;
+    private String descEstilo;
     private boolean insertar = true;
-    int NumCilindro;
+    private int NumCilindro;
     private Timer timer = new Timer();
     private final long DELAY = 0;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,8 +213,6 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
 
 
     }
-
-
 
 
     @Override
@@ -300,7 +317,6 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                 idTransmision = "3";
             }
         });
-
 
     }
 
@@ -419,6 +435,12 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         } else {
 
             Call<String> vehiculoCall = AdapterVehiculo.setVehiculo().insertVehiculos(vehiculo);
+            dialog = new ProgressDialog(this);
+            dialog.setTitle(null);
+            dialog.setMax(100);
+            dialog.setMessage("Guardando Vehículo...");
+            // show it
+            dialog.show();
             vehiculoCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -426,6 +448,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                         String[] p = response.body().toString().split(",");
                         if (p[0].equals(RESPONSE_CODE_OK)) {
                             idVehiculo = p[1];
+                            dialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(VehiculoActivity.this.getApplicationContext(), ClienteActivity.class);
                             if (idCliente != null) {
@@ -433,6 +456,10 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                             }
                             refVehiculo = editTextReferencia.getText().toString();
                             chasisVehiculo = chasis.getText().toString();
+                            nombreVehiculo = marca.getText().toString() + " " + spinnerModelo.getSelectedItem().toString() +
+                                    " " + spinnerEstilo.getSelectedItem().toString() + año.getText().toString()
+                                    +  " (Ref." + editTextReferencia.getText().toString() + ")";
+
                             intent.putExtra("VEHICULO", nombreVehiculo);
                             intent.putExtra("IDVEHICULO", idVehiculo);
                             intent.putExtra("REFERENCIA", refVehiculo);
@@ -443,6 +470,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                             finish();
                             startActivity(intent);
                         } else {
+                            dialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Error al guardar datos del vehiculo", Toast.LENGTH_SHORT).show();
 
                         }
@@ -452,6 +480,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     Log.v("Error insercion ** ", t.getMessage());
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), t.getMessage() + " Error al insertar vehiculo", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -543,20 +572,19 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         callColores.enqueue(new Callback<OtrosParametros>() {
             @Override
             public void onResponse(Call<OtrosParametros> call, Response<OtrosParametros> response) {
-                OtrosParametrosResponse otrosParametros = response.body();
-                if(otrosParametros.getResponseCode().equals(RESPONSE_CODE_OK))
-                {
-                    llenarAutocompletarColores(otrosParametros.getOtrosParametros());
-                }
-                else
-                {
+                if (response.isSuccessful()) {
+                    OtrosParametrosResponse otrosParametros = response.body();
+                    if (otrosParametros.getResponseCode().equals(RESPONSE_CODE_OK)) {
+                        llenarAutocompletarColores(otrosParametros.getOtrosParametros());
+                    }
+                } else {
                     Toast.makeText(getApplicationContext(), "Error de respuesta de colores", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<OtrosParametros> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error: "  + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -567,8 +595,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
     private void llenarAutocompletarColores(ArrayList<OtrosParametros> otrosParametros) {
 
         List<String> lista = new ArrayList<>();
-        for(OtrosParametros color:otrosParametros)
-        {
+        for (OtrosParametros color : otrosParametros) {
             lista.add(color.getDescripcion());
         }
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
@@ -607,7 +634,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                     if (p[0].equals(RESPONSE_CODE_OK)) {
                         Toast.makeText(getApplicationContext(), "Marca guardada con éxito!", Toast.LENGTH_SHORT).show();
                         String id = p[1];
-                        idMarca =id;
+                        idMarca = id;
                         obtenerDatosMarca();
 
 
@@ -801,8 +828,6 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                 ViewGroup vg = (ViewGroup) view;
                 TextView txt = (TextView) vg.findViewById(R.id.txtRowMarca);
                 Toast.makeText(VehiculoActivity.this, txt.getText().toString(), Toast.LENGTH_LONG);
-
-
             }
         });
 
@@ -848,10 +873,8 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
         marca.setAdapter(arrayAdapter);
 
-        for(int i=0; i<marcas.size(); i++)
-        {
-            if(marcas.get(i).getId().equals(idMarca))
-            {
+        for (int i = 0; i < marcas.size(); i++) {
+            if (marcas.get(i).getId().equals(idMarca)) {
                 marca.setText(marcas.get(i).getDescripcion());
             }
         }
@@ -886,10 +909,8 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);
         spinnerEstilo.setAdapter(spinnerArrayAdapter);
 
-        for (int i=0; i<estilos.size(); i++)
-        {
-            if(estilos.get(i).getId().equals(idEstilo))
-            {
+        for (int i = 0; i < estilos.size(); i++) {
+            if (estilos.get(i).getId().equals(idEstilo)) {
                 spinnerEstilo.setSelection(i);
             }
         }
@@ -928,14 +949,14 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                 poblarSpinnerEstilo(estiloResponse);
             } else {
 
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error en respuesta de Estilo", Toast.LENGTH_LONG).show();
             }
         }
 
         @Override
         public void onFailure(Call<ArrayList<Estilo>> call, Throwable t) {
             Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            Log.v("Aqui ===>", t.getMessage());
+            Log.v("Estilo ===>", t.getMessage());
         }
     }
 
@@ -971,10 +992,8 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);
         spinnerModelo.setAdapter(spinnerArrayAdapter);
 
-        for(int i= 1; i<=modelos.size();i++ )
-        {
-            if(modelos.get(i-1).getId().equals(idModelo))
-            {
+        for (int i = 1; i <= modelos.size(); i++) {
+            if (modelos.get(i - 1).getId().equals(idModelo)) {
                 spinnerModelo.setSelection(i);
             }
         }
@@ -1153,6 +1172,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                 } else {
                     InabilitarVistasVehiculo(true);
                     limpiarVistas();
+                    Toast.makeText(getApplicationContext(), "Vehículo no registrado!", Toast.LENGTH_SHORT).show();
                     insertar = true;
                 }
             } else {
@@ -1239,7 +1259,7 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
             spinnerEstilo.setAdapter(spinnerAdapterEstilo);
 
             //Combustible
-            if (varVehiculo.getIdCombustible() != null) {
+            if (varVehiculo.getIdCombustible() != null && radioCombustible.getChildCount() > 0) {
                 View vista = radioCombustible.findViewById(Integer.parseInt(varVehiculo.getIdCombustible()));
                 RadioButton radioCom = (RadioButton) vista;
                 radioCom.setChecked(true);
@@ -1276,24 +1296,26 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
                     break;
                 }
             }
-            switch (varVehiculo.getIdTraccion().toString()) {
-                case "2WD": {
-                    View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("1"));
-                    RadioButton radioTrac = (RadioButton) vistaTraccion;
-                    radioTrac.setChecked(true);
-                    break;
-                }
-                case "4WD": {
-                    View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("2"));
-                    RadioButton radioTrac = (RadioButton) vistaTraccion;
-                    radioTrac.setChecked(true);
-                    break;
-                }
-                case "4WD FULL": {
-                    View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("3"));
-                    RadioButton radioTrac = (RadioButton) vistaTraccion;
-                    radioTrac.setChecked(true);
-                    break;
+            if (varVehiculo.getIdTraccion() != null && radioTraccion.getChildCount() > 0) {
+                switch (varVehiculo.getIdTraccion().toString()) {
+                    case "2WD": {
+                        View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("1"));
+                        RadioButton radioTrac = (RadioButton) vistaTraccion;
+                        radioTrac.setChecked(true);
+                        break;
+                    }
+                    case "4WD": {
+                        View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("2"));
+                        RadioButton radioTrac = (RadioButton) vistaTraccion;
+                        radioTrac.setChecked(true);
+                        break;
+                    }
+                    case "4WD FULL": {
+                        View vistaTraccion = radioTraccion.findViewById(Integer.parseInt("3"));
+                        RadioButton radioTrac = (RadioButton) vistaTraccion;
+                        radioTrac.setChecked(true);
+                        break;
+                    }
                 }
             }
             color.setText(varVehiculo.getColor());
@@ -1376,14 +1398,16 @@ public class VehiculoActivity extends AppCompatActivity implements myDialogMarca
         marca.setEnabled(estado);
         spinnerModelo.setEnabled(estado);
         spinnerEstilo.setEnabled(estado);
-
-        for (int i = 0; i < radioCombustible.getChildCount(); i++) {
-            radioCombustible.getChildAt(i).setEnabled(estado);
+        if (radioCombustible.getChildCount() > 0) {
+            for (int i = 0; i < radioCombustible.getChildCount(); i++) {
+                radioCombustible.getChildAt(i).setEnabled(estado);
+            }
         }
 
-
-        for (int i = 0; i < radioTraccion.getChildCount(); i++) {
-            radioTraccion.getChildAt(i).setEnabled(estado);
+        if (radioTraccion.getChildCount() > 0) {
+            for (int i = 0; i < radioTraccion.getChildCount(); i++) {
+                radioTraccion.getChildAt(i).setEnabled(estado);
+            }
         }
         cilindro2.setEnabled(estado);
         cilindro3.setEnabled(estado);

@@ -245,7 +245,8 @@
                 android:layout_weight="1"
                 android:enabled="false"
                 android:hint="edad"
-                android:inputType="number" />
+                android:inputType="number"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -337,12 +338,14 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/etxtProvincia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Provincia"
+                android:imeOptions="actionSearch"
+                android:completionThreshold="1"
                 android:inputType="textPersonName" />
         </LinearLayout>
 

@@ -4,7 +4,7 @@
     <string name="action_settings">Configuraciones</string>
     <string name="Acerca">Acerca de</string>
     <string name="action_salir">cerrar sesión</string>
-    <string name="Section1">Inspecciones</string>
+    <string name="Section1">Inspecciones Pendientes</string>
     <string name="Section2">Ordenes de trabajo</string>
     <string name="Section3">Vehiculos</string>
     <string name="title_activity_vehiculo">Vehiculo</string>
@@ -18,7 +18,7 @@
     <string name="section1Inspeccion">Inspección</string>
     <string name="section2Inspeccion">Luces</string>
     <string name="section3Inspeccion">Accesorios</string>
-    <string name="section4Inspeccion">Otros elementos</string>
+    <string name="section4Inspeccion">Otros</string>
     <string name="title_activity_consulta_inspeccion">Consulta Inspección</string>
     <string name="title_activity_login">Entrar</string>
     <string name="version">version 1.0.0</string>

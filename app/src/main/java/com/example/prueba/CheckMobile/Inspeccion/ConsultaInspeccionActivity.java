@@ -3,14 +3,19 @@ package com.example.prueba.CheckMobile.Inspeccion;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -37,9 +42,20 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.prueba.CheckMobile.Actualizaciones.*;
+import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.VehiculoDocumento.*;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -53,18 +69,23 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.example.prueba.CheckMobile.Utils.Constantes.*;
 import static java.lang.Integer.parseInt;
 
@@ -108,7 +129,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
     List<String> elementosCantidades = new ArrayList<>();
     List<String> idElementoCantidades = new ArrayList<>();
     ArrayList<VehiculoDocumento> listaDocumentos;
-
+    private static String TAG = ConsultaInspeccionActivity.class.getSimpleName();
     private int idInspeccion;
     private String nombreVehiculo;
     private String nombreCliente;
@@ -145,8 +166,15 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
     private final long DELAY = 0;
     private static final String NOMBRE_CARPETA_APP = "proyecto.com.demoPdf";
     private static final String GENERADOS = "MisArchivos";
-
-    String descAlfombra1, descAlfombra2, descAlfombra3;
+    private String descAlfombra1;
+    private String descAlfombra2;
+    private String descAlfombra3;
+    private boolean hasInternet = false;
+    private StorageReference mStorageRef;
+    private DatabaseReference mDataBase;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth mAuth;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +188,12 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
         inicializacionVariables();
         Intent intent = getIntent();
         Bundle extra = intent.getExtras();
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mDataBase = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
+        // mAuth = FirebaseAuth.getInstance();
+
+
         if (extra != null) {
             idInspeccion = extra.getInt("IDINSPECCION");
             nombreVehiculo = extra.getString("VEHICULO");
@@ -181,7 +215,6 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             buscar = extra.getBoolean("BUSCAR");
             actualizar = extra.getBoolean("ACTUALIZAR");
             consultar = extra.getBoolean("CONSULTAR");
-
             if (actualizar) {
                 btnAgregarLuces.setVisibility(View.VISIBLE);
                 btnAgregarAccesorios.setVisibility(View.VISIBLE);
@@ -216,6 +249,8 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
         ObtenerDatosInspeccion(idInspeccion);
         ObtenerDatosVehiculoDocumento(idInspeccion);
         cameraPhoto = new CameraPhoto(getApplicationContext());
+
+        new conectionTask().execute();
     }
 
     private void removerDocumentoVehiculo() {
@@ -245,10 +280,8 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             if (data != null) {
                 List<String> dataidLuces = new ArrayList<>();
                 List<String> dataDescripcionLuces = new ArrayList<>();
-
                 dataidLuces.addAll(data.getStringArrayListExtra("IDLUCES"));
                 dataDescripcionLuces.addAll(data.getStringArrayListExtra("DESCLUCES"));
-
                 if (!dataidLuces.isEmpty() && !dataDescripcionLuces.isEmpty()) {
                     for (int i = 0; i < dataidLuces.size(); i++) {
                         if (idluces.contains(dataidLuces.get(i))) {
@@ -256,11 +289,8 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         } else {
                             idluces.add(dataidLuces.get(i));
                             descLuces.add(dataDescripcionLuces.get(i));
-
-
                         }
                     }
-
                     layoutLuces.removeAllViews();
                     for (int j = 0; j < idluces.size(); j++) {
                         CheckBox checkLuces = new CheckBox(layoutLuces.getContext());
@@ -269,7 +299,6 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                         checkLuces.setChecked(true);
                         checkLuces.setId(parseInt(idluces.get(j)));
                         layoutLuces.addView(checkLuces);
-
                         checkLuces.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -277,16 +306,12 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                                     layoutLuces.removeView(compoundButton);
                                     idluces.remove(String.valueOf(compoundButton.getId()));
                                     descLuces.remove(compoundButton.getText().toString());
-
                                 }
                             }
 
                         });
-
                     }
-
                 }
-
             }
         } else if (resultCode == 2) {
             List<String> dataidAccesorios = new ArrayList<>();
@@ -344,7 +369,8 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                                 PhotoPath,
                                 String.valueOf(idInspeccion),
                                 descripcionLado,
-                                String.valueOf(idPictureLados)));
+                                String.valueOf(idPictureLados),
+                                null));
                     }
                 }
             }
@@ -540,6 +566,12 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
 
 
         Call<String> callUpdate = AdapterInspeccion.setUpdateInspeccionVeh().setupdateInspeccion(inspeccion);
+        dialog = new ProgressDialog(this);
+        dialog.setTitle(null);
+        dialog.setMax(100);
+        dialog.setMessage("Actualizando Inspección...");
+        // show it
+        dialog.show();
         callUpdate.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -547,9 +579,12 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                     if (response.body().equals(RESPONSE_CODE_OK)) {
                         actualizarInspeccionDetalle();
                     } else {
+                        dialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Error al actualizar inspección", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error de respuesta " + response.errorBody(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -557,6 +592,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "Error update: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
                 Log.d("ACTUALIZAR==>", t.getMessage());
             }
         });
@@ -803,16 +839,19 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
                 if (response.isSuccessful()) {
 
                     if (response.body().toString().equals(RESPONSE_CODE_OK)) {
-
                         if (listaDocumentos.isEmpty()) {
-                            myDialogProgress dialogProgress = new myDialogProgress();
-                            dialogProgress.show(getFragmentManager(), "Inspeccion");
+//                            myDialogProgress dialogProgress = new myDialogProgress();
+//                            dialogProgress.show(getFragmentManager(), "Inspeccion");
+                            dialog.dismiss();
+                            Intent intent = new Intent(ConsultaInspeccionActivity.this, MainActivity.class);
+                            startActivity(intent);
                             generarPdfOnClick();
                         } else {
-                            guardarVehiculoDocumento();
+                            subirImagen();
                         }
                     }
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al actualizar detalle de inspección", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -820,26 +859,26 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.v("Actualizacion==> ", t.getMessage());
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Error update detalle" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
     private void guardarVehiculoDocumento() {
-
         Call<String> callVehiculoDocumento = AdapterVehiculoDocumento.getService().setVehiculoDocumentos(listaDocumentos);
         callVehiculoDocumento.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     if (response.body().toString().equals(RESPONSE_CODE_OK)) {
-                        myDialogProgress dialogProgress = new myDialogProgress();
-                        dialogProgress.show(getFragmentManager(), "Inspeccion");
+//                        myDialogProgress dialogProgress = new myDialogProgress();
+//                        dialogProgress.show(getFragmentManager(), "Inspeccion");
+                        dialog.dismiss();
                         generarPdfOnClick();
                     }
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -847,6 +886,7 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.v("Error insercion ** ", t.getMessage());
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext(), t.getMessage() + " Error al insertar Inspeccion", Toast.LENGTH_SHORT).show();
 
             }
@@ -1255,7 +1295,6 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
             r.setChecked(true);
 
         }
-
     }
 
     private class DocumentoCallback implements retrofit2.Callback<VehiculoDocumento> {
@@ -1302,18 +1341,25 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
         public View getView(int posicion, View convertView, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View item = inflater.inflate(R.layout.row_lado_vehiculo, null);
-            File f = new File(lista.get(posicion).getRutaDocumento());
-
+            File f;
             ImageView imagen = (ImageView) item.findViewById(R.id.imageViewLado);
             TextView text = (TextView) item.findViewById(R.id.textViewLado);
             text.setText(lista.get(posicion).getNota());
             item.setId(Integer.parseInt(lista.get(posicion).getId_lado()));
-
-            Picasso.with(getApplicationContext())
-                    .load(f)
-                    .error(R.mipmap.no_foto)
-                    .into(imagen);
-
+            if (hasInternet && lista.get(posicion).getRutaDocumentoWeb() != null) {
+                Picasso.with(getApplicationContext())
+                        .load(lista.get(posicion).getRutaDocumentoWeb())
+                        .error(R.mipmap.no_foto)
+                        .into(imagen);
+                Log.d(TAG, "imagen de la web ==> " + lista.get(posicion).getRutaDocumentoWeb());
+            } else {
+                f = new File(lista.get(posicion).getRutaDocumento());
+                Picasso.with(getApplicationContext())
+                        .load(f)
+                        .error(R.mipmap.no_foto)
+                        .into(imagen);
+                Log.d(TAG, "imagen del disco local ==> " + lista.get(posicion).getRutaDocumento());
+            }
             return item;
         }
     }
@@ -1617,5 +1663,120 @@ public class ConsultaInspeccionActivity extends AppCompatActivity implements myD
         }
     }
 
+
+    private boolean isConnectingToInternet(Context applicationContext) {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(applicationContext.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni != null && ni.isConnected() && ni.isConnectedOrConnecting()) {
+            // There are no active networks.
+//            Toast.makeText(getApplicationContext(), "no internet", Toast.LENGTH_LONG).show();
+
+            return true;
+        } else
+            return false;
+
+    }
+
+    public class conectionTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (isConnectingToInternet(getApplicationContext())) {
+                try {
+                    HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
+                    urlc.setRequestProperty("User-Agent", "Test");
+                    urlc.setRequestProperty("Connection", "close");
+                    urlc.setConnectTimeout(1500);
+                    urlc.connect();
+                    if (urlc.getResponseCode() == 200) {
+                        Log.e(TAG, "==> Tiene acceso a internet!");
+                        hasInternet = true;
+//                        Toast.makeText(getApplicationContext(), "Tiene acceso a internet!", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (IOException e) {
+                    hasInternet = false;
+                    Log.e(TAG, "==> Error checking internet connection", e);
+                }
+            } else {
+                Log.e(TAG, "==> Red no disponible!");
+                hasInternet = false;
+//                Toast.makeText(getApplicationContext(), "Red no disponible!", Toast.LENGTH_SHORT).show();
+            }
+            return null;
+        }
+
+
+    }
+
+    @SuppressWarnings("VisibleForTests")
+    public void subirImagen() {
+
+        //ImageRutaWeb, lista de tipo URi que guarda todas las direcciones locales de las imagenes que tienen que subirse
+        for (int i = 0; i < listaDocumentos.size(); i++) {
+            StorageReference ref = mStorageRef.child(FB_STORAGE_PATH + System.currentTimeMillis() + "." + "jpg");
+            final int finalI = i;
+            ref.putFile(Uri.fromFile(new File(listaDocumentos.get(i).getRutaDocumento())))
+                    .addOnSuccessListener(
+                            new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    ImageUpload imageUpload = new ImageUpload(obtenerDescLado(Integer.parseInt(listaDocumentos.get(finalI).getId_lado())), taskSnapshot.getDownloadUrl().toString(), String.valueOf(idInspeccion));
+                                    String uploadId = mDataBase.push().getKey();
+                                    mDataBase.child(uploadId).setValue(imageUpload);
+                                    listaDocumentos.get(finalI).setRutaDocumentoWeb(taskSnapshot.getDownloadUrl().toString());
+                                    if (finalI == listaDocumentos.size() - 1) {
+                                           guardarVehiculoDocumento();
+                                        Toast.makeText(getApplicationContext(), "Imagen(es) cargada(s) con éxito!", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                }
+                            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            dialog.dismiss();
+                            if (finalI == listaDocumentos.size() - 1) {
+                                guardarVehiculoDocumento();
+                                Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                            dialog.setMessage("Subiendo...: " + (int) progress + "%");
+                        }
+                    });
+
+        }
+
+    }
+
+    private String obtenerDescLado(int idLado) {
+
+        switch (idLado) {
+
+            case 1: {
+                return "Izquierda";
+            }
+            case 2: {
+                return "Derecha";
+            }
+            case 3: {
+                return "Delantero";
+            }
+            case 4: {
+                return "Detrás";
+            }
+            case 5: {
+                return "Encima";
+            }
+            default:
+                return null;
+        }
+
+    }
 
 }

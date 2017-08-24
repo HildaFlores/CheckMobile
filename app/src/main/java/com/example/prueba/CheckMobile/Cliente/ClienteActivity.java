@@ -2,6 +2,7 @@ package com.example.prueba.CheckMobile.Cliente;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -33,10 +35,13 @@ import com.example.prueba.CheckMobile.CondicionPago.AdapterCondicion;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionPago;
 import com.example.prueba.CheckMobile.CondicionPago.CondicionResponse;
 import com.example.prueba.CheckMobile.Inspeccion.MainInspeccionActivity;
+import com.example.prueba.CheckMobile.MainActivity;
 import com.example.prueba.CheckMobile.OrdenTrabajo.OrdenTrabajoActivity;
 import com.example.prueba.CheckMobile.Pais.AdapterPais;
 import com.example.prueba.CheckMobile.Pais.Pais;
 import com.example.prueba.CheckMobile.Pais.PaisResponse;
+import com.example.prueba.CheckMobile.Provincias.AdapterProvincias;
+import com.example.prueba.CheckMobile.Provincias.provincias;
 import com.example.prueba.CheckMobile.R;
 import com.example.prueba.CheckMobile.TablaDgii.AdapterDgii;
 import com.example.prueba.CheckMobile.TablaDgii.TablaDgii;
@@ -86,7 +91,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     EditText edad;
     RadioButton sexoF;
     RadioButton sexoM;
-    EditText provincia;
+    AutoCompleteTextView provincia;
     EditText direccion;
     EditText proximoA;
     EditText telefono;
@@ -99,14 +104,28 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
     // /Parametros
 
-    String nombreVehiculo = null, nombreCliente = null, idCliente = null, idVehiculo = null, refVehiculo, chasisVehiculo, placa, color;
+    private String nombreVehiculo = null;
+    private String nombreCliente = null;
+    private String idCliente = null;
+    private String idVehiculo = null;
+    private String refVehiculo;
+    private String chasisVehiculo;
+    private String placa;
+    private String color;
+    private String valorSexo;
+    private String idCondicion;
+    private String desc_nacionalidad;
+    private String desc_pais;
+    private String valor;
+    private int numCaracteres = 0;
+    private int contador = 0;
+    private boolean insertar = true;
+    private boolean actualizar = false;
+    private String tipoEntidad;
     private Timer timer = new Timer();
     private final long DELAY = 0;
-    String valor;
-    int numCaracteres = 0;
-    int contador = 0;
-    boolean insertar = true, actualizar = false;
-    String valorSexo, idCondicion, desc_nacionalidad, desc_pais;
+    ProgressDialog dialog;
+
     private DatePickerDialog.OnDateSetListener mDateSetListenerFecha;
 
     @Override
@@ -125,6 +144,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         ObtenerDatosNacionalidad();
         ObtenerDatosCondicion();
 
+
         radioPersona.setOnClickListener(this);
         radioEmpresa.setOnClickListener(this);
         Intent intent = getIntent();
@@ -140,11 +160,9 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             color = extra.getString("COLOR");
             actualizar = extra.getBoolean("ACTUALIZAR");
 
-            if (actualizar)
-            {
+            if (actualizar) {
                 btnClienteSiguiente.setVisibility(View.GONE);
-            }else  if (placa.isEmpty())
-            {
+            } else if (placa.isEmpty()) {
                 placa = "En trámite";
             }
 
@@ -202,7 +220,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                             }
 
                         } catch (Exception e) {
-                            Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
+                            Log.d(getApplicationContext().getClass().toString(), "Error en formato de fecha!");
+                            //Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
 
                         }
                     }
@@ -264,10 +283,44 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private void ObtenerDatosProvincias() {
+        Call<ArrayList<provincias>> call = AdapterProvincias.getApiService().getProvincias();
+        call.enqueue(new Callback<ArrayList<provincias>>() {
+            @Override
+            public void onResponse(Call<ArrayList<provincias>> call, Response<ArrayList<provincias>> response) {
+                if (response.isSuccessful()) {
+                    ArrayList<provincias> provinciasResponse = response.body();
+                    llenarAutoCompleteProvincias(provinciasResponse);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error en respuesta de provincias", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<provincias>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                Log.v("Provincia ===>", t.getMessage());
+            }
+        });
+
+    }
+
+    private void llenarAutoCompleteProvincias(ArrayList<provincias> provinciasResponse) {
+
+        List<String> lista = new ArrayList<>();
+        for(provincias prov: provinciasResponse)
+        {
+            lista.add(prov.getDescProvincia());
+        }
+
+        ArrayAdapter<String> madapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_style, lista);
+        madapter.setDropDownViewResource(R.layout.spinner_style);
+        provincia.setAdapter(madapter);
+
+    }
 
 
-
-        @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         if (actualizar) {
@@ -280,24 +333,21 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-       if (id == R.id.action_update) {
+        if (id == R.id.action_update) {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ClienteActivity.this);
             alertBuilder.setMessage("¿Está seguro de actualizar los datos?")
                     .setCancelable(false)
                     .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                         if(insertar)
-                         {
-                             InsertarCliente();
-                             etxtDocIdentidad.getText().clear();
-                             limpiarVistasCliente();
+                            if (insertar) {
+                                InsertarCliente();
+                                etxtDocIdentidad.getText().clear();
+                                limpiarVistasCliente();
 
-                         }
-                         else
-                         {
-                             ActualizaVehiculoCliente(idCliente, idVehiculo);
-                         }
+                            } else {
+                                ActualizaVehiculoCliente(idCliente, idVehiculo);
+                            }
                         }
                     })
                     .setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -323,8 +373,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         if (!insertar) {
             ClienteActivity.this.finish();
-        }
-        else {
+        } else {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ClienteActivity.this);
             alertBuilder.setMessage("¿Está seguro de salir?")
                     .setCancelable(false)
@@ -348,6 +397,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             alert.show();
         }
     }
+
     private void ActualizaVehiculoCliente(String idCte, String idVeh) {
 
         String parametro = idCte + "," + idVeh;
@@ -399,7 +449,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                                         }
 
                                     } catch (Exception e) {
-                                        Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
+                                        Log.d(getApplicationContext().getClass().getSimpleName(), "Error en formato de fecha!");
+                                       // Toast.makeText(getApplicationContext(), "Error en formato de fecha!", Toast.LENGTH_SHORT).show();
 
                                     }
                                 }
@@ -477,25 +528,10 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
     private void InsertarCliente() {
 
-//        String fechaNacimiento = fechaNac.getText().toString();
-//
-//        try {
-//
-//            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-//            Date newDate = null;
-//            try {
-//                newDate = format.parse(fechaNacimiento);
-//            } catch (Exception e) {
-//                Log.d("TAG", e.getMessage());
-//            }
-//
-//            format = new SimpleDateFormat("yyyy-MM-dd");
-//            date = format.format(newDate);
-//        } catch (Exception e) {
-//            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-//        }
-
         ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+        if(limiteCredito.getText().toString() == null){
+            limiteCredito.setText("0");
+        }
         if (radioPersona.isChecked()) {
             clientes.add(new Cliente(
                     "1",
@@ -518,7 +554,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     email.getText().toString().toUpperCase(),
                     direccion.getText().toString().toUpperCase(),
                     provincia.getText().toString().toUpperCase(),
-                    proximoA.getText().toString().toUpperCase()));
+                    proximoA.getText().toString().toUpperCase(),
+                    tipoEntidad));
 
             if (etxtDocIdentidad.getText().toString() == null || nombres.getText().toString() == null
                     || apellidos.getText().toString() == null || idCondicion == null || fechaNac.getText().toString() == null
@@ -526,9 +563,15 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
                 Toast.makeText(getApplicationContext(), "Faltan datos por llenar", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d("TAG", "cliente == >" + clientes);
+
                 nombreCliente = nombres.getText().toString().toUpperCase() + " " + apellidos.getText().toString().toUpperCase();
                 Call<String> clienteCall = AdapterCliente.setCliente().insertClientes(clientes);
+                dialog = new ProgressDialog(this);
+                dialog.setTitle(null);
+                dialog.setMax(100);
+                dialog.setMessage("Guardando Cliente...");
+                // show it
+                dialog.show();
                 clienteCall.enqueue(new InsertClienteCallback());
             }
 
@@ -554,7 +597,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     email.getText().toString().toUpperCase(),
                     direccion.getText().toString().toUpperCase(),
                     provincia.getText().toString().toUpperCase(),
-                    proximoA.getText().toString().toUpperCase()));
+                    proximoA.getText().toString().toUpperCase(),
+                    tipoEntidad));
 
             if (etxtDocIdentidad.getText().toString() == null || nombres.getText().toString() == null
                     || apellidos.getText().toString() == null || idCondicion == null || fechaNac.getText().toString() == null
@@ -564,6 +608,12 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             } else {
                 nombreCliente = nombreEmpresa.getText().toString();
                 Call<String> clienteCall = AdapterCliente.setCliente().insertClientes(clientes);
+                dialog = new ProgressDialog(this);
+                dialog.setTitle(null);
+                dialog.setMax(100);
+                dialog.setMessage("Guardando Cliente...");
+                // show it
+                dialog.show();
                 clienteCall.enqueue(new InsertClienteCallback());
             }
         }
@@ -653,7 +703,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         edad = (EditText) findViewById(R.id.etxtEdad);
         sexoM = (RadioButton) findViewById(R.id.rbMasculino);
         sexoF = (RadioButton) findViewById(R.id.rbFemenino);
-        provincia = (EditText) findViewById(R.id.etxtProvincia);
+        provincia = (AutoCompleteTextView) findViewById(R.id.etxtProvincia);
         direccion = (EditText) findViewById(R.id.etxtDireccion);
         proximoA = (EditText) findViewById(R.id.etxtProximoA);
         telefono = (EditText) findViewById(R.id.etxtTelefono);
@@ -694,6 +744,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 limpiarVistasCliente();
                 InhabilitarVistas(true);
                 contador = 0;
+                tipoEntidad = "E";
                 buscarCliente();
 
                 break;
@@ -707,6 +758,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 etxtDocIdentidad.setFilters(new InputFilter[]{new InputFilter.LengthFilter(11)});
                 numCaracteres = 11;
                 etxtDocIdentidad.getText().clear();
+                tipoEntidad = "C";
                 limpiarVistasCliente();
                 InhabilitarVistas(true);
                 contador = 0;
@@ -725,7 +777,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 poblarSpinnerNacionalidad(nacionalidadresponse.getPaises());
 
             } else {
-                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de nacionalidad", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -769,6 +821,9 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 desc_pais = spinnerArrayAdapter2.getItem(i).toString();
+                if (desc_pais.equals(KEY_PAIS)){
+                    ObtenerDatosProvincias();
+                }
             }
 
             @Override
@@ -845,6 +900,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                     limpiarVistasCliente();
                     InhabilitarVistas(true);
                     obtenerClienteFiltrado(valor);
+                    Toast.makeText(getApplicationContext(), "Cliente no registrado!", Toast.LENGTH_SHORT).show();
 
                 } else {
                     insertar = false;
@@ -866,6 +922,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
         }
     }
+
     private void limpiarVistasCliente() {
         nombreEmpresa.getText().clear();
         nombreSegunDGII.getText().clear();
@@ -910,14 +967,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
             edad.setText(Integer.toString(varCte.getEdad()));
 
             if (varCte.getfechaNac() != null) {
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                Date myDate = null;
-                try {
-                    myDate = df.parse(varCte.getfechaNac().substring(0, 10));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                fechaNac.setText(myDate.toString());
+
+                fechaNac.setText(varCte.getfechaNac().substring(0,10));
             }
             if (varCte.getSexo().equals("F")) {
                 sexoF.setChecked(true);
@@ -944,8 +995,6 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         nombres.setEnabled(estado);
         apellidos.setEnabled(estado);
         apodo.setEnabled(estado);
-        fechaNac.setEnabled(estado);
-        edad.setEnabled(estado);
         sexoM.setEnabled(estado);
         sexoF.setEnabled(estado);
         spinnerNacionalidad.setEnabled(estado);
@@ -995,7 +1044,7 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onFailure(Call<TablaDgii> call, Throwable t) {
             Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            Log.v("Clii-->*** ===>", t.getMessage());
+            Log.v("cliente-->*** ===>", t.getMessage());
 
         }
     }
@@ -1008,25 +1057,35 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
                 if (p[0].equals(RESPONSE_CODE_OK)) {
                     idCliente = p[1];
                     Toast.makeText(getApplicationContext(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainInspeccionActivity.class);
-                    intent.putExtra("IDVEHICULO", idVehiculo);
-                    intent.putExtra("VEHICULO", nombreVehiculo);
-                    intent.putExtra("IDCLIENTE", idCliente);
-                    intent.putExtra("CLIENTE", nombreCliente);
-                    intent.putExtra("REFERENCIA", refVehiculo);
-                    intent.putExtra("CHASIS", chasisVehiculo);
-                    ActualizaVehiculoCliente(idCliente, idVehiculo);
-                    etxtDocIdentidad.setEnabled(false);
-                    radioEmpresa.setEnabled(false);
-                    radioPersona.setEnabled(false);
-                    InhabilitarVistas(false);
-                    startActivity(intent);
+                    if (actualizar) {
+                        dialog.dismiss();
+                        ActualizaVehiculoCliente(idCliente, idVehiculo);
+                        Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        dialog.dismiss();
+                        Intent intent = new Intent(ClienteActivity.this.getApplicationContext(), MainInspeccionActivity.class);
+                        intent.putExtra("IDVEHICULO", idVehiculo);
+                        intent.putExtra("VEHICULO", nombreVehiculo);
+                        intent.putExtra("IDCLIENTE", idCliente);
+                        intent.putExtra("CLIENTE", nombreCliente);
+                        intent.putExtra("REFERENCIA", refVehiculo);
+                        intent.putExtra("CHASIS", chasisVehiculo);
+                        ActualizaVehiculoCliente(idCliente, idVehiculo);
+                        etxtDocIdentidad.setEnabled(false);
+                        radioEmpresa.setEnabled(false);
+                        radioPersona.setEnabled(false);
+                        InhabilitarVistas(false);
+                        startActivity(intent);
+                    }
 
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al guardar datos del cliente", Toast.LENGTH_SHORT).show();
 
                 }
             } else {
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Error al guardar datos del cliente", Toast.LENGTH_SHORT).show();
 
             }
@@ -1034,7 +1093,8 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         public void onFailure(Call<String> call, Throwable t) {
-            Log.v("Error insercion ** ", t.getMessage());
+            Log.v("Error insercion ==>", t.getMessage());
+            dialog.dismiss();
             Toast.makeText(getApplicationContext(), t.getMessage() + " Error de respuesta", Toast.LENGTH_SHORT).show();
 
         }
@@ -1045,27 +1105,20 @@ public class ClienteActivity extends AppCompatActivity implements View.OnClickLi
         public void onResponse(Call<String> call, Response<String> response) {
             if (response.isSuccessful()) {
                 if (response.toString().equals(RESPONSE_CODE_OK)) {
-                    Toast.makeText(getApplicationContext(), "Cliente Actualizado", Toast.LENGTH_SHORT).show();
-                } else {
-                    if(actualizar) {
-                        Toast.makeText(getApplicationContext(), "Tutorial actualizado", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
+                    if (actualizar) {
+                        Toast.makeText(getApplicationContext(), "Titular actualizado", Toast.LENGTH_SHORT).show();
+                    } else {
                         Toast.makeText(getApplicationContext(), "Datos verificados", Toast.LENGTH_SHORT).show();
                     }
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Error al guardar datos", Toast.LENGTH_SHORT).show();
             }
-
         }
-
         @Override
         public void onFailure(Call<String> call, Throwable t) {
             Toast.makeText(getApplicationContext(), "Error de respuesta", Toast.LENGTH_SHORT).show();
-            Log.v("Act---> ", t.getMessage());
-
+            Log.v("Actualizar---> ", t.getMessage());
         }
     }
 }

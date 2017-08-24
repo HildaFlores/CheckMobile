@@ -10,11 +10,4 @@
         android:orderInCategory="100"
         android:title="Guardar"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_ver"
-        android:orderInCategory="100"
-        android:title="PDF"
-        app:showAsAction="never" />
-
 </menu>

@@ -14,13 +14,15 @@ public class VehiculoDocumento extends VehiculoDocumentoResponse {
     private String nota;
     private String estado;
     private String id_lado;
+    private String rutaDocumentoWeb;
 
-    public VehiculoDocumento(String id_vehiculo,String rutaDocumento, String id_documento, String nota, String id_lado) {
+    public VehiculoDocumento(String id_vehiculo,String rutaDocumento, String id_documento, String nota, String id_lado, String rutaDocumentoWeb) {
         this.id_vehiculo = id_vehiculo;
         this.rutaDocumento = rutaDocumento;
         this.id_documento = id_documento;
         this.nota = nota;
         this.id_lado = id_lado;
+        this.rutaDocumentoWeb = rutaDocumentoWeb;
     }
 
     @Override
@@ -34,6 +36,7 @@ public class VehiculoDocumento extends VehiculoDocumentoResponse {
                 ", nota='" + nota + '\'' +
                 ", estado='" + estado + '\'' +
                 ", id_lado='" + id_lado + '\'' +
+                ", rutaDocumentoWeb='" + rutaDocumentoWeb + '\'' +
                 '}';
     }
 
@@ -99,5 +102,13 @@ public class VehiculoDocumento extends VehiculoDocumentoResponse {
 
     public void setId_lado(String id_lado) {
         this.id_lado = id_lado;
+    }
+
+    public String getRutaDocumentoWeb() {
+        return rutaDocumentoWeb;
+    }
+
+    public void setRutaDocumentoWeb(String rutaDocumentoWeb) {
+        this.rutaDocumentoWeb = rutaDocumentoWeb;
     }
 }

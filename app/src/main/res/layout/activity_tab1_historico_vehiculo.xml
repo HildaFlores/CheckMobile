@@ -6,23 +6,23 @@
     >
 
     <ListView
-        android:id="@+id/listaVehiculoInspeccion"
+        android:id="@+id/listaVehiculoOrden"
         style="@style/mySpinnerItemStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_barInspeccion"
         android:layout_marginTop="20sp"
         android:padding="15sp" />
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No existe ninguna inspección para este vehículo"
+        android:text="No existe ninguna orden de Trabajo para este vehículo"
         android:textSize="15sp"
         android:textStyle="italic"
         android:gravity="center"
         android:layout_gravity="center_vertical"
-        android:id="@+id/txtMensajeInspeccion"
+        android:id="@+id/textMensajeOrden"
         android:visibility="visible"/>
 
 </FrameLayout>

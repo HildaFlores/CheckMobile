@@ -55,7 +55,57 @@ public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse implements Parcela
     private int kilometraje;
     private String nombreSupervisor;
 
-
+    @Override
+    public String toString() {
+        return "OrdenTrabajoEnc{" +
+                "id='" + id + '\'' +
+                ", id_empresa='" + id_empresa + '\'' +
+                ", id_centroCostos='" + id_centroCostos + '\'' +
+                ", cliente='" + cliente + '\'' +
+                ", id_documento='" + id_documento + '\'' +
+                ", estadoFactura='" + estadoFactura + '\'' +
+                ", tipoTransaccion='" + tipoTransaccion + '\'' +
+                ", nombreCliente='" + nombreCliente + '\'' +
+                ", apellidosCte='" + apellidosCte + '\'' +
+                ", montoBruto='" + montoBruto + '\'' +
+                ", montoNeto='" + montoNeto + '\'' +
+                ", porcDescuento='" + porcDescuento + '\'' +
+                ", montoDesc='" + montoDesc + '\'' +
+                ", montoImpuestos='" + montoImpuestos + '\'' +
+                ", montoGravado='" + montoGravado + '\'' +
+                ", montoExento='" + montoExento + '\'' +
+                ", idAsesor='" + idAsesor + '\'' +
+                ", notas='" + notas + '\'' +
+                ", idCondicion='" + idCondicion + '\'' +
+                ", idMoneda='" + idMoneda + '\'' +
+                ", referencia=" + referencia +
+                ", calDesc='" + calDesc + '\'' +
+                ", idMecanico='" + idMecanico + '\'' +
+                ", trOrigen=" + trOrigen +
+                ", noPagos=" + noPagos +
+                ", efectivo=" + efectivo +
+                ", cheque=" + cheque +
+                ", tarjeta=" + tarjeta +
+                ", idTipoTransFac='" + idTipoTransFac + '\'' +
+                ", idDocumento='" + idDocumento + '\'' +
+                ", idTipoNcf='" + idTipoNcf + '\'' +
+                ", notaDescuento='" + notaDescuento + '\'' +
+                ", noOrden='" + noOrden + '\'' +
+                ", fechaPedido='" + fechaPedido + '\'' +
+                ", numeroDias=" + numeroDias +
+                ", idTipoServicio='" + idTipoServicio + '\'' +
+                ", idSupervisor='" + idSupervisor + '\'' +
+                ", recibidoPor='" + recibidoPor + '\'' +
+                ", realizadoPor='" + realizadoPor + '\'' +
+                ", id_inspeccion='" + id_inspeccion + '\'' +
+                ", fechaDocumento='" + fechaDocumento + '\'' +
+                ", permite_pieza_reemplazo='" + permite_pieza_reemplazo + '\'' +
+                ", nombre_mecanico='" + nombre_mecanico + '\'' +
+                ", condicion='" + condicion + '\'' +
+                ", kilometraje=" + kilometraje +
+                ", nombreSupervisor='" + nombreSupervisor + '\'' +
+                '}';
+    }
 
     public OrdenTrabajoEnc(String cliente, String nombreCliente, String apellidosCte, String montoBruto, String montoNeto, String porcDescuento, String montoDesc, String montoImpuestos, String montoGravado, String montoExento, String notas, String idCondicion, String idMoneda, String idMecanico, String fechaPedido, String idSupervisor, String id_inspeccion, String permite_pieza_reemplazo) {
         this.cliente = cliente;
@@ -141,51 +191,6 @@ public class OrdenTrabajoEnc  extends OrdenTrabajoEncResponse implements Parcela
         }
     };
 
-    @Override
-    public String toString() {
-        return "OrdenTrabajoEnc{" +
-                "id='" + id + '\'' +
-                ", id_empresa='" + id_empresa + '\'' +
-                ", id_centroCostos='" + id_centroCostos + '\'' +
-                ", cliente='" + cliente + '\'' +
-                ", id_documento='" + id_documento + '\'' +
-                ", estadoFactura='" + estadoFactura + '\'' +
-                ", tipoTransaccion='" + tipoTransaccion + '\'' +
-                ", nombreCliente='" + nombreCliente + '\'' +
-                ", apellidosCte='" + apellidosCte + '\'' +
-                ", montoBruto='" + montoBruto + '\'' +
-                ", montoNeto='" + montoNeto + '\'' +
-                ", porcDescuento='" + porcDescuento + '\'' +
-                ", montoDesc='" + montoDesc + '\'' +
-                ", montoImpuestos='" + montoImpuestos + '\'' +
-                ", montoGravado='" + montoGravado + '\'' +
-                ", montoExento='" + montoExento + '\'' +
-                ", idAsesor='" + idAsesor + '\'' +
-                ", notas='" + notas + '\'' +
-                ", idCondicion='" + idCondicion + '\'' +
-                ", idMoneda='" + idMoneda + '\'' +
-                ", referencia=" + referencia +
-                ", calDesc='" + calDesc + '\'' +
-                ", idMecanico='" + idMecanico + '\'' +
-                ", trOrigen=" + trOrigen +
-                ", noPagos=" + noPagos +
-                ", efectivo=" + efectivo +
-                ", cheque=" + cheque +
-                ", tarjeta=" + tarjeta +
-                ", idTipoTransFac='" + idTipoTransFac + '\'' +
-                ", idDocumento='" + idDocumento + '\'' +
-                ", idTipoNcf='" + idTipoNcf + '\'' +
-                ", notaDescuento='" + notaDescuento + '\'' +
-                ", noOrden='" + noOrden + '\'' +
-                ", fechaPedido='" + fechaPedido + '\'' +
-                ", numeroDias=" + numeroDias +
-                ", idTipoServicio='" + idTipoServicio + '\'' +
-                ", idSupervisor='" + idSupervisor + '\'' +
-                ", recibidoPor='" + recibidoPor + '\'' +
-                ", realizadoPor='" + realizadoPor + '\'' +
-                ", id_inspeccion='" + id_inspeccion + '\'' +
-                '}';
-    }
 
     public String getId() {
         return id;

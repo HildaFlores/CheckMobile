@@ -28,6 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_KEY_TIPO_TRANS;
+import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_TIPO_TRANS_ORDEN;
 import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 
 /**
@@ -88,6 +90,9 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mOrdenList.setLayoutManager(layoutManager);
         mOrdenList.setHasFixedSize(true);
+
+        NUM_LIST_ITEMS = orden.size();
+        Log.d("ITEMS==>", String.valueOf(NUM_LIST_ITEMS));
         mAdapter = new GreenAdapterOrden(NUM_LIST_ITEMS, orden, this);
         mOrdenList.setAdapter(mAdapter);
         mListener.sendRecycleList(mOrdenList);
@@ -97,7 +102,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
 
     private void obtenerDatosOrdenes() {
 
-        Call<OrdenTrabajoEnc> call = AdapterOrdenTrabajo.getApiService("id_tipo_trans", "OTT").getOrdenTrabajo();
+        Call<OrdenTrabajoEnc> call = AdapterOrdenTrabajo.getApiService(JSON_KEY_TIPO_TRANS,KEY_TIPO_TRANS_ORDEN).getOrdenTrabajo();
         call.enqueue(new OrdenCallback());
     }
 
@@ -105,7 +110,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
     public void onListItemClickOrden(int clickedItemIndex) {
         Intent intent = new Intent(Tab2OrdenesTrabajo.this.getContext(), ConsultaOrdenTrabajo.class);
         View vista = mOrdenList.getLayoutManager().findViewByPosition(clickedItemIndex);
-        TextView textView = (TextView) vista.findViewById(R.id.txtRowOrden0);
+        TextView textView = (TextView) vista.findViewById(R.id.txtRowOrden2);
         int index1 = textView.getText().toString().indexOf("-") + 1;
         int index2 = textView.getText().toString().indexOf(")");
         idOrden = Integer.parseInt(textView.getText().toString().substring(index1, index2));
@@ -159,7 +164,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
             case R.id.action_ver_inspeccion: {
                 Intent intent = new Intent(Tab2OrdenesTrabajo.this.getContext(), ConsultaInspeccionActivity.class);
                 buscar = true;
-                TextView textView = (TextView) view.findViewById(R.id.txtRowOrden0);
+                TextView textView = (TextView) view.findViewById(R.id.txtRowOrden2);
                 int index1 = textView.getText().toString().indexOf("-") + 1;
                 int index2 = textView.getText().toString().indexOf(")");
                 String idOrden = textView.getText().toString().substring(index1, index2);
@@ -183,7 +188,7 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
                         .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                TextView textView = (TextView) view.findViewById(R.id.txtRowOrden0);
+                                TextView textView = (TextView) view.findViewById(R.id.txtRowOrden2);
                                 int index1 = textView.getText().toString().indexOf("-") + 1;
                                 int index2 = textView.getText().toString().indexOf(")");
                                 String idOrden = textView.getText().toString().substring(index1, index2);
@@ -244,7 +249,6 @@ public class Tab2OrdenesTrabajo extends Fragment implements GreenAdapterOrden.Li
                         mOrdenList.setVisibility(View.GONE);
                     } else {
                         mensaje.setVisibility(View.GONE);
-                        NUM_LIST_ITEMS = ordenes.getOrdenes().size();
                         callAdapter(ordenes.getOrdenes());
                     }
                 }

@@ -8,25 +8,90 @@
         android:id="@+id/txtFecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="01/05/2017"
-        android:layout_marginTop="5sp"
-        android:layout_gravity="end"/>
+        android:layout_gravity="end"
+        android:layout_marginTop="10sp"
+        android:text="01/05/2017" />
 
-    <TextView
-        android:id="@+id/txtInspeccion"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Inspección >> IV-15"
-        android:padding="5sp"
-        />
-    <TextView
-        android:id="@+id/txtCliente"
-        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:padding="7sp">
+
+
+        <TextView
+            android:id="@+id/etiqueta1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Orden >> "
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OTT-15"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/etiqueta4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inspección >> "
+            android:textStyle="bold"
+            android:layout_gravity="end"
+            />
+
+        <TextView
+            android:id="@+id/txtidInspeccion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IV-20"
+            android:layout_weight="1"
+            android:layout_gravity="end"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cliente >> HILDA FLORES SANTANA"
-        android:padding="5sp"/>
+        android:orientation="horizontal"
+        android:padding="7sp">
 
+        <TextView
+            android:id="@+id/etiqueta2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cliente >> "
+            android:textStyle="bold"/>
 
+        <TextView
+            android:id="@+id/txtCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HILDA FLORES SANTANA" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="7sp"
+        >
+
+        <TextView
+            android:id="@+id/etiqueta3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mecánico >> "
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txtMecánico"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PAUL PEREZ" />
+
+    </LinearLayout>
 
 </LinearLayout>

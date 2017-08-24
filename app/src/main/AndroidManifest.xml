@@ -55,10 +55,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Vehiculo.VehiculoActivity" />
         </activity>
-        <activity
-            android:name=".Vehiculo.ListaMarcaActivity"
-            android:label="Marcas"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Inspeccion.MainInspeccionActivity" />
         <activity
             android:name=".Inspeccion.ConsultaInspeccionActivity"
@@ -88,6 +84,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity android:name=".Utils.FullscreenActivity" />
         <activity android:name=".Actualizaciones.FiltroLucesActivity" />
         <activity android:name=".Actualizaciones.FiltroAccesoriosActivity" />
         <activity android:name=".Actualizaciones.FiltroOrdenTrabajoActivity">

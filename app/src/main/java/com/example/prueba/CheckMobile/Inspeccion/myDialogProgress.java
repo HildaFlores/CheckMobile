@@ -74,9 +74,7 @@ public class myDialogProgress extends DialogFragment {
         @Override
         protected void onPostExecute(Void result) {
             progress.setVisibility(View.INVISIBLE);
-            Toast.makeText(getActivity(), "Registros guardados con éxito", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
+
 
         }
 

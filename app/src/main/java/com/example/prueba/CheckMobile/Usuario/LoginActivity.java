@@ -1,6 +1,7 @@
 package com.example.prueba.CheckMobile.Usuario;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ import retrofit2.Response;
 
 import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_CLAVE_USUARIO_ADMIN;
 import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_USARIO_ADMIN;
+import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -40,8 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private EditText muserView;
     private EditText mPasswordView;
-    private ProgressBar progress;
-    private String idUsuario, nombreUsuario, ipservidor, puerto, supervisor;
+    private String idUsuario, nombreUsuario;
     int requestCode = 1;
     int contador = 0;
     Button mEmailSignInButton;
@@ -54,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_login);
         setSupportActionBar(toolbar);
         // Set up the login form.
-        progress = (ProgressBar) findViewById(R.id.progressBarCircle);
         muserView = (EditText) findViewById(R.id.user);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -68,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        progress.setProgress(0);
        mEmailSignInButton = (Button) findViewById(R.id.user_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -85,81 +84,54 @@ public class LoginActivity extends AppCompatActivity {
     private void buscarUsuario(final String valor1, String valor2) {
 
         Call<Usuario> callUsuario = AdapterUsuario.getUsuario(JSON_USARIO_ADMIN, valor1, JSON_CLAVE_USUARIO_ADMIN, valor2).getUsuario();
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setTitle(null);
+        dialog.setMax(100);
+        dialog.setMessage("Cargando...");
+        // show it
+        dialog.show();
+
         callUsuario.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful()) {
-                    UsuarioResponse usuarioResponse = null;
+                    UsuarioResponse usuarioResponse;
                     if (response.body() != null) {
-
                         usuarioResponse = response.body();
-                    }
-                    if (usuarioResponse.getResponseCode().equals("200") && usuarioResponse.getRows() > 0) {
-                        contador = contador +1;
-                        if(contador ==1) {
+                        if (usuarioResponse.getResponseCode().equals(RESPONSE_CODE_OK) && usuarioResponse.getRows() > 0) {
                             idUsuario = usuarioResponse.getUsuarios().get(0).getId();
                             nombreUsuario = usuarioResponse.getUsuarios().get(0).getNombres() + " " + usuarioResponse.getUsuarios().get(0).getApellidos();
-                            new AsyncTask_load().execute();
-                            progress.setClickable(false);
-                        }
+                            dialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Bienvenido " + nombreUsuario, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("IDUSUARIO", idUsuario);
+                            intent.putExtra("NOMBREUSUARIO", nombreUsuario);
+                            finish();
+                            startActivity(intent);
 
-                    } else
-                        Toast.makeText(getApplicationContext(), "Usuario o contraseña incorrectos ", Toast.LENGTH_SHORT).show();
+                        } else if (usuarioResponse.getResponseCode().equals(RESPONSE_CODE_OK) && usuarioResponse.getRows() == 0) {
+                            dialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Usuario o contraseña incorrectos ", Toast.LENGTH_SHORT).show();
+
+                        }
                     }
-                 else {
+            }  else {
+                    dialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al validar usuario o contraseña ", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
+                dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d("USUARIO==>", t.getMessage());
+                Log.d("USUARIO==>", "Error: " + t.getMessage());
             }
         });
 
     }
 
-    public class AsyncTask_load extends AsyncTask<Void, Integer, Void> {
 
-        int progreso;
-
-
-        @Override
-        protected void onPreExecute() {
-            progress.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            while (progreso < 100) {
-                progreso++;
-                publishProgress(progreso);
-                SystemClock.sleep(10);
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-
-            progress.setProgress(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            progress.setVisibility(View.INVISIBLE);
-            Toast.makeText(getApplicationContext(), "Bienvenido " + nombreUsuario, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("IDUSUARIO", idUsuario);
-            intent.putExtra("NOMBREUSUARIO", nombreUsuario);
-            finish();
-            startActivity(intent);
-        }
-
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

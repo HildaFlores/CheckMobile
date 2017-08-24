@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@android:style/Widget.Button.Inset"
     android:layout_width="match_parent"
@@ -8,28 +8,105 @@
     android:orientation="vertical"
     android:padding="10sp">
 
+    <!--Fecha-->
 
-    <TextView
-        android:id="@+id/txtRowOrden0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center"
-        android:fontFamily="monospace"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        tools:text="#42" />
 
     <TextView
         android:id="@+id/txtRowOrden1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:fontFamily="monospace"
-        android:paddingBottom="10sp"
-        android:paddingTop="10sp"
+        android:layout_alignParentRight="true"
+        android:padding="10sp"
+        android:textStyle="bold"
+        tools:text="01/02/2015" />
+
+    <!--Orden-->
+
+    <TextView
+        android:id="@+id/txtEtiqueta1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden1"
+        android:layout_centerHorizontal="true"
+        android:padding="10sp"
         android:textSize="20sp"
         android:textStyle="bold"
-        tools:text="#42" />
+        tools:text="Orden >> " />
+
+    <TextView
+        android:id="@+id/txtRowOrden2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden1"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/txtEtiqueta1"
+        android:layout_marginTop="15sp"
+        tools:text="(OTT-10)" />
 
 
-</LinearLayout>
+    <!--Inspeccion-->
+
+    <TextView
+        android:id="@+id/txtEtiqueta2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden2"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Inspeccion >> "
+        android:padding="10sp"/>
+
+    <TextView
+        android:id="@+id/txtRowOrden3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden2"
+        android:layout_toRightOf="@id/txtEtiqueta2"
+        tools:text="(IV-20)"
+        android:layout_marginTop="15sp"/>
+
+    <!--Cliente-->
+
+    <TextView
+        android:id="@+id/txtEtiqueta3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden3"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Cliente >> "
+        android:padding="10sp"/>
+
+    <TextView
+        android:id="@+id/txtRowOrden4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden3"
+        android:layout_toRightOf="@id/txtEtiqueta3"
+        tools:text="HILDA FLORES SANTANA"
+        android:layout_marginTop="15sp"/>
+
+    <!--Mecanico-->
+
+    <TextView
+        android:id="@+id/txtEtiqueta4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden4"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Mecánico >> "
+        android:padding="10sp"/>
+
+    <TextView
+        android:id="@+id/txtRowOrden5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtRowOrden4"
+        android:layout_toRightOf="@id/txtEtiqueta4"
+        tools:text="MECANICO 1"
+        android:layout_marginTop="15sp"
+       />
+
+
+</RelativeLayout>

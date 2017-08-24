@@ -1,6 +1,7 @@
 package com.example.prueba.CheckMobile.Actualizaciones;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
@@ -41,6 +42,7 @@ import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_CLAVE_USUARIO
 import static com.example.prueba.CheckMobile.Utils.Constantes.JSON_USARIO_ADMIN;
 import static com.example.prueba.CheckMobile.Utils.Constantes.RESPONSE_CODE_OK;
 import static com.example.prueba.CheckMobile.Utils.Constantes.USER_SUPERVISOR;
+import static com.itextpdf.text.pdf.PdfName.ca;
 
 public class FiltroVehiculoActivity extends AppCompatActivity implements myDialogClaveAutorizacion.OnDialogclickListener {
 
@@ -124,7 +126,37 @@ public class FiltroVehiculoActivity extends AppCompatActivity implements myDialo
     private void obtenerDatosVehiculos() {
 
         Call<Vehiculo> call = AdapterVehiculo.getApiService().getVehiculos();
-        call.enqueue(new VehiculoCallback());
+        // Set up progress before call
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setTitle(null);
+        dialog.setMax(100);
+        dialog.setMessage("Cargando...");
+        // show it
+        dialog.show();
+        call.enqueue(new Callback<Vehiculo>() {
+            @Override
+            public void onResponse(Call<Vehiculo> call, Response<Vehiculo> response) {
+                if (response.isSuccessful()) {
+                    dialog.dismiss();
+                    VehiculoResponse vehicle = response.body();
+                    if (vehicle.getResponseCode().equals(RESPONSE_CODE_OK)) {
+                        vehiculos = vehicle.getVehiculos();
+                        madapter = new VehiculoAdapter(getApplicationContext(), vehiculos);
+                        listViewVehiculo.setAdapter(madapter);
+                    }
+                } else {
+                    dialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de vehículo", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Vehiculo> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                Log.v("Vehiculo", " ===>" + t.getMessage());
+                dialog.dismiss();
+            }
+        });
     }
 
     @Override
@@ -145,28 +177,6 @@ public class FiltroVehiculoActivity extends AppCompatActivity implements myDialo
 
     }
 
-
-    class VehiculoCallback implements Callback<Vehiculo> {
-        @Override
-        public void onResponse(Call<Vehiculo> call, Response<Vehiculo> response) {
-            if (response.isSuccessful()) {
-                VehiculoResponse vehicle = response.body();
-                if (vehicle.getResponseCode().equals(RESPONSE_CODE_OK)) {
-                    vehiculos = vehicle.getVehiculos();
-                    madapter = new VehiculoAdapter(getApplicationContext(), vehiculos);
-                    listViewVehiculo.setAdapter(madapter);
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), "Error en el formato de respuesta de vehículo", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onFailure(Call<Vehiculo> call, Throwable t) {
-            Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-            Log.v("Aqui ===>", t.getMessage());
-        }
-    }
 
 
     public class VehiculoAdapter extends ArrayAdapter<Vehiculo> {

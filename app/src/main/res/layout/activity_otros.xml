@@ -190,22 +190,13 @@
 
         </GridLayout>
 
-
-        <Button
-            android:id="@+id/btnUpLoad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/layoutCantidades"
-            android:background="@android:drawable/ic_menu_upload_you_tube"
-            android:padding="20sp" />
         <TextView
             android:id="@+id/etxtLadosVehiculo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:padding="20sp"
-            android:layout_below="@id/btnUpLoad"
+            android:layout_below="@id/layoutCantidades"
             android:text="Lados con rayones"
             android:textSize="20sp"
             android:textStyle="bold" />

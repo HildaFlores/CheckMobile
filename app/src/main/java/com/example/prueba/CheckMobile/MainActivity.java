@@ -19,6 +19,8 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.prueba.CheckMobile.Actualizaciones.FiltroInspeccionActivity;
 import com.example.prueba.CheckMobile.Actualizaciones.FiltroOrdenTrabajoActivity;
@@ -41,6 +43,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 import static com.example.prueba.CheckMobile.Utils.Constantes.IPSERVIDOR;
+import static com.example.prueba.CheckMobile.Utils.Constantes.NOMBRE_EMPRESA;
+import static com.example.prueba.CheckMobile.Utils.Constantes.NOMBRE_USUARIO;
 import static com.example.prueba.CheckMobile.Utils.Constantes.PUERTO;
 
 
@@ -72,26 +76,25 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-//        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("EXIT", false)) {
-//            System.exit(0);
-//
-//        }
-//        LinearLayout layoutHeader = (LinearLayout) findViewById(R.id.layoutHeader);
-//        TextView txtNombreUsuario = (TextView) layoutHeader.findViewById(R.id.textViewUsuario);
-//        TextView txtEmpresa = (TextView) layoutHeader.findViewById(R.id.textViewEmpresa);
-//        Intent intent = getIntent();
-//        Bundle extra = intent.getExtras();
-//
-//        if (extra != null) {
-//            txtNombreUsuario.setText(extra.getString("NOMBREUSUARIO"));
-//
-//        }
-//        txtEmpresa.setText("Empresa X");
+        Intent intent = getIntent();
+        Bundle extra = intent.getExtras();
 
+        if (extra != null) {
+            nombreusuario = extra.getString("NOMBREUSUARIO");
+
+        }
+        NOMBRE_USUARIO = nombreusuario;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        NavigationView vista =(NavigationView) drawer.findViewById(R.id.nav_view);
+        View header = vista.getHeaderView(0);
+        TextView user = (TextView) header.findViewById(R.id.textViewUsuario);
+        TextView empresa = (TextView) header.findViewById(R.id.textViewEmpresa);
+        user.setText(nombreusuario);
+        empresa.setText(NOMBRE_EMPRESA);
+
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -161,7 +164,9 @@ public class MainActivity extends AppCompatActivity implements Tab1Inspecciones.
                         case 0: {
                             final ArrayList<InspeccionVehiculo> filterList = new ArrayList<InspeccionVehiculo>();
                             for (int i = 0; i < inspeccionVehiculos.size(); i++) {
-                                final String text = inspeccionVehiculos.get(i).getNombre_vehiculo().toUpperCase();
+                                final String text = inspeccionVehiculos.get(i).getNombre_vehiculo().toUpperCase() + " " +
+                                        inspeccionVehiculos.get(i).getNombre_cliente().toUpperCase()  + " " +
+                                        inspeccionVehiculos.get(i).getReferencia() + " " + NOMBRE_USUARIO;
                                 if (text.contains(newText)) {
                                     filterList.add(inspeccionVehiculos.get(i));
                                 }

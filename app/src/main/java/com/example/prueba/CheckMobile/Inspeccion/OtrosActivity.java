@@ -1,12 +1,13 @@
 package com.example.prueba.CheckMobile.Inspeccion;
 
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +36,10 @@ import com.example.prueba.CheckMobile.OtrosParametros.AdapterOtrosParametros;
 import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametros;
 import com.example.prueba.CheckMobile.OtrosParametros.OtrosParametrosResponse;
 import com.example.prueba.CheckMobile.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.ImageLoader;
 import com.squareup.picasso.Picasso;
@@ -50,13 +56,12 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_CANTIDAD;
-import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_CONDICION_ALFOMBRA;
-import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_CONDICION_ENTRADA;
-import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_LADOS;
-import static com.example.prueba.CheckMobile.Utils.Constantes.KEY_LISTA_PARAM_LLAVE;
+import static com.example.prueba.CheckMobile.Utils.Constantes.*;
+
 
 public class OtrosActivity extends Fragment {
+
+    //Views
     GridLayout layoutCantidades;
     GridLayout layoutLados;
     SeekBar sbCombustible;
@@ -64,21 +69,31 @@ public class OtrosActivity extends Fragment {
     SeekBar sbAceite;
     TextView txtAceite;
     RadioGroup rgLLaves;
-    Button btnUpLoad;
+
+    //Atributos
     private Timer timer = new Timer();
     private final long DELAY = 0;
     int idPictureLados;
-    String tipoLlave, descLlave, nivelCombustible, nivelAceite;
-    String cantAlfombra, cantLlaves, cantGato, cantAlicate, cantLlaveRueda, noBateria;
+    private String tipoLlave;
+    private String descLlave;
+    private String nivelCombustible;
+    private String nivelAceite;
+    private String cantAlfombra;
+    private String cantLlaves;
+    private String cantGato;
+    private String cantAlicate;
+    private String cantLlaveRueda;
+    private String noBateria;
+    private final int CAMERA_REQUEST = 13323;
+
+    List<String> photoToUpload = new ArrayList<>();
+    List<Uri> imageUriToUpload = new ArrayList<>();
+    List<String> imageDesc = new ArrayList<>();
+    List<Integer> lado = new ArrayList<>();
     sendOtros mListener;
-    private static final int TAKE_PICTURE = 1;
-    final int CAMERA_REQUEST = 13323;
     private Uri imageUri;
     CameraPhoto cameraPhoto;
-    List<String> photoToUpload = new ArrayList<>();
-    List<Integer> lado = new ArrayList<>();
     DrawingView mDrawingView;
-    boolean actualizar;
 
     @Override
     public void onAttach(Context context) {
@@ -120,6 +135,7 @@ public class OtrosActivity extends Fragment {
 
         void sendLadoId(List<Integer> lado);
 
+        void sendImageRutaWeb(List<Uri> rutaweb);
     }
 
 
@@ -127,6 +143,7 @@ public class OtrosActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         View rootView = inflater.inflate(R.layout.activity_otros, container, false);
         layoutCantidades = (GridLayout) rootView.findViewById(R.id.layoutCantidades);
@@ -137,10 +154,9 @@ public class OtrosActivity extends Fragment {
         txtAceite = (TextView) rootView.findViewById(R.id.txtProgressAceite);
         layoutLados = (GridLayout) rootView.findViewById(R.id.layoutLadosVehiculo);
         rgLLaves = (RadioGroup) rootView.findViewById(R.id.rgLLaves);
-        btnUpLoad = (Button) rootView.findViewById(R.id.btnUpLoad);
 
-        txtSeekBar.setText("Nivel --> " + sbCombustible.getProgress() + "/" + sbCombustible.getMax());
-        txtAceite.setText("Nivel -->" + sbAceite.getProgress());
+        txtSeekBar.setText("Nivel >> " + sbCombustible.getProgress() + "/" + sbCombustible.getMax());
+        txtAceite.setText("Nivel >>" + sbAceite.getProgress());
 
         ObtenerDatosOtrosParametros(KEY_LISTA_PARAM_LLAVE + "," +
                 KEY_LISTA_PARAM_LADOS + "," +
@@ -162,15 +178,13 @@ public class OtrosActivity extends Fragment {
                 rb.setChecked(true);
             }
         }
-
-
         cameraPhoto = new CameraPhoto(getContext());
 
 
         sbCombustible.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                txtSeekBar.setText("Nivel --> " + sbCombustible.getProgress() + "/" + sbCombustible.getMax());
+                txtSeekBar.setText("Nivel >> " + sbCombustible.getProgress() + "/" + sbCombustible.getMax());
                 nivelCombustible = String.valueOf(sbCombustible.getProgress());
                 if (mListener != null) {
                     Log.d("TAG", "Fragment ==> " + nivelCombustible);
@@ -193,7 +207,7 @@ public class OtrosActivity extends Fragment {
         sbAceite.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                txtAceite.setText("Nivel --> " + sbAceite.getProgress());
+                txtAceite.setText("Nivel >> " + sbAceite.getProgress() + "/" + sbAceite.getMax());
                 nivelAceite = String.valueOf(sbAceite.getProgress());
                 if (mListener != null) {
                     Log.d("TAG", "Fragment ==> " + nivelAceite);
@@ -212,68 +226,13 @@ public class OtrosActivity extends Fragment {
 
             }
         });
+
+
         return rootView;
 
     }
 
-    /*
-        private void subirImagen() {
-            btnUpLoad.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                     for(int i= 0; i<photoToUpload.size(); i++)
-                     {
-                         Bitmap bitmap = ImageLoader.init().from(photoToUpload.get(i)).requestSize(1024, 1024).getBitmap();
-                         String encodedImage = ImageBase64.encode(bitmap);
-                         Log.d("TAG==>", encodedImage);
-                       //  Toast.makeText(getContext(), encodedImage, Toast.LENGTH_SHORT).show();
-                         HashMap<String , String> postData = new HashMap<String, String>();
-                         postData.put("image", encodedImage);
-                         PostResponseAsyncTask task = new PostResponseAsyncTask(getActivity(), postData, new AsyncResponse() {
-                             @Override
-                             public void processFinish(String s) {
-                                        if(s.contains("uploaded_sucessful"))
-                                        {
-                                            Toast.makeText(getContext(), s.toString(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            Toast.makeText(getContext(), "Error al cargar imagenes", Toast.LENGTH_SHORT).show();
-                                        }
-                             }
-                         });
-                         task.execute("http://10.0.0.2:9999/news/upload.php");
-                         task.setEachExceptionsHandler(new EachExceptionsHandler() {
-                             @Override
-                             public void handleIOException(IOException e) {
-                                 Toast.makeText(getContext(), "No puede conectarse al servidor", Toast.LENGTH_SHORT).show();
-                             }
 
-                             @Override
-                             public void handleMalformedURLException(MalformedURLException e) {
-                                 Toast.makeText(getContext(), "Error de URL ", Toast.LENGTH_SHORT).show();
-                             }
-
-                             @Override
-                             public void handleProtocolException(ProtocolException e) {
-                                 Toast.makeText(getContext(), "Error  de Protocolo ", Toast.LENGTH_SHORT).show();
-                             }
-
-                             @Override
-                             public void handleUnsupportedEncodingException(UnsupportedEncodingException e) {
-                                 Toast.makeText(getContext(), "Error  de condificacion ", Toast.LENGTH_SHORT).show();
-                             }
-                         });
-                     }
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(getContext(), "Algo ha fallado al obtener Foto", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-        }
-    */
     private void ObtenerTipoLlave() {
 
         rgLLaves.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -308,19 +267,14 @@ public class OtrosActivity extends Fragment {
     }
 
     private void ObtenerDatosOtrosParametros(String s) {
-
-
         Call<OtrosParametros> call = AdapterOtrosParametros.getServiceOtros("id_lista", s).getOtrosParametros();
         call.enqueue(new OtrosCallback());
-
-
     }
 
     private class OtrosCallback implements retrofit2.Callback<OtrosParametros> {
         @Override
         public void onResponse(Call<OtrosParametros> call, Response<OtrosParametros> response) {
             if (response.isSuccessful()) {
-
                 OtrosParametrosResponse otrosParametros = response.body();
                 DividirListas(otrosParametros.getOtrosParametros());
 
@@ -410,7 +364,7 @@ public class OtrosActivity extends Fragment {
                 //   takePhoto();
                 return true;
             }
-            case R.id.action_editar: { //layoutLados.removeView(imageView);
+        //    case R.id.action_editar: { //layoutLados.removeView(imageView);
 //                mDrawingView = new DrawingView(layoutLados.getContext());
 //               mDrawingView.setId(idPictureLados);
 //                mDrawingView.setMinimumWidth(w);
@@ -418,56 +372,58 @@ public class OtrosActivity extends Fragment {
 //                LayoutInflater inflater = LayoutInflater.from(imageView.getContext());
 //                inflater.inflate(R.layout.screen_drawing_room, null);
 //              LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.view_drawing_pad);
-                layoutLados.addView(mDrawingView);
-                return true;
-            }
+              //  layoutLados.addView(mDrawingView);
+            //    return true;
+          //  }
         }
         return super.onContextItemSelected(item);
-    }
-
-    private void takePhoto() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photo = new File(Environment.getExternalStorageDirectory(), "Pic.jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photo));
-        imageUri = Uri.fromFile(photo);
-        startActivityForResult(intent, TAKE_PICTURE);
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //  super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == RESULT_OK) {
             if (requestCode == CAMERA_REQUEST) {
                 String PhotoPath = cameraPhoto.getPhotoPath();
-
+                imageUri = Uri.fromFile(new File(PhotoPath));
                 switch (idPictureLados) {
                     case 1: {
                         photoToUpload.add(PhotoPath);
+                        imageUriToUpload.add(imageUri);
+                        imageDesc.add("Izquierda");
                         break;
                     }
                     case 2: {
                         photoToUpload.add(PhotoPath);
+                        imageUriToUpload.add(imageUri);
+                        imageDesc.add("Derecha");
                         break;
                     }
                     case 3: {
                         photoToUpload.add(PhotoPath);
+                        imageUriToUpload.add(imageUri);
+                        imageDesc.add("Delantero");
                         break;
                     }
                     case 4: {
                         photoToUpload.add(PhotoPath);
+                        imageUriToUpload.add(imageUri);
+                        imageDesc.add("Detras");
                         break;
                     }
                     case 5: {
                         photoToUpload.add(PhotoPath);
+                        imageUriToUpload.add(imageUri);
+                        imageDesc.add("Encima");
                         break;
                     }
                 }
                 if (mListener != null) {
                     mListener.sendImageRuta(photoToUpload);
+                    mListener.sendImageRutaWeb(imageUriToUpload);
                 }
+
                 ImageView imageView = (ImageView) layoutLados.findViewById(idPictureLados);
                 try {
                     Bitmap bitmap = ImageLoader.init().from(PhotoPath).requestSize(256, 256).getBitmap();
@@ -480,7 +436,6 @@ public class OtrosActivity extends Fragment {
 
             }
         }
-
 
        /* switch (requestCode) {
             case TAKE_PICTURE:
@@ -505,6 +460,15 @@ public class OtrosActivity extends Fragment {
                 }
         }*/
     }
+
+
+    public String getImageExt(Uri uri) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+
+    }
+
 
     private void LlenarLadosVehiculo(List<OtrosParametros> lados) {
         layoutLados.setRowCount(lados.size());
@@ -539,7 +503,6 @@ public class OtrosActivity extends Fragment {
             etxtCantidades.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
                 }
 
                 @Override
@@ -614,7 +577,6 @@ public class OtrosActivity extends Fragment {
                                                 break;
                                             }
                                         }
-
                                     }
 
                                 });
@@ -625,52 +587,6 @@ public class OtrosActivity extends Fragment {
                     }
                 }
             });
-
-            switch (etxtCantidades.getId()) {
-                case 1: {
-
-                    if (cantAlfombra != null) {
-                        etxtCantidades.setText(cantAlfombra);
-                    }
-                    break;
-
-                }
-                case 2: {
-
-                    if (cantLlaves != null) {
-                        etxtCantidades.setText(cantLlaves);
-                    }
-                    break;
-
-                }
-                case 3: {
-                    if (cantGato != null) {
-                        etxtCantidades.setText(cantGato);
-                    }
-                    break;
-
-                }
-                case 4: {
-                    if (cantAlicate != null) {
-                        etxtCantidades.setText(cantAlicate);
-                    }
-                    break;
-                }
-                case 5: {
-                    if (cantLlaveRueda != null) {
-                        etxtCantidades.setText(cantLlaveRueda);
-                    }
-                    break;
-                }
-                case 6: {
-
-                    if (noBateria != null) {
-                        etxtCantidades.setText(noBateria);
-                    }
-                    break;
-
-                }
-            }
         }
     }
 }

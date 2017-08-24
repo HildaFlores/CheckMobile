@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.prueba.CheckMobile.Cliente.GreenAdapter;
 import com.example.prueba.CheckMobile.Inspeccion.InspeccionVehiculo;
 import com.example.prueba.CheckMobile.R;
+import com.example.prueba.CheckMobile.Utils.Constantes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,15 +86,28 @@ public class GreenAdapterInspeccion extends RecyclerView.Adapter<GreenAdapterIns
     class NumberViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
 
         // Will display the position in the list, ie 0 through getItemCount() - 1
+        TextView listFecha;
         TextView listItemNumberView;
         TextView listClienteName;
         TextView listIdInspeccion;
+        TextView listAsesor;
+        TextView etiqueta1;
+        TextView etiqueta2;
+        TextView etiqueta3;
+        TextView etiqueta4;
 
         public NumberViewHolder(View itemView) {
             super(itemView);
-            listIdInspeccion = (TextView) itemView.findViewById(txtRowInspeccion0);
-            listItemNumberView = (TextView) itemView.findViewById(R.id.txtRowInspeccion);
-            listClienteName = (TextView) itemView.findViewById(R.id.txtRowInspeccion2);
+            listFecha = (TextView) itemView.findViewById(R.id.txtRowInspeccion0);
+            listIdInspeccion = (TextView) itemView.findViewById(R.id.txtRowInspeccion1);
+            listItemNumberView = (TextView) itemView.findViewById(R.id.txtRowInspeccion2);
+            listClienteName = (TextView) itemView.findViewById(R.id.txtRowInspeccion3);
+            listAsesor = (TextView) itemView.findViewById(R.id.txtRowInspeccion4);
+            etiqueta1 = (TextView) itemView.findViewById(R.id.txtEtiqueta1);
+            etiqueta2 = (TextView) itemView.findViewById(R.id.txtEtiqueta2);
+            etiqueta3 = (TextView) itemView.findViewById(R.id.txtEtiqueta3);
+            etiqueta4 = (TextView) itemView.findViewById(R.id.txtEtiqueta4);
+
             itemView.setId(Integer.parseInt(inspeccionVeh.get(contador).getId()));
             contador++;
             itemView.setOnClickListener(this);
@@ -105,10 +119,16 @@ public class GreenAdapterInspeccion extends RecyclerView.Adapter<GreenAdapterIns
                     inspeccionVeh.get(listIndex).getNombre_vehiculo() +
                     " (Ref." + inspeccionVeh.get(listIndex).getReferencia() + ")";
 
-            String detalle = "Cliente >> " + inspeccionVeh.get(listIndex).getNombre_cliente();
+            String detalle =  inspeccionVeh.get(listIndex).getNombre_cliente();
+            listFecha.setText(inspeccionVeh.get(listIndex).getFechaInspeccion().substring(0,10));
             listIdInspeccion.setText("(IV-" + inspeccionVeh.get(listIndex).getId() + ")");
             listItemNumberView.setText(encabezado);
             listClienteName.setText(detalle);
+            listAsesor.setText(Constantes.NOMBRE_USUARIO);
+            etiqueta1.setText("Inspección >> ");
+            etiqueta2.setText("Vehículo >> ");
+            etiqueta3.setText("Cliente >> ");
+            etiqueta4.setText("Asesor >> ");
 
 
         }
